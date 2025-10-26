@@ -1,0 +1,2 @@
+// Contactドメインのエクスポート
+export * from './types';

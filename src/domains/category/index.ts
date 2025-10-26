@@ -1,0 +1,2 @@
+// Categoryドメインのエクスポート
+export * from './types';

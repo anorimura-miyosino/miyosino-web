@@ -1,0 +1,2 @@
+// Mediaドメインのエクスポート
+export * from './types';

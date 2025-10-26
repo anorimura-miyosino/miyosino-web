@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# miyosino-web
 
-## Getting Started
+DDD（ドメイン駆動設計）構造を意識したNext.js + TypeScriptアプリケーション
 
-First, run the development server:
+## 技術スタック
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Next.js 15** (App Router)
+- **TypeScript**
+- **Tailwind CSS**
+- **ESLint** + **Prettier**
+
+## プロジェクト構造
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── domains/                # ドメイン層
+│   ├── user/
+│   │   ├── types.ts
+│   │   └── index.ts
+│   ├── product/
+│   │   ├── types.ts
+│   │   └── index.ts
+│   └── index.ts
+├── application/            # アプリケーション層
+│   ├── services/
+│   │   ├── userService.ts
+│   │   ├── productService.ts
+│   │   └── index.ts
+│   ├── hooks/
+│   │   ├── useUsers.ts
+│   │   ├── useProducts.ts
+│   │   └── index.ts
+│   └── index.ts
+├── infrastructure/         # インフラストラクチャ層
+│   ├── api/
+│   │   ├── client.ts
+│   │   └── index.ts
+│   └── index.ts
+└── shared/                 # 共有層
+    ├── types/
+    │   └── index.ts
+    ├── utils/
+    │   └── index.ts
+    ├── constants/
+    │   └── index.ts
+    └── index.ts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## DDD構造の説明
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ドメイン層 (`domains/`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- ビジネスロジックの中核
+- エンティティ、値オブジェクト、ドメインサービス
+- 他の層に依存しない
 
-## Learn More
+### アプリケーション層 (`application/`)
 
-To learn more about Next.js, take a look at the following resources:
+- ユースケースの実装
+- ドメインオブジェクトの協調
+- サービスとカスタムフック
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### インフラストラクチャ層 (`infrastructure/`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 外部システムとの連携
+- API クライアント、データベースアクセス
+- 技術的な詳細の実装
 
-## Deploy on Vercel
+### 共有層 (`shared/`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 複数層で使用される共通要素
+- 型定義、ユーティリティ、定数
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 開発コマンド
+
+```bash
+# 開発サーバー起動
+npm run dev
+
+# ビルド
+npm run build
+
+# 本番サーバー起動
+npm start
+
+# リント
+npm run lint
+
+# フォーマット
+npm run format
+```
+
+## 環境変数
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+```
+
+## デプロイ
+
+### GitHub Pages
+
+このプロジェクトはGitHub Pagesに自動デプロイされる設定になっています。
+
+1. **GitHubリポジトリにPush**
+
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git push origin master
+   ```
+
+2. **GitHub Pagesの設定**
+   - リポジトリのSettings → Pages
+   - Source: GitHub Actionsを選択
+   - リポジトリ名が `miyosino-web` の場合、URLは `https://[ユーザー名].github.io/miyosino-web/` になります
+
+3. **自動デプロイの確認**
+   - GitHub Actionsでビルドとデプロイが実行されます
+   - 完了後、GitHub PagesのURLでアクセスできます
+
+### さくらレンタルサーバ
+
+静的サイトとして出力されたファイルをアップロードすることで、さくらレンタルサーバでも使用できます。
+
+1. **ビルド**
+
+   ```bash
+   npm run build
+   ```
+
+2. **アップロード**
+   - `out`フォルダの中身をすべて`public_html`にアップロード
+
+## ライセンス
+
+MIT
