@@ -5,11 +5,12 @@ import {
   InstagramSection,
 } from '@/components/home';
 import { microCMSClient } from '@/infrastructure/api';
+import type { Photo } from '@/domains/media';
 
 export default async function Home() {
   // 写真データを取得（静的生成時に実行）
-  let photos = [];
-  let defaultPhoto = null;
+  let photos: Photo[] = [];
+  let defaultPhoto: Photo | null = null;
 
   try {
     photos = await microCMSClient.getPhotos();

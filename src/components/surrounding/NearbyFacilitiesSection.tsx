@@ -16,6 +16,10 @@ type Facility = {
   website?: string;
 };
 
+// Facility型を他の変数にも適用
+type Service = Facility;
+type School = Facility;
+
 export default function NearbyFacilitiesSection() {
   const [activeTab, setActiveTab] = useState<
     | 'shoppingStreet'
@@ -239,7 +243,7 @@ export default function NearbyFacilitiesSection() {
                         </div>
                         <div className="mb-4">
                           <div className="flex flex-wrap gap-2">
-                            {facility.features.map((feature, index) => (
+                            {facility.features?.map((feature, index) => (
                               <span
                                 key={index}
                                 className="bg-pink-100 text-pink-800 text-xs px-2 py-1 rounded-full"
@@ -273,7 +277,7 @@ export default function NearbyFacilitiesSection() {
                 生活サービス
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {nearbyFacilities.lifeServices.map((service) => (
+                {nearbyFacilities.lifeServices.map((service: Service) => (
                   <div
                     key={service.id}
                     className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
@@ -297,7 +301,7 @@ export default function NearbyFacilitiesSection() {
                         </div>
                         <div className="mb-4">
                           <div className="flex flex-wrap gap-2">
-                            {service.features.map((feature, index) => (
+                            {service.features?.map((feature, index) => (
                               <span
                                 key={index}
                                 className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
@@ -307,9 +311,9 @@ export default function NearbyFacilitiesSection() {
                             ))}
                           </div>
                         </div>
-                        {(service as any).website && (
+                        {service.website && (
                           <a
-                            href={(service as any).website}
+                            href={service.website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm font-medium text-center"
@@ -377,7 +381,7 @@ export default function NearbyFacilitiesSection() {
                 教育施設
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {nearbyFacilities.education.map((school) => (
+                {nearbyFacilities.education.map((school: School) => (
                   <div
                     key={school.id}
                     className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
@@ -406,9 +410,9 @@ export default function NearbyFacilitiesSection() {
                             </span>
                           </div>
                         </div>
-                        {(school as any).website && (
+                        {school.website && (
                           <a
-                            href={(school as any).website}
+                            href={school.website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm font-medium text-center"
@@ -452,7 +456,7 @@ export default function NearbyFacilitiesSection() {
                           </div>
                           <div>
                             <div className="flex flex-wrap gap-2">
-                              {facility.features.map((feature, index) => (
+                              {facility.features?.map((feature, index) => (
                                 <span
                                   key={index}
                                   className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full"
@@ -512,7 +516,7 @@ export default function NearbyFacilitiesSection() {
                           </div>
                           <div className="mb-4">
                             <div className="flex flex-wrap gap-2">
-                              {facility.features.map((feature, index) => (
+                              {facility.features?.map((feature, index) => (
                                 <span
                                   key={index}
                                   className="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full"
@@ -522,9 +526,9 @@ export default function NearbyFacilitiesSection() {
                               ))}
                             </div>
                           </div>
-                          {(facility as any).website && (
+                          {facility.website && (
                             <a
-                              href={(facility as any).website}
+                              href={facility.website}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="block w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 text-sm font-medium text-center"

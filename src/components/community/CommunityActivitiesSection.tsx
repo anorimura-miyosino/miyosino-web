@@ -130,9 +130,8 @@ export default function CommunityActivitiesSection() {
               {['スポーツ・運動', '文化活動'].map((category) => {
                 const circlesInCategory =
                   communityActivities.residentCircles.filter(
-                    (circle): circle is ResidentCircle =>
-                      circle.category === category
-                  );
+                    (circle) => circle.category === category
+                  ) as ResidentCircle[];
 
                 if (circlesInCategory.length === 0) return null;
 
@@ -184,7 +183,9 @@ export default function CommunityActivitiesSection() {
                               ))}
                             </div>
                           </div>
-                          {circle.website || circle.instagram || circle.facebook ? (
+                          {circle.website ||
+                          circle.instagram ||
+                          circle.facebook ? (
                             <div className="mt-4 pt-4 border-t border-gray-200">
                               <h5 className="text-sm font-medium text-gray-700 mb-2">
                                 公式リンク：
@@ -197,8 +198,7 @@ export default function CommunityActivitiesSection() {
                                     rel="noopener noreferrer"
                                     className="text-blue-600 hover:text-blue-800 text-xs underline"
                                   >
-                                    🌐{' '}
-                                    {circle.websiteLabel || 'ホームページ'}
+                                    🌐 {circle.websiteLabel || 'ホームページ'}
                                   </a>
                                 )}
                                 {circle.instagram && (
