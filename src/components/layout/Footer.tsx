@@ -49,7 +49,15 @@ export default function Footer() {
                   href="/community"
                   className="text-gray-300 hover:text-green-500 text-sm transition-colors"
                 >
-                  コミュニティと日常
+                  コミュニティ
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/shared-facilities"
+                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                >
+                  共有施設・サービス
                 </Link>
               </li>
               <li>
@@ -119,7 +127,7 @@ export default function Footer() {
         {/* コピーライト */}
         <div className="border-t border-gray-700 mt-8 pt-8 text-center">
           <p className="text-gray-400 text-sm">
-            © 2024 Miyoshino Apartments. All rights reserved.
+            © 2025 かわつる三芳野団地管理組合法人. All rights reserved.
           </p>
         </div>
       </div>

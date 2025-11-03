@@ -18,9 +18,27 @@ export default function CommunitySection() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-green-50 to-white">
+    <section
+      id="next-section"
+      className="py-20 bg-gradient-to-b from-green-50 to-white"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
+          {/* メインキャッチコピー */}
+          <h1
+            className="text-2xl md:text-4xl font-bold mb-8 text-gray-900"
+            style={{
+              fontFamily:
+                "var(--font-kosugi-maru), 'Kosugi Maru', 'ヒラギノ丸ゴ ProN', 'Hiragino Maru Gothic ProN', '筑紫A丸ゴシック', 'TsukuAGo', 'M+ Rounded 1c', 'Nico Moji', sans-serif",
+            }}
+          >
+            かわつる三芳野団地へようこそ
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
+            埼玉県川越市、武蔵野台地の北端で、豊かな緑に包まれた団地空間。
+            <br />
+            住民による自主管理体制のもと、100年以上にわたって住み続けられる団地づくりを目指しています。
+          </p>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
             活気あふれるコミュニティ
           </h2>

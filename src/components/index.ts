@@ -4,7 +4,7 @@ export * from './home';
 export * from './features';
 export * from './community';
 export * from './family';
-export * from './facilities';
+export * from './surrounding';
 
 // Legacy UI components (for backward compatibility)
 export * from './ui';

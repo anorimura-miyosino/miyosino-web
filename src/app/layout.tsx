@@ -1,5 +1,10 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import {
+  Geist,
+  Geist_Mono,
+  Noto_Serif_JP,
+  Kosugi_Maru,
+} from 'next/font/google';
 import './globals.css';
 import { Header, Footer } from '@/components';
 
@@ -11,6 +16,20 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+});
+
+const notoSerifJP = Noto_Serif_JP({
+  variable: '--font-noto-serif-jp',
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600', '700'],
+  preload: true,
+});
+
+const kosugiMaru = Kosugi_Maru({
+  variable: '--font-kosugi-maru',
+  subsets: ['latin'],
+  weight: ['400'],
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -28,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJP.variable} ${kosugiMaru.variable} antialiased`}
       >
         <Header />
         <main className="min-h-screen">{children}</main>

@@ -1,9 +1,14 @@
-import { TrainAccessSection, CarAccessSection } from '@/components/access';
+import {
+  TrainAccessSection,
+  CarAccessSection,
+  GoogleMapSection,
+  TableOfContents,
+} from '@/components/access';
 
 export const metadata = {
   title: 'アクセス | かわつる三芳野団地',
   description:
-    'かわつる三芳野団地への交通アクセス情報をご紹介。電車・バス・車でのアクセス方法、駐車場情報、都心各所へのアクセス時間などを詳しく解説します。',
+    '団地への交通アクセス情報をご紹介。電車・バス・車でのアクセス方法、駐車場情報、都心各所へのアクセス時間などを詳しく解説します。',
 };
 
 export default function AccessPage() {
@@ -14,13 +19,16 @@ export default function AccessPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">アクセス</h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-            かわつる三芳野団地への交通アクセス情報をご紹介
+            団地への交通アクセス情報をご紹介
             <br />
             電車・バス・車でのアクセス方法、駐車場情報などを詳しく解説します
           </p>
         </div>
       </section>
 
+      <TableOfContents />
+
+      <GoogleMapSection />
       <TrainAccessSection />
       <CarAccessSection />
     </div>

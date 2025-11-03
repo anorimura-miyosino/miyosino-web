@@ -6,9 +6,11 @@ import { useState } from 'react';
 const navigationItems = [
   { href: '/', label: 'ホーム' },
   { href: '/features', label: '特徴' },
+  { href: '/management', label: '団地運営' },
   { href: '/access', label: 'アクセス' },
-  { href: '/community', label: 'コミュニティと日常' },
-  { href: '/facilities', label: '周辺環境' },
+  { href: '/community', label: 'コミュニティ' },
+  { href: '/shared-facilities', label: '共有施設' },
+  { href: '/surrounding', label: '周辺環境' },
 ];
 
 export default function Header() {
@@ -66,12 +68,13 @@ export default function Header() {
               </svg>
               組合員専用
             </Link>
-            <Link
+            {/* TODO: 今後コンテンツを充実させて追加 */}
+            {/* <Link
               href="/family"
               className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-1.5 rounded-lg text-xs lg:text-sm font-medium hover:from-pink-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap"
             >
               👨‍👩‍👧‍👦 子育て環境の魅力
-            </Link>
+            </Link> */}
             <Link
               href="/contact"
               className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs lg:text-sm font-medium hover:bg-green-600 transition-colors duration-200 whitespace-nowrap"
@@ -141,13 +144,14 @@ export default function Header() {
                 </svg>
                 組合員専用
               </Link>
-              <Link
+              {/* TODO: 今後コンテンツを充実させて追加 */}
+              {/* <Link
                 href="/family"
                 className="bg-gradient-to-r from-pink-500 to-purple-600 text-white block px-3 py-2 text-base font-medium rounded-lg mx-3 mt-2 hover:from-pink-600 hover:to-purple-700 transition-all duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
                 👨‍👩‍👧‍👦 子育て環境の魅力
-              </Link>
+              </Link> */}
               <Link
                 href="/contact"
                 className="bg-green-500 text-white block px-3 py-2 text-base font-medium rounded-lg mx-3 mt-2 hover:bg-green-600 transition-colors duration-200"

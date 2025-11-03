@@ -2,7 +2,7 @@ import { accessData } from './data';
 
 export function TrainAccessSection() {
   return (
-    <section className="bg-white py-16 sm:py-20">
+    <section id="train" className="bg-white py-16 sm:py-20 scroll-mt-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-green-600">
@@ -90,6 +90,44 @@ export function TrainAccessSection() {
                     {accessData.train.bus.stop}
                   </span>
                 </div>
+              </div>
+
+              {/* バス時刻表リンク */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <a
+                  href="https://transfer-cloud.navitime.biz/tobubus/courses/timetables?busstop=00311020&external-destination=011"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full gap-x-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span>バス時刻表を見る（東武バス）</span>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </a>
               </div>
             </div>
           </div>

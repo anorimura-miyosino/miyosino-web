@@ -77,7 +77,9 @@ export default function SharedFacilitiesSection() {
                                       ? '🏊‍♀️'
                                       : facility.id === 8
                                         ? '📋'
-                                        : '🏢'}
+                                        : facility.id === 9
+                                          ? '🏛️'
+                                          : '🏢'}
                       </div>
                     </div>
                     <div className="p-6">
@@ -137,8 +139,8 @@ export default function SharedFacilitiesSection() {
                           : service.id === 2
                             ? '💼'
                             : service.id === 3
-                              ? '📚'
-                              : '🧸'}
+                              ? '🏊‍♀️'
+                              : '🅿️'}
                       </div>
                       <div className="flex-1">
                         <h4 className="text-xl font-bold text-gray-900 mb-3">

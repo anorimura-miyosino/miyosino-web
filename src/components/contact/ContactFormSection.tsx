@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { ContactType, CONTACT_TYPE_LABELS } from '@/domains/contact';
 
 interface FormData {
@@ -29,6 +30,10 @@ export default function ContactFormSection() {
   const [submitStatus, setSubmitStatus] = useState<
     'idle' | 'success' | 'error'
   >('idle');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
+
+  const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -45,28 +50,50 @@ export default function ContactFormSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Turnstileトークンのチェック
+    if (!turnstileToken) {
+      setSubmitStatus('error');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
     try {
-      // フォーム送信のロジック（実際のAPIエンドポイントに送信）
-      const response = await fetch('/api/contact', {
+      // フォーム送信のロジック（APIエンドポイントに送信）
+      // 静的エクスポートの場合は外部APIを指定する必要がある
+      const apiUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL || '/api/contact';
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          turnstileToken,
+        }),
       });
 
       if (response.ok) {
         setSubmitStatus('success');
         setFormData(initialFormData);
+        setTurnstileToken(null);
+        // Turnstileをリセット
+        turnstileRef.current?.reset();
       } else {
         setSubmitStatus('error');
+        // エラー時もTurnstileをリセット
+        turnstileRef.current?.reset();
+        setTurnstileToken(null);
       }
     } catch (error) {
       console.error('Form submission error:', error);
       setSubmitStatus('error');
+      // エラー時もTurnstileをリセット
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -77,7 +104,8 @@ export default function ContactFormSection() {
     formData.email &&
     formData.subject &&
     formData.message &&
-    formData.privacyConsent;
+    formData.privacyConsent &&
+    turnstileToken;
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-8 lg:p-10">
@@ -298,6 +326,19 @@ export default function ContactFormSection() {
             に同意します
           </label>
         </div>
+
+        {/* Cloudflare Turnstile */}
+        {TURNSTILE_SITE_KEY && (
+          <div className="flex justify-center">
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={TURNSTILE_SITE_KEY}
+              onSuccess={(token) => setTurnstileToken(token)}
+              onError={() => setTurnstileToken(null)}
+              onExpire={() => setTurnstileToken(null)}
+            />
+          </div>
+        )}
 
         {/* 送信ボタン */}
         <div className="pt-4">

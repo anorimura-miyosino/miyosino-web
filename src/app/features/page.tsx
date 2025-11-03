@@ -1,7 +1,9 @@
 import {
   OverviewSection,
   OrganizationManagementSection,
+  SeasonsSection,
   HistorySection,
+  TableOfContents,
 } from '@/components/features';
 
 export const metadata = {
@@ -20,13 +22,16 @@ export default function FeaturesPage() {
           <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
             かわつる三芳野団地の魅力と特徴を詳しくご紹介
             <br />
-            団地の概要、組織・あゆみなど、団地の魅力を解説します
+            団地の概要、組織・あゆみ、四季の様子など、団地の魅力を解説します
           </p>
         </div>
       </section>
 
+      <TableOfContents />
+
       <OverviewSection />
       <OrganizationManagementSection />
+      <SeasonsSection />
       <HistorySection />
     </div>
   );

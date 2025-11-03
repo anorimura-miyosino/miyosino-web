@@ -96,9 +96,54 @@ npm run format
 
 ## 環境変数
 
+### ローカル開発時
+
+プロジェクトルートに`.env.local`ファイルを作成して、以下の環境変数を設定してください：
+
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+# MicroCMS APIキー（必須）
+MICROCMS_API_KEY=your_microcms_api_key_here
+
+# MicroCMS APIベースURL（オプション、デフォルト値あり）
+# MICROCMS_API_BASE_URL=https://k-miyoshino.microcms.io/api/v1
 ```
+
+**注意**: `.env.local`は`.gitignore`に含まれているため、Gitにコミットされません。安全にAPIキーを管理できます。
+
+### GitHub Pagesへのデプロイ時
+
+GitHub Actionsでビルドする際に環境変数が必要です。以下の手順で設定してください：
+
+1. **GitHubリポジトリのSettingsを開く**
+   - リポジトリページ → Settings → Secrets and variables → Actions
+
+2. **New repository secretをクリック**
+
+3. **以下の情報を入力**
+   - Name: `MICROCMS_API_KEY`
+   - Secret: MicroCMSのAPIキー（ローカルで使用しているものと同じ）
+
+4. **Add secretをクリック**
+
+これで、GitHub Actionsのビルド時に環境変数が自動的に使用されます。
+
+### その他の環境変数
+
+```env
+# API URL（オプション）
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+
+# Cloudflare Turnstile設定（お問い合わせフォーム用）
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_turnstile_site_key
+NEXT_PUBLIC_CONTACT_API_URL=https://your-api-endpoint.com/api/contact
+```
+
+**Turnstileについて**:
+- 静的エクスポート（`output: 'export'`）でもTurnstileウィジェットは動作します
+- ただし、トークン検証は外部のAPIエンドポイントで行う必要があります
+- 開発環境では`/api/contact`（Next.jsのAPI Routes）が使用されます
+- 本番環境では`NEXT_PUBLIC_CONTACT_API_URL`で指定した外部APIを使用してください
+- 外部APIの例として、`cloudflare-worker-example.js`を参照してください
 
 ## デプロイ
 

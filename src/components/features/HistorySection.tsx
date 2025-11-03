@@ -1,74 +1,245 @@
 // アイコンを削除してエラー回避
+import { featuresSections } from './data';
 
 const historyData = [
   {
-    year: '1982年',
-    event: '入居開始・管理組合設立',
-    description:
-      '昭和57年8月25日に入居開始。かわつる地区で最初の分譲団地として、住民による自主管理体制でスタートしました。',
+    year: '1982年（昭和57年）',
+    events: [
+      {
+        event: '住宅分譲募集開始',
+        description: '6月、住宅分譲募集開始（かわつる地区で最初の分譲団地）',
+      },
+      {
+        event: '管理組合設立、入居開始',
+        description:
+          '8月、第1回創立総会、管理組合設立、規約・協定・細則を決定。8月25日、入居開始',
+      },
+      {
+        event: '第1回理事会開催',
+        description: '9月、第1回理事会開催',
+      },
+      {
+        event: '10月、グリーンタウンニュース創刊（以降毎月発行）',
+        description: '',
+      },
+    ],
   },
   {
-    year: '1984年',
-    event: '完全自主管理体制確立',
-    description:
-      '管理組合法人化により「かわつる三芳野団地管理組合法人」に名称変更。完全自主管理体制を確立し、窓口業務・環境整備を組合員が担当。',
+    year: '1983年（昭和58年）',
+    events: [
+      {
+        event: '街区班設置',
+        description: '5月、第2回通常総会開催、街区班の設置を決定',
+      },
+      {
+        event: '夏まつり',
+        description: '8月、夏まつり実施（以降毎年実施）',
+      },
+    ],
   },
   {
-    year: '1985年',
-    event: '自治会設立',
-    description:
-      '管理組合と自治会を分離し、住民活動の充実を図りました。夏まつり、文化祭、バザーなどのイベントが自治会主催で実施されるようになりました。',
+    year: '1984年（昭和59年）',
+    events: [
+      {
+        event: '日住協加入',
+        description: '3月、公団分譲住宅管理組合連絡協議会（後の日住協）に加入',
+      },
+      {
+        event: '完全自主管理体制',
+        description:
+          '4月、完全自主管理体制スタート。窓口業務、環境整備を組合員が担当',
+      },
+      {
+        event: '法人化',
+        description:
+          '6月、第3回通常総会開催「法人化」を決定。「かわつる三芳野団地管理組合法人」に名称変更。',
+      },
+      {
+        event: '住まいのハンドブック',
+        description: '7月、住まいのハンドブック（第1版）発行',
+      },
+    ],
   },
   {
-    year: '1987年',
-    event: 'ペット飼育指針制定',
-    description:
-      'ペットの飼育指針を発表し、団地内でのペット飼育を正式に認めました。現在もペットクラブが活動を続けています。',
+    year: '1985年（昭和60年）',
+    events: [
+      {
+        event: '自治会設立',
+        description: '3月、自治会設立総会（管理組合と分離）',
+      },
+      {
+        event: '長期修繕計画',
+        description: '5月、第4回通常総会開催「長期修繕計画」を決定',
+      },
+    ],
   },
   {
-    year: '1995年',
-    event: '大規模修繕工事実施',
-    description:
-      '建物の大規模修繕工事を実施し、住環境を大幅に向上させました。外壁塗装、屋根防水、設備更新などを含む総合的な改修を行いました。',
+    year: '1986年（昭和61年）',
+    events: [
+      {
+        event: '町名変更',
+        description:
+          '10月、居住者の意見により、新町名を「かわつる三芳野」に変更',
+      },
+      {
+        event: '長期修繕計画',
+        description: '5月、第4回通常総会開催「長期修繕計画」を決定',
+      },
+    ],
   },
   {
-    year: '2000年',
-    event: 'NHK全国放送',
-    description:
-      '当団地の管理組合運営状況がNHKニュース10で全国放送され、住民自治による団地運営のモデルケースとして紹介されました。',
+    year: '1987年（昭和62年）',
+    events: [
+      {
+        event: '登記実施',
+        description: '2月、かわつる地区の区画整理完了に伴い、土地の登記を実施',
+      },
+      {
+        event: 'ペット飼育指針',
+        description: '2月、ペットの飼育指針発表',
+      },
+      {
+        event: '12月、住まいのハンドブック（第2版）発行',
+        description: '',
+      },
+    ],
   },
   {
-    year: '2025年',
-    event: '3回目の大規模修繕工事実施',
-    description:
-      '外壁塗装、屋根防水、窓サッシ等の設備更新などを含む総合的な改修を行いました。',
+    year: '1988年（昭和63年）',
+    events: [
+      {
+        event: '秩序協定',
+        description:
+          '5月、第7回通常総会開催、秩序協定に「所有住宅を社宅や賃貸などの登記目的に利用してはならない」ことを決定',
+      },
+    ],
+  },
+  {
+    year: '1989年（昭和64年）',
+    events: [
+      {
+        event: '空家完売',
+        description: '3月、団地内公団所有文の空家が完売',
+      },
+    ],
+  },
+  {
+    year: '1991年（平成3年）',
+    events: [
+      {
+        event: '1月、グリーンタウンニュース100号記念特集発行',
+        description: '',
+      },
+    ],
+  },
+  {
+    year: '1992年（平成4年）',
+    events: [
+      {
+        event: '12月、「住まいのハンドブック（第3版）グリーンウェルネス」発行',
+        description: '',
+      },
+    ],
+  },
+  {
+    year: '1994年（平成6年）',
+    events: [
+      {
+        event: 'NHK放送',
+        description: '当団地のペット飼育状況につきNHKで放映',
+      },
+    ],
+  },
+  {
+    year: '1995年（平成7年）',
+    events: [
+      {
+        event: '大規模修繕工事実施',
+        description: '5月、第14回通常総会開催「大規模修繕工事の実施」を決定',
+      },
+      {
+        event: '7月、大規模修繕工事着工',
+        description: '7月、大規模修繕工事着工、翌年2月、竣工検査実施',
+      },
+    ],
+  },
+  {
+    year: '1998年（平成10年）',
+    events: [
+      {
+        event: '防災備品倉庫',
+        description: '11月、防災備品倉庫を新設',
+      },
+    ],
+  },
+  {
+    year: '2000年（平成12年）',
+    events: [
+      {
+        event: '長期修繕計画見直し',
+        description:
+          '3月、長期修繕計画の見直しが完了、平成31年までの修繕計画報告書を作成',
+      },
+      {
+        event: 'NHK放送',
+        description:
+          '6月、NHK、当団地管理組合の運営状況を収録、6月21日ニュース10で全国放映',
+      },
+    ],
+  },
+  {
+    year: '2007年（平成19年）',
+    events: [
+      {
+        event: '大規模修繕工事実施',
+        description: '4月、第2回大規模修繕工事開始、翌年1月、工事完工式',
+      },
+    ],
+  },
+  {
+    year: '2009年（平成21年）',
+    events: [
+      {
+        event: '大規模修繕計画見直し',
+        description: '1月、長期修繕計画（第3回見直し）配布',
+      },
+    ],
+  },
+  {
+    year: '2025年（令和7年）',
+    events: [
+      {
+        event: '第3回、大規模修繕工事実施',
+        description: '',
+      },
+    ],
   },
 ];
 
 export function HistorySection() {
+  const sectionMeta = featuresSections[3];
+
   return (
-    <section className="bg-white py-24 sm:py-32">
+    <section id={sectionMeta.id} className="bg-white py-24 sm:py-32 scroll-mt-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-green-600">
-            歴史
+            {sectionMeta.subtitle}
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            団地のあゆみ
+            {sectionMeta.title}
           </p>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            昭和57年の入居開始から現在までの歩みをご紹介します。
-          </p>
+          <p className="mt-6 text-lg leading-8 text-gray-600"></p>
         </div>
 
         {/* 団地のあゆみ */}
         <div className="mx-auto mt-16 max-w-4xl">
           <div className="flow-root">
             <ul role="list" className="-mb-8">
-              {historyData.map((item, index) => (
-                <li key={index}>
+              {historyData.map((yearItem, yearIndex) => (
+                <li key={yearIndex}>
                   <div className="relative pb-8">
-                    {index !== historyData.length - 1 ? (
+                    {yearIndex !== historyData.length - 1 ? (
                       <span
                         className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200"
                         aria-hidden="true"
@@ -81,18 +252,29 @@ export function HistorySection() {
                         </span>
                       </div>
                       <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
-                        <div>
-                          <p className="text-sm text-gray-500">
+                        <div className="w-full">
+                          <p className="text-sm text-gray-500 mb-2">
                             <span className="font-medium text-gray-900">
-                              {item.year}
+                              {yearItem.year}
                             </span>
                           </p>
-                          <p className="text-sm font-semibold text-gray-900 mt-1">
-                            {item.event}
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">
-                            {item.description}
-                          </p>
+                          {yearItem.events.map((event, eventIndex) => (
+                            <div
+                              key={eventIndex}
+                              className={
+                                eventIndex > 0
+                                  ? 'mt-3 pt-3 border-t border-gray-100'
+                                  : ''
+                              }
+                            >
+                              <p className="text-sm font-semibold text-gray-900">
+                                {event.event}
+                              </p>
+                              <p className="text-sm text-gray-600 mt-1">
+                                {event.description}
+                              </p>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>

@@ -1,3 +1,5 @@
+import { featuresSections } from './data';
+
 const overviewData = {
   location: {
     title: '所在地・立地',
@@ -47,15 +49,17 @@ const overviewData = {
 };
 
 export function OverviewSection() {
+  const sectionMeta = featuresSections[0];
+
   return (
-    <section className="bg-gray-50 py-24 sm:py-32">
+    <section id={sectionMeta.id} className="bg-gray-50 py-24 sm:py-32 scroll-mt-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-green-600">
-            基本情報
+            {sectionMeta.subtitle}
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            基本情報
+            {sectionMeta.title}
           </p>
           <p className="mt-6 text-lg leading-8 text-gray-600">
             かわつる三芳野団地の基本情報をご紹介します。
