@@ -1,186 +1,122 @@
-# miyosino-web
+# みよしのウェブサイト
 
-DDD（ドメイン駆動設計）構造を意識したNext.js + TypeScriptアプリケーション
+## GitHub Pagesでのデプロイ設定
 
-## 技術スタック
+### 1. GitHub Secretsの設定
 
-- **Next.js 15** (App Router)
-- **TypeScript**
-- **Tailwind CSS**
-- **ESLint** + **Prettier**
+GitHub PagesでMicroCMSのAPIデータを取得するには、GitHubリポジトリのSettingsでSecretsを設定する必要があります。
 
-## プロジェクト構造
+#### 設定手順
 
-```
-src/
-├── app/                    # Next.js App Router
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
-├── domains/                # ドメイン層
-│   ├── user/
-│   │   ├── types.ts
-│   │   └── index.ts
-│   ├── product/
-│   │   ├── types.ts
-│   │   └── index.ts
-│   └── index.ts
-├── application/            # アプリケーション層
-│   ├── services/
-│   │   ├── userService.ts
-│   │   ├── productService.ts
-│   │   └── index.ts
-│   ├── hooks/
-│   │   ├── useUsers.ts
-│   │   ├── useProducts.ts
-│   │   └── index.ts
-│   └── index.ts
-├── infrastructure/         # インフラストラクチャ層
-│   ├── api/
-│   │   ├── client.ts
-│   │   └── index.ts
-│   └── index.ts
-└── shared/                 # 共有層
-    ├── types/
-    │   └── index.ts
-    ├── utils/
-    │   └── index.ts
-    ├── constants/
-    │   └── index.ts
-    └── index.ts
-```
+1. GitHubリポジトリにアクセス
+2. **Settings** > **Secrets and variables** > **Actions** を開く
+3. **New repository secret** をクリック
+4. 以下のSecretsを追加：
 
-## DDD構造の説明
+#### 必須のSecret
 
-### ドメイン層 (`domains/`)
+- **`MICROCMS_API_KEY`**
+  - 値：MicroCMSのAPIキー
+  - MicroCMSの管理画面 > API設定 > 書き込みAPIキーまたは読み取り専用APIキー
 
-- ビジネスロジックの中核
-- エンティティ、値オブジェクト、ドメインサービス
-- 他の層に依存しない
+- **`TURNSTILE_SECRET_KEY`**
+  - 値：Cloudflare Turnstileのシークレットキー（サーバーサイド検証用）
+  - [Cloudflare Dashboard](https://dash.cloudflare.com/) > Turnstile > サイト設定から取得
 
-### アプリケーション層 (`application/`)
+#### オプションのSecret
 
-- ユースケースの実装
-- ドメインオブジェクトの協調
-- サービスとカスタムフック
+- **`MICROCMS_API_BASE_URL`**
+  - 値：MicroCMSのAPIエンドポイントURL
+  - 例：`https://k-miyoshino.microcms.io/api/v1`
+  - 未設定の場合は、デフォルト値が使用されます
 
-### インフラストラクチャ層 (`infrastructure/`)
+- **`NEXT_PUBLIC_TURNSTILE_SITE_KEY`**
+  - 値：Cloudflare Turnstileのサイトキー（クライアントサイド表示用）
+  - [Cloudflare Dashboard](https://dash.cloudflare.com/) > Turnstile > サイト設定から取得
+  - 未設定の場合、Turnstileウィジェットは表示されませんが、フォーム送信は動作します
+  - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれます（公開されるため機密情報ではありません）
 
-- 外部システムとの連携
-- API クライアント、データベースアクセス
-- 技術的な詳細の実装
+### 2. ローカル開発環境の設定
 
-### 共有層 (`shared/`)
-
-- 複数層で使用される共通要素
-- 型定義、ユーティリティ、定数
-
-## 開発コマンド
+ローカルで開発する場合は、`.env.local`ファイルを作成してください：
 
 ```bash
-# 開発サーバー起動
-npm run dev
+# .env.local
+MICROCMS_API_KEY=your_api_key_here
+MICROCMS_API_BASE_URL=https://k-miyoshino.microcms.io/api/v1
 
-# ビルド
-npm run build
-
-# 本番サーバー起動
-npm start
-
-# リント
-npm run lint
-
-# フォーマット
-npm run format
+# Cloudflare Turnstile（お問い合わせフォームのボット対策）
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_site_key_here
+TURNSTILE_SECRET_KEY=your_secret_key_here
 ```
 
-## 環境変数
+⚠️ **注意**: `.env.local`はGitにコミットしないでください（`.gitignore`に含まれています）
 
-### ローカル開発時
+### 3. APIキーの取得方法
 
-プロジェクトルートに`.env.local`ファイルを作成して、以下の環境変数を設定してください：
+#### MicroCMS APIキー
 
-```env
-# MicroCMS APIキー（必須）
-MICROCMS_API_KEY=your_microcms_api_key_here
+1. [MicroCMS](https://microcms.io/)にログイン
+2. 対象のサービスを選択
+3. **API設定** > **APIキー** からキーを取得
+   - **読み取り専用APIキー**：ビルド時にデータを取得するだけならこちらで十分
+   - **書き込みAPIキー**：データの更新も行う場合はこちら
 
-# MicroCMS APIベースURL（オプション、デフォルト値あり）
-# MICROCMS_API_BASE_URL=https://k-miyoshino.microcms.io/api/v1
-```
+#### Cloudflare Turnstileキー
 
-**注意**: `.env.local`は`.gitignore`に含まれているため、Gitにコミットされません。安全にAPIキーを管理できます。
+1. [Cloudflare Dashboard](https://dash.cloudflare.com/)にログイン
+2. **Turnstile** を選択
+3. 新しいサイトを追加（まだ作成していない場合）
+4. **Site Key**（サイトキー）と**Secret Key**（シークレットキー）をコピー
+   - **Site Key** → `NEXT_PUBLIC_TURNSTILE_SITE_KEY`に設定
+   - **Secret Key** → `TURNSTILE_SECRET_KEY`に設定
 
-### GitHub Pagesへのデプロイ時
+⚠️ **注意**: Site Keyは公開されても問題ありませんが、Secret Keyは絶対に公開してはいけません
 
-GitHub Actionsでビルドする際に環境変数が必要です。以下の手順で設定してください：
+### 4. ビルドとデプロイ
 
-1. **GitHubリポジトリのSettingsを開く**
-   - リポジトリページ → Settings → Secrets and variables → Actions
+GitHubにpushすると、自動的にビルドとデプロイが実行されます。
 
-2. **New repository secretをクリック**
+- `master`ブランチにpushすると自動デプロイ
+- ワークフローは `.github/workflows/deploy.yml` で定義されています
 
-3. **以下の情報を入力**
-   - Name: `MICROCMS_API_KEY`
-   - Secret: MicroCMSのAPIキー（ローカルで使用しているものと同じ）
+### トラブルシューティング
 
-4. **Add secretをクリック**
+#### ヒーロー画像が表示されない場合
 
-これで、GitHub Actionsのビルド時に環境変数が自動的に使用されます。
+1. **GitHub Actionsのビルドログを確認**
+   - リポジトリ > Actions > 最新のワークフロー実行を開く
+   - ビルドログで以下のメッセージを確認：
+     - `[Home] MicroCMS API Key: 設定済み` または `未設定`
+     - `[Home] 取得した写真数: X`
+     - `[Home] デフォルト写真URL: https://...`
+   - エラーメッセージがないか確認
 
-### その他の環境変数
+2. **GitHub Secretsの確認**
+   - `MICROCMS_API_KEY`が正しく設定されているか確認
+   - Secretsの名前が正確か確認（大文字小文字を区別）
 
-```env
-# API URL（オプション）
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
+3. **MicroCMSのAPIエンドポイント確認**
+   - MicroCMSの管理画面で`photo`エンドポイントが存在するか確認
+   - APIキーに読み取り権限があるか確認
 
-# Cloudflare Turnstile設定（お問い合わせフォーム用）
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_turnstile_site_key
-NEXT_PUBLIC_CONTACT_API_URL=https://your-api-endpoint.com/api/contact
-```
+4. **ブラウザのコンソールで確認**
+   - GitHub Pagesで公開されたページを開く
+   - F12 > Consoleで以下を確認：
+     - `[HeroSection] 画像URL: ...` のログが表示されているか
+     - 画像読み込みエラーが表示されていないか
+   - Networkタブで画像リクエストが失敗していないか確認
 
-**Turnstileについて**:
-- 静的エクスポート（`output: 'export'`）でもTurnstileウィジェットは動作します
-- ただし、トークン検証は外部のAPIエンドポイントで行う必要があります
-- 開発環境では`/api/contact`（Next.jsのAPI Routes）が使用されます
-- 本番環境では`NEXT_PUBLIC_CONTACT_API_URL`で指定した外部APIを使用してください
-- 外部APIの例として、`cloudflare-worker-example.js`を参照してください
+#### ビルド時にデータが取得できない場合
 
-## デプロイ
+1. GitHub Secretsが正しく設定されているか確認
+2. MicroCMSのAPIキーの権限を確認（読み取り権限があるか）
+3. MicroCMSのAPIエンドポイントURLが正しいか確認
+4. GitHub Actionsのビルドログでエラーメッセージを確認
 
-### GitHub Pages
+#### ローカルでデータが取得できない場合
 
-このプロジェクトはGitHub Pagesに自動デプロイされる設定になっています。
-
-1. **GitHubリポジトリにPush**
-
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push origin master
-   ```
-
-2. **GitHub Pagesの設定**
-   - リポジトリのSettings → Pages
-   - Source: GitHub Actionsを選択
-   - リポジトリ名が `miyosino-web` の場合、URLは `https://[ユーザー名].github.io/miyosino-web/` になります
-
-3. **自動デプロイの確認**
-   - GitHub Actionsでビルドとデプロイが実行されます
-   - 完了後、GitHub PagesのURLでアクセスできます
-
-### さくらレンタルサーバ
-
-静的サイトとして出力されたファイルをアップロードすることで、さくらレンタルサーバでも使用できます。
-
-1. **ビルド**
-
-   ```bash
-   npm run build
-   ```
-
-2. **アップロード**
-   - `out`フォルダの中身をすべて`public_html`にアップロード
-
-## ライセンス
-
-MIT
+1. `.env.local`ファイルが存在するか確認
+2. `MICROCMS_API_KEY`が正しく設定されているか確認
+3. MicroCMSのAPIが正常に動作しているか確認（ブラウザで直接アクセスしてテスト）
+4. ビルドログで取得した写真数やURLが表示されているか確認

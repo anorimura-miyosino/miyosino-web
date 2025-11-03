@@ -9,6 +9,7 @@ export default function InstagramSection() {
     const script = document.createElement('script');
     script.src = 'https://cdn.lightwidget.com/widgets/lightwidget.js';
     script.async = true;
+    script.crossOrigin = 'anonymous';
     document.body.appendChild(script);
 
     // クリーンアップ関数
@@ -38,10 +39,13 @@ export default function InstagramSection() {
         {/* LightWidget Instagram埋め込み */}
         <div className="flex justify-center">
           <iframe
-            src="//lightwidget.com/widgets/b2ca5c6547aa5c0d84d708754dbe84d3.html"
+            src="https://lightwidget.com/widgets/b2ca5c6547aa5c0d84d708754dbe84d3.html"
             scrolling="no"
+            allowTransparency
             className="lightwidget-widget"
             style={{ width: '100%', border: 0, overflow: 'hidden' }}
+            title="Instagramギャラリー"
+            allow="encrypted-media"
           ></iframe>
         </div>
 

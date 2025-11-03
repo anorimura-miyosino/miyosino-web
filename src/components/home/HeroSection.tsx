@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import type { Photo } from '@/domains/media';
 
@@ -16,9 +16,22 @@ export default function HeroSection({
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(
     defaultPhoto || null
   );
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
-  // 写真が空の場合のフォールバック
-  if (!selectedPhoto || photos.length === 0) {
+  // デバッグ用: 写真データの確認
+  useEffect(() => {
+    if (photos.length === 0) {
+      console.warn('[HeroSection] 写真データが空です');
+    } else if (!selectedPhoto) {
+      console.warn('[HeroSection] デフォルト写真が設定されていません');
+    } else {
+      console.log('[HeroSection] 画像URL:', selectedPhoto.photo.url);
+    }
+  }, [photos, selectedPhoto]);
+
+  // 写真が空の場合、または画像読み込みエラーの場合のフォールバック
+  if (!selectedPhoto || photos.length === 0 || imageError) {
     return (
       <section className="relative bg-gradient-to-br from-green-50 to-green-100 overflow-hidden h-[50vh] min-h-[400px]">
         <div className="absolute inset-0">
@@ -36,12 +49,35 @@ export default function HeroSection({
     <section className="relative overflow-hidden h-[50vh] min-h-[400px]">
       {/* 背景写真 */}
       <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        <Image
+          src={selectedPhoto.photo.url}
+          alt={selectedPhoto.title || 'ヒーロー画像'}
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
           style={{
-            backgroundImage: `url(${selectedPhoto.photo.url})`,
+            objectFit: 'cover',
+            objectPosition: 'center',
+          }}
+          unoptimized
+          onLoad={() => {
+            setImageLoaded(true);
+            setImageError(false);
+          }}
+          onError={() => {
+            console.error(
+              '[HeroSection] 画像読み込みエラー:',
+              selectedPhoto.photo.url
+            );
+            setImageError(true);
+            setImageLoaded(false);
           }}
         />
+        {/* 画像読み込み中のインジケーター（オプション） */}
+        {!imageLoaded && !imageError && (
+          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+        )}
         {/* オーバーレイ（テキストの可読性向上） */}
         <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-black/40"></div>
       </div>
@@ -69,6 +105,7 @@ export default function HeroSection({
                   fill
                   className="object-cover"
                   sizes="64px"
+                  unoptimized
                 />
               </button>
             ))}
