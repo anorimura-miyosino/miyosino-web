@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     // Cloudflare Turnstile APIでトークンを検証
     const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY;
-    
+
     if (!TURNSTILE_SECRET_KEY) {
       console.error('TURNSTILE_SECRET_KEYが設定されていません');
       return NextResponse.json(
@@ -34,9 +34,10 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           secret: TURNSTILE_SECRET_KEY,
           response: turnstileToken,
-          remoteip: request.headers.get('x-forwarded-for') || 
-                   request.headers.get('x-real-ip') || 
-                   request.ip || '',
+          remoteip:
+            request.headers.get('x-forwarded-for') ||
+            request.headers.get('x-real-ip') ||
+            '',
         }),
       }
     );
@@ -68,4 +69,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

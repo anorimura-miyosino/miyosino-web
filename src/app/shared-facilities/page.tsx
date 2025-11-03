@@ -10,9 +10,7 @@ export default function SharedFacilitiesPage() {
             共有施設・サービス
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-            充実した共有施設とサービスで、
-            <br />
-            快適で便利な団地ライフをサポートします
+            共有施設とサービスについて紹介します。
           </p>
         </div>
       </section>
@@ -22,6 +20,3 @@ export default function SharedFacilitiesPage() {
     </div>
   );
 }
-
-
-

@@ -3,6 +3,19 @@
 import { useState } from 'react';
 import { nearbyFacilities } from './data';
 
+type Facility = {
+  id: number;
+  name: string;
+  description: string;
+  distance: string;
+  category: string;
+  icon: string;
+  features?: string[];
+  hours?: string;
+  phone?: string;
+  website?: string;
+};
+
 export default function NearbyFacilitiesSection() {
   const [activeTab, setActiveTab] = useState<
     | 'shoppingStreet'
@@ -167,9 +180,9 @@ export default function NearbyFacilitiesSection() {
                               ))}
                           </div>
                         </div>
-                        {(facility as any).website && (
+                        {facility.website && (
                           <a
-                            href={(facility as any).website}
+                            href={facility.website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors duration-200 text-sm font-medium text-center"
@@ -236,9 +249,9 @@ export default function NearbyFacilitiesSection() {
                             ))}
                           </div>
                         </div>
-                        {(facility as any).website && (
+                        {facility.website && (
                           <a
-                            href={(facility as any).website}
+                            href={facility.website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors duration-200 text-sm font-medium text-center"
@@ -340,9 +353,9 @@ export default function NearbyFacilitiesSection() {
                             </span>
                           </div>
                         </div>
-                        {(facility as any).website && (
+                        {facility.website && (
                           <a
-                            href={(facility as any).website}
+                            href={facility.website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-200 text-sm font-medium text-center"
@@ -450,9 +463,9 @@ export default function NearbyFacilitiesSection() {
                             </div>
                           </div>
                         </div>
-                        {(facility as any).website && (
+                        {facility.website && (
                           <a
-                            href={(facility as any).website}
+                            href={facility.website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="block w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm font-medium text-center"

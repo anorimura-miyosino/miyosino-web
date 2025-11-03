@@ -220,7 +220,10 @@ export function HistorySection() {
   const sectionMeta = featuresSections[3];
 
   return (
-    <section id={sectionMeta.id} className="bg-white py-24 sm:py-32 scroll-mt-20">
+    <section
+      id={sectionMeta.id}
+      className="bg-white py-24 sm:py-32 scroll-mt-20"
+    >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-green-600">

@@ -464,8 +464,7 @@ export const sharedFacilities = {
     {
       id: 3,
       name: '幼児プール',
-      description:
-        '幼児が安全に遊べるプール。無料で利用できます。',
+      description: '幼児が安全に遊べるプール。無料で利用できます。',
       features: ['安全な水深', '監視員常駐', '更衣室完備', '日陰エリア'],
       capacity: '20名',
       reservation: '不要（利用時間制限あり）',
@@ -475,8 +474,7 @@ export const sharedFacilities = {
     {
       id: 4,
       name: '来客駐車場',
-      description:
-        '来客用の駐車場。無料で利用できます。',
+      description: '来客用の駐車場。無料で利用できます。',
       features: ['24時間利用可能', '防犯カメラ設置', '複数台対応'],
       capacity: '要確認',
       reservation: '不要',

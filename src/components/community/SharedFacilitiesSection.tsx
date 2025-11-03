@@ -9,17 +9,6 @@ export default function SharedFacilitiesSection() {
   return (
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            共有施設・サービス
-          </h2>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            充実した共有施設とサービスで、
-            <br />
-            快適で便利な団地ライフをサポートします
-          </p>
-        </div>
-
         {/* タブナビゲーション */}
         <div className="flex justify-center mb-12">
           <div className="bg-gray-100 rounded-lg p-1 flex">

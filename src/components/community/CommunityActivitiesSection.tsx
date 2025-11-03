@@ -3,6 +3,21 @@
 import { useState } from 'react';
 import { communityActivities } from './data';
 
+type ResidentCircle = {
+  id: number;
+  name: string;
+  category: string;
+  description: string;
+  activities: string[];
+  members: string;
+  meetingFrequency: string;
+  contact: string;
+  website?: string;
+  instagram?: string;
+  facebook?: string;
+  websiteLabel?: string;
+};
+
 export default function CommunityActivitiesSection() {
   const [activeTab, setActiveTab] = useState<'activities' | 'circles'>(
     'activities'
@@ -11,17 +26,6 @@ export default function CommunityActivitiesSection() {
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            コミュニティ活動
-          </h2>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            住民同士の絆を深める様々な活動を通じて、
-            <br />
-            豊かなコミュニティライフを築いています
-          </p>
-        </div>
-
         {/* タブナビゲーション */}
         <div className="flex justify-center mb-12">
           <div className="bg-gray-100 rounded-lg p-1 flex">
@@ -126,7 +130,8 @@ export default function CommunityActivitiesSection() {
               {['スポーツ・運動', '文化活動'].map((category) => {
                 const circlesInCategory =
                   communityActivities.residentCircles.filter(
-                    (circle) => (circle as any).category === category
+                    (circle): circle is ResidentCircle =>
+                      circle.category === category
                   );
 
                 if (circlesInCategory.length === 0) return null;
@@ -179,29 +184,26 @@ export default function CommunityActivitiesSection() {
                               ))}
                             </div>
                           </div>
-                          {(circle as any).website ||
-                          (circle as any).instagram ||
-                          (circle as any).facebook ? (
+                          {circle.website || circle.instagram || circle.facebook ? (
                             <div className="mt-4 pt-4 border-t border-gray-200">
                               <h5 className="text-sm font-medium text-gray-700 mb-2">
                                 公式リンク：
                               </h5>
                               <div className="flex flex-wrap gap-2">
-                                {(circle as any).website && (
+                                {circle.website && (
                                   <a
-                                    href={(circle as any).website}
+                                    href={circle.website}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-600 hover:text-blue-800 text-xs underline"
                                   >
                                     🌐{' '}
-                                    {(circle as any).websiteLabel ||
-                                      'ホームページ'}
+                                    {circle.websiteLabel || 'ホームページ'}
                                   </a>
                                 )}
-                                {(circle as any).instagram && (
+                                {circle.instagram && (
                                   <a
-                                    href={(circle as any).instagram}
+                                    href={circle.instagram}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-pink-600 hover:text-pink-800 text-xs underline"
@@ -209,9 +211,9 @@ export default function CommunityActivitiesSection() {
                                     📷 Instagram
                                   </a>
                                 )}
-                                {(circle as any).facebook && (
+                                {circle.facebook && (
                                   <a
-                                    href={(circle as any).facebook}
+                                    href={circle.facebook}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-700 hover:text-blue-900 text-xs underline"

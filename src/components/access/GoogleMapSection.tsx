@@ -4,7 +4,7 @@ export function GoogleMapSection() {
   // かわつる三芳野団地の住所
   const address = '埼玉県川越市かわつる三芳野１番地';
   const encodedAddress = encodeURIComponent(address);
-  
+
   // Google Maps埋め込み用のURL（APIキー不要）
   // APIキーがある場合はそれを使い、ない場合は検索URLを使用
   const mapUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
@@ -21,11 +21,9 @@ export function GoogleMapSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             所在地マップ
           </h2>
-          <p className="text-lg text-gray-600">
-            {address}
-          </p>
+          <p className="text-lg text-gray-600">{address}</p>
         </div>
-        
+
         <div className="rounded-2xl shadow-lg overflow-hidden border border-gray-200">
           <iframe
             width="100%"
@@ -39,7 +37,7 @@ export function GoogleMapSection() {
             title="かわつる三芳野団地の所在地マップ"
           />
         </div>
-        
+
         <div className="mt-4 text-center">
           <a
             href={searchUrl}
@@ -68,4 +66,3 @@ export function GoogleMapSection() {
     </section>
   );
 }
-
