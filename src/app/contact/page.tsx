@@ -21,12 +21,18 @@ export default function ContactPage() {
 
       {/* メインコンテンツ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* 電話でのお問い合わせ */}
-          <PhoneContactSection />
+          <div className="relative">
+            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-green-500 rounded-full hidden lg:block"></div>
+            <PhoneContactSection />
+          </div>
 
           {/* お問い合わせフォーム */}
-          <ContactFormSection />
+          <div className="relative">
+            <div className="absolute -right-4 top-0 bottom-0 w-1 bg-blue-500 rounded-full hidden lg:block"></div>
+            <ContactFormSection />
+          </div>
         </div>
       </div>
     </div>

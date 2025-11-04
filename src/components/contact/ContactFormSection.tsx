@@ -65,6 +65,19 @@ export default function ContactFormSection() {
       // 静的エクスポートの場合は外部APIを指定する必要がある
       const apiUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL || '/api/contact';
 
+      // 静的エクスポートの場合、APIルートは動作しない
+      if (
+        !process.env.NEXT_PUBLIC_CONTACT_API_URL &&
+        apiUrl === '/api/contact'
+      ) {
+        console.error(
+          'APIエンドポイントが設定されていません。静的エクスポートの場合は、NEXT_PUBLIC_CONTACT_API_URLを設定してください。'
+        );
+        setSubmitStatus('error');
+        setIsSubmitting(false);
+        return;
+      }
+
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -76,18 +89,24 @@ export default function ContactFormSection() {
         }),
       });
 
-      if (response.ok) {
-        setSubmitStatus('success');
-        setFormData(initialFormData);
-        setTurnstileToken(null);
-        // Turnstileをリセット
-        turnstileRef.current?.reset();
-      } else {
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('APIエラー:', response.status, errorData);
         setSubmitStatus('error');
         // エラー時もTurnstileをリセット
         turnstileRef.current?.reset();
         setTurnstileToken(null);
+        setIsSubmitting(false);
+        return;
       }
+
+      const data = await response.json();
+      console.log('フォーム送信成功:', data);
+      setSubmitStatus('success');
+      setFormData(initialFormData);
+      setTurnstileToken(null);
+      // Turnstileをリセット
+      turnstileRef.current?.reset();
     } catch (error) {
       console.error('Form submission error:', error);
       setSubmitStatus('error');
@@ -108,7 +127,11 @@ export default function ContactFormSection() {
     turnstileToken;
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 lg:p-10">
+    <div className="bg-white rounded-2xl shadow-lg border-l-4 border-blue-500 p-8 lg:p-10 relative">
+      {/* セクション識別用のバッジ */}
+      <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
+        フォーム
+      </div>
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg
@@ -128,6 +151,7 @@ export default function ContactFormSection() {
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           お問い合わせフォーム
         </h2>
+        <div className="w-16 h-1 bg-blue-500 rounded-full mx-auto mt-2 mb-3"></div>
         <p className="text-gray-600">
           詳細なご質問やご相談は、こちらのフォームからお送りください
         </p>
@@ -151,7 +175,7 @@ export default function ContactFormSection() {
             </svg>
             <p className="text-green-800">
               お問い合わせを送信しました。ありがとうございます。
-              担当者より2営業日以内にご連絡いたします。
+              担当者よりご連絡いたします。
             </p>
           </div>
         </div>
@@ -173,9 +197,16 @@ export default function ContactFormSection() {
                 d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p className="text-red-800">
-              送信に失敗しました。しばらく時間をおいて再度お試しください。
-            </p>
+            <div className="flex-1">
+              <p className="text-red-800 font-semibold mb-1">
+                送信に失敗しました
+              </p>
+              <p className="text-sm text-red-700">
+                しばらく時間をおいて再度お試しください。
+                <br />
+                解決しない場合は、お電話でのお問い合わせをお願いいたします。
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -185,7 +216,7 @@ export default function ContactFormSection() {
         <div>
           <label
             htmlFor="type"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-semibold text-gray-900 mb-2"
           >
             お問い合わせの種類 <span className="text-red-500">*</span>
           </label>
@@ -194,7 +225,7 @@ export default function ContactFormSection() {
             name="type"
             value={formData.type}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
             required
           >
             {Object.entries(CONTACT_TYPE_LABELS).map(([value, label]) => (
@@ -209,7 +240,7 @@ export default function ContactFormSection() {
         <div>
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-semibold text-gray-900 mb-2"
           >
             お名前 <span className="text-red-500">*</span>
           </label>
@@ -219,8 +250,8 @@ export default function ContactFormSection() {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="山田 太郎"
+            className="w-full px-3 py-2 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm placeholder:text-gray-400"
+            placeholder="三芳野 太郎"
             required
           />
         </div>
@@ -229,7 +260,7 @@ export default function ContactFormSection() {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-semibold text-gray-900 mb-2"
           >
             メールアドレス <span className="text-red-500">*</span>
           </label>
@@ -239,7 +270,7 @@ export default function ContactFormSection() {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm placeholder:text-gray-400"
             placeholder="example@email.com"
             required
           />
@@ -249,7 +280,7 @@ export default function ContactFormSection() {
         <div>
           <label
             htmlFor="phone"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-semibold text-gray-900 mb-2"
           >
             電話番号
           </label>
@@ -259,7 +290,7 @@ export default function ContactFormSection() {
             name="phone"
             value={formData.phone}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm placeholder:text-gray-400"
             placeholder="090-1234-5678"
           />
         </div>
@@ -268,7 +299,7 @@ export default function ContactFormSection() {
         <div>
           <label
             htmlFor="subject"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-semibold text-gray-900 mb-2"
           >
             件名 <span className="text-red-500">*</span>
           </label>
@@ -278,7 +309,7 @@ export default function ContactFormSection() {
             name="subject"
             value={formData.subject}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm placeholder:text-gray-400"
             placeholder="お問い合わせの件名をご入力ください"
             required
           />
@@ -288,7 +319,7 @@ export default function ContactFormSection() {
         <div>
           <label
             htmlFor="message"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-semibold text-gray-900 mb-2"
           >
             お問い合わせ内容 <span className="text-red-500">*</span>
           </label>
@@ -298,7 +329,7 @@ export default function ContactFormSection() {
             value={formData.message}
             onChange={handleInputChange}
             rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 bg-white text-gray-900 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm placeholder:text-gray-400 resize-y"
             placeholder="お問い合わせの詳細をご記入ください"
             required
           />
@@ -315,11 +346,14 @@ export default function ContactFormSection() {
             className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             required
           />
-          <label htmlFor="privacyConsent" className="text-sm text-gray-700">
+          <label
+            htmlFor="privacyConsent"
+            className="text-sm font-medium text-gray-900"
+          >
             <span className="text-red-500">*</span>{' '}
             <a
               href="/privacy"
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="text-blue-600 hover:text-blue-800 underline font-semibold"
             >
               プライバシーポリシー
             </a>
@@ -387,7 +421,6 @@ export default function ContactFormSection() {
           お問い合わせについて
         </h4>
         <ul className="text-sm text-gray-600 space-y-1">
-          <li>• お問い合わせへの回答は2営業日以内に行います</li>
           <li>• 緊急の場合はお電話でのお問い合わせをお勧めします</li>
           <li>
             • 個人情報は適切に管理し、お問い合わせ対応以外には使用しません

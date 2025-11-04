@@ -96,7 +96,7 @@ export const CONTACT_TYPE_LABELS: Record<ContactType, string> = {
   [ContactType.MOVING_IN]: '入居について',
   [ContactType.FACILITIES]: '共用施設について',
   [ContactType.COMMUNITY]: 'コミュニティについて',
-  [ContactType.GENERAL]: 'その他一般',
+  [ContactType.GENERAL]: 'その他  ',
 };
 
 // お問い合わせ対応方法の表示名マッピング

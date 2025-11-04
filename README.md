@@ -36,6 +36,13 @@ GitHub PagesでMicroCMSのAPIデータを取得するには、GitHubリポジト
   - 未設定の場合、Turnstileウィジェットは表示されませんが、フォーム送信は動作します
   - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれます（公開されるため機密情報ではありません）
 
+- **`NEXT_PUBLIC_CONTACT_API_URL`** (オプション)
+  - 値：お問い合わせフォーム送信用の外部APIエンドポイントURL
+  - 例：`https://your-api.workers.dev/api/contact` または `https://your-vercel-app.vercel.app/api/contact`
+  - ⚠️ **重要**: 静的エクスポート（`output: 'export'`）を使用している場合、Next.jsのAPIルート（`/api/contact`）は動作しません
+  - 外部APIエンドポイント（Cloudflare Workers、Vercel Functions、AWS Lambdaなど）を設定する必要があります
+  - 未設定の場合、フォーム送信時にエラーが発生します
+
 ### 2. ローカル開発環境の設定
 
 ローカルで開発する場合は、`.env.local`ファイルを作成してください：
@@ -48,6 +55,11 @@ MICROCMS_API_BASE_URL=https://k-miyoshino.microcms.io/api/v1
 # Cloudflare Turnstile（お問い合わせフォームのボット対策）
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_site_key_here
 TURNSTILE_SECRET_KEY=your_secret_key_here
+
+# お問い合わせフォームAPIエンドポイント（静的エクスポートの場合に必須）
+# ローカル開発時は '/api/contact' を使用可能（next dev の場合）
+# 本番環境では外部APIエンドポイントを設定（Cloudflare Workers、Vercel Functionsなど）
+NEXT_PUBLIC_CONTACT_API_URL=https://your-api-endpoint.com/api/contact
 ```
 
 ⚠️ **注意**: `.env.local`はGitにコミットしないでください（`.gitignore`に含まれています）

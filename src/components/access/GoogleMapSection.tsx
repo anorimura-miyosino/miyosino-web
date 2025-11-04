@@ -2,7 +2,7 @@
 
 export function GoogleMapSection() {
   // かわつる三芳野団地の住所
-  const address = '埼玉県川越市かわつる三芳野１番地';
+  const address = '〒350-1177 埼玉県川越市かわつる三芳野１番地';
   const encodedAddress = encodeURIComponent(address);
 
   // Google Maps埋め込み用のURL（APIキー不要）

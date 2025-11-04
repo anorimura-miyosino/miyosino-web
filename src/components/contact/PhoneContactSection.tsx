@@ -3,15 +3,15 @@
 import { useState } from 'react';
 
 const contactInfo = {
-  phone: '03-1234-5678',
-  fax: '03-1234-5679',
-  email: 'info@miyosino-apartments.com',
+  phone: '049-232-3638',
+  fax: '049-232-8656',
+  email: 'office@k-miyosino.com',
   businessHours: {
-    weekdays: '9:00 - 18:00',
-    weekends: '10:00 - 17:00',
+    weekdays: '9:00 - 17:00',
+    weekends: '9:00 - 12:00',
     holidays: '休業',
   },
-  address: '〒123-4567 東京都渋谷区三芳野1-2-3',
+  address: '350-1177 埼玉県川越市かわつる三芳野１番地',
 };
 
 export default function PhoneContactSection() {
@@ -28,7 +28,11 @@ export default function PhoneContactSection() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 lg:p-10">
+    <div className="bg-white rounded-2xl shadow-lg border-l-4 border-green-500 p-8 lg:p-10 relative">
+      {/* セクション識別用のバッジ */}
+      <div className="absolute top-4 right-4 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
+        電話
+      </div>
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg
@@ -48,9 +52,7 @@ export default function PhoneContactSection() {
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           お電話でのお問い合わせ
         </h2>
-        <p className="text-gray-600">
-          お急ぎの場合は、お電話でお気軽にお問い合わせください
-        </p>
+        <div className="w-16 h-1 bg-green-500 rounded-full mx-auto mt-2"></div>
       </div>
 
       <div className="space-y-6">
@@ -96,13 +98,13 @@ export default function PhoneContactSection() {
           </h3>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-gray-600">平日</span>
+              <span className="text-gray-600">平日/土曜日</span>
               <span className="font-medium text-gray-900">
                 {contactInfo.businessHours.weekdays}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">土日祝</span>
+              <span className="text-gray-600">日曜日</span>
               <span className="font-medium text-gray-900">
                 {contactInfo.businessHours.weekends}
               </span>
@@ -170,35 +172,6 @@ export default function PhoneContactSection() {
             <div>
               <p className="text-sm text-gray-500">住所</p>
               <p className="text-gray-900">{contactInfo.address}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* 注意事項 */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-start space-x-3">
-            <svg
-              className="w-5 h-5 text-yellow-600 mt-0.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
-            <div>
-              <h4 className="text-sm font-medium text-yellow-800 mb-1">
-                お電話でのお問い合わせについて
-              </h4>
-              <ul className="text-sm text-yellow-700 space-y-1">
-                <li>• 営業時間外は留守番電話にて承ります</li>
-                <li>• お名前とお電話番号をお聞かせください</li>
-                <li>• 折り返しお電話いたします</li>
-              </ul>
             </div>
           </div>
         </div>

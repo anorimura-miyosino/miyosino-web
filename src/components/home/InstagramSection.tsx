@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // Instagram埋め込み用のコンポーネント
 export default function InstagramSection() {
   const [widgetLoaded, setWidgetLoaded] = useState(false);
   const [widgetError, setWidgetError] = useState(false);
   const [loadTimeout, setLoadTimeout] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const iframeLoadedRef = useRef(false);
 
   useEffect(() => {
     // LightWidgetのスクリプトを読み込む
@@ -15,7 +17,7 @@ export default function InstagramSection() {
     script.async = true;
     script.crossOrigin = 'anonymous';
     script.onload = () => {
-      setWidgetLoaded(true);
+      console.log('[InstagramSection] LightWidgetスクリプト読み込み完了');
     };
     script.onerror = () => {
       console.error('[InstagramSection] LightWidgetスクリプト読み込みエラー');
@@ -23,25 +25,29 @@ export default function InstagramSection() {
     };
     document.body.appendChild(script);
 
-    // タイムアウト設定（15秒 - 504エラーを早期検知）
+    // タイムアウト設定（10秒 - GitHub Pagesでは504エラーが発生しやすいため早期検知）
     const timeoutId = setTimeout(() => {
-      if (!widgetLoaded) {
+      if (!iframeLoadedRef.current) {
         console.warn(
-          '[InstagramSection] LightWidget読み込みタイムアウト (504 Gateway Timeout の可能性)'
+          '[InstagramSection] iframe読み込みタイムアウト（504 Gateway Timeoutの可能性）'
         );
         setLoadTimeout(true);
         setWidgetError(true);
       }
-    }, 15000);
+    }, 10000);
 
     // クリーンアップ関数
     return () => {
       clearTimeout(timeoutId);
+      // スクリプトは残す（他のページでも使われる可能性があるため）
     };
-  }, [widgetLoaded]);
+  }, []); // 初回マウント時のみ実行
 
   // iframeの読み込みエラーハンドリング
   const handleIframeLoad = () => {
+    console.log('[InstagramSection] iframe読み込み完了');
+    iframeLoadedRef.current = true;
+    setIframeLoaded(true);
     setWidgetLoaded(true);
     setWidgetError(false);
     setLoadTimeout(false);
@@ -52,6 +58,7 @@ export default function InstagramSection() {
       '[InstagramSection] iframe読み込みエラー (504 Gateway Timeout)'
     );
     setWidgetError(true);
+    setLoadTimeout(true);
   };
 
   return (
@@ -87,6 +94,8 @@ export default function InstagramSection() {
                 </svg>
                 <p className="text-gray-600 mb-4">
                   Instagramウィジェットが読み込めませんでした。
+                  <br />
+                  （外部サービスのタイムアウトが原因の可能性があります）
                   <br />
                   下のボタンからInstagramアカウントを直接ご覧ください。
                 </p>
@@ -130,8 +139,8 @@ export default function InstagramSection() {
                   width: '100%',
                   border: 0,
                   overflow: 'hidden',
-                  minHeight: widgetLoaded ? 'auto' : '600px',
-                  display: widgetLoaded ? 'block' : 'none',
+                  minHeight: iframeLoaded ? 'auto' : '600px',
+                  display: iframeLoaded ? 'block' : 'none',
                 }}
                 title="Instagramギャラリー"
                 allow="encrypted-media"
