@@ -72,9 +72,7 @@ export function OrganizationStructureSection() {
                 {/* 委員会 */}
                 {org.structure.committees.length > 0 && (
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">
-                      委員会・部会
-                    </h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">委員会</h4>
                     <ul className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {org.structure.committees.map((committee, cIndex) => (
                         <li key={cIndex} className="flex items-center gap-2">
