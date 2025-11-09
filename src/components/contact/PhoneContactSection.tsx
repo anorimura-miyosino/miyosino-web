@@ -28,7 +28,7 @@ export default function PhoneContactSection() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border-l-4 border-green-500 p-8 lg:p-10 relative">
+    <div className="bg-white rounded-2xl shadow-lg border-l-4 border-green-600 p-8 lg:p-10 relative">
       {/* セクション識別用のバッジ */}
       <div className="absolute top-4 right-4 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
         電話
@@ -52,7 +52,7 @@ export default function PhoneContactSection() {
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           お電話でのお問い合わせ
         </h2>
-        <div className="w-16 h-1 bg-green-500 rounded-full mx-auto mt-2"></div>
+        <div className="w-16 h-1 bg-green-600 rounded-full mx-auto mt-2"></div>
       </div>
 
       <div className="space-y-6">

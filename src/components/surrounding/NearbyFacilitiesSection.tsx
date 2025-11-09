@@ -159,7 +159,7 @@ export default function NearbyFacilitiesSection() {
                 ].map((facility) => (
                   <div
                     key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{facility.icon}</div>
@@ -220,7 +220,7 @@ export default function NearbyFacilitiesSection() {
                 ].map((facility) => (
                   <div
                     key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{facility.icon}</div>
@@ -280,7 +280,7 @@ export default function NearbyFacilitiesSection() {
                 {nearbyFacilities.lifeServices.map((service: Service) => (
                   <div
                     key={service.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{service.icon}</div>
@@ -338,7 +338,7 @@ export default function NearbyFacilitiesSection() {
                 {nearbyFacilities.medical.map((facility) => (
                   <div
                     key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{facility.icon}</div>
@@ -384,7 +384,7 @@ export default function NearbyFacilitiesSection() {
                 {nearbyFacilities.education.map((school: School) => (
                   <div
                     key={school.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{school.icon}</div>
@@ -437,7 +437,7 @@ export default function NearbyFacilitiesSection() {
                 {nearbyFacilities.publicTransport.map((facility) => (
                   <div
                     key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{facility.icon}</div>
@@ -472,7 +472,7 @@ export default function NearbyFacilitiesSection() {
                             href={facility.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm font-medium text-center"
+                            className="block w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm font-medium text-center"
                           >
                             公式サイトを見る
                           </a>
@@ -495,7 +495,7 @@ export default function NearbyFacilitiesSection() {
                   (facility) => (
                     <div
                       key={facility.id}
-                      className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                      className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                     >
                       <div className="flex items-start space-x-4">
                         <div className="text-4xl">{facility.icon}</div>

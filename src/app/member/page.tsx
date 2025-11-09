@@ -69,7 +69,7 @@ export default function MemberPage() {
                 2024年12月15日（日）に組合総会を開催いたします。詳細は後日お知らせいたします。
               </p>
             </div>
-            <div className="border-l-4 border-green-500 pl-4">
+            <div className="border-l-4 border-green-600 pl-4">
               <h3 className="font-semibold text-gray-900">
                 2024年11月 - 駐車場管理について
               </h3>

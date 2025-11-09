@@ -35,7 +35,7 @@ const kosugiMaru = Kosugi_Maru({
 export const metadata: Metadata = {
   title: 'かわつる三芳野団地 | Miyoshino Apartments',
   description:
-    '家族の笑顔が生まれる場所、かわつる三芳野団地へようこそ。広々とした住空間、緑豊かな環境、そして温かいコミュニティが、あなたの家族を待っています。',
+    'かわつる三芳野団地へようこそ。広々とした住空間、緑豊かな環境、そして温かいコミュニティがここにはあります。',
   keywords: '団地, マンション, 家族, コミュニティ, 子育て, 緑豊か',
 };
 

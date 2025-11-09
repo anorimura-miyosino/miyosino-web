@@ -74,7 +74,7 @@ export function OrganizationCompositionSection() {
                                     key={index}
                                     className="flex items-start gap-2 text-xs text-gray-700"
                                   >
-                                    <div className="h-1.5 w-1.5 bg-green-500 rounded-full flex-shrink-0 mt-1.5"></div>
+                                    <div className="h-1.5 w-1.5 bg-green-600 rounded-full flex-shrink-0 mt-1.5"></div>
                                     <span>{item}</span>
                                   </li>
                                 )
@@ -280,7 +280,7 @@ export function OrganizationCompositionSection() {
                     {org.business.sections.map((section, index) => (
                       <div
                         key={index}
-                        className="border-l-4 border-green-500 pl-4"
+                        className="border-l-4 border-green-600 pl-4"
                       >
                         <h5 className="font-semibold text-gray-900 mb-2 text-sm">
                           {section.title}

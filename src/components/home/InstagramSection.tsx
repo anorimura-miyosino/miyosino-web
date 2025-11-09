@@ -72,7 +72,7 @@ export default function InstagramSection() {
             団地の日常やイベントの様子をInstagramで発信しています。
             <br />
             ハッシュタグ{' '}
-            <span className="text-green-500 font-semibold">
+            <span className="text-green-600 font-semibold">
               #かわつる三芳野
             </span>{' '}
             でご投稿ください。
@@ -122,7 +122,7 @@ export default function InstagramSection() {
               {!widgetLoaded && (
                 <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-8 border border-gray-200">
                   <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
                     <p className="text-gray-600">
                       Instagramウィジェットを読み込んでいます...
                     </p>

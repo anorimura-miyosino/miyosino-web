@@ -29,8 +29,8 @@ export default function ParksPlaygroundsSection() {
               onClick={() => setActiveTab('parks')}
               className={`px-6 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'parks'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-green-500'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-green-600'
               }`}
             >
               近隣公園
@@ -39,8 +39,8 @@ export default function ParksPlaygroundsSection() {
               onClick={() => setActiveTab('indoor')}
               className={`px-6 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'indoor'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-green-500'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-green-600'
               }`}
             >
               屋内遊び場
@@ -49,8 +49,8 @@ export default function ParksPlaygroundsSection() {
               onClick={() => setActiveTab('sports')}
               className={`px-6 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'sports'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-green-500'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-green-600'
               }`}
             >
               スポーツ施設
@@ -69,7 +69,7 @@ export default function ParksPlaygroundsSection() {
                 {parksPlaygrounds.nearbyParks.map((park) => (
                   <div
                     key={park.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200"
                   >
                     <div className="h-48 bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center">
                       <div className="text-6xl text-white opacity-80">
@@ -138,7 +138,7 @@ export default function ParksPlaygroundsSection() {
                 {parksPlaygrounds.indoorPlaygrounds.map((playground) => (
                   <div
                     key={playground.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{playground.icon}</div>
@@ -214,7 +214,7 @@ export default function ParksPlaygroundsSection() {
                 {parksPlaygrounds.sportsFacilities.map((facility) => (
                   <div
                     key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 border border-gray-200"
                   >
                     <div className="text-center mb-4">
                       <div className="text-4xl mb-3">{facility.icon}</div>

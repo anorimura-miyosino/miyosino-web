@@ -20,13 +20,13 @@ export default function CommunitySection() {
   return (
     <section
       id="next-section"
-      className="py-20 bg-gradient-to-b from-green-50 to-white"
+      className="py-20 bg-gradient-to-b from-gray-100 to-gray-50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           {/* メインキャッチコピー */}
           <h1
-            className="text-2xl md:text-4xl font-bold mb-8 text-gray-900"
+            className="text-2xl md:text-4xl font-bold mb-8 text-gray-800"
             style={{
               fontFamily:
                 "var(--font-kosugi-maru), 'Kosugi Maru', 'ヒラギノ丸ゴ ProN', 'Hiragino Maru Gothic ProN', '筑紫A丸ゴシック', 'TsukuAGo', 'M+ Rounded 1c', 'Nico Moji', sans-serif",
@@ -39,7 +39,7 @@ export default function CommunitySection() {
             <br />
             住民による自主管理体制のもと、100年以上にわたって住み続けられる団地づくりを目指しています。
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
             活気あふれるコミュニティ
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
@@ -53,10 +53,10 @@ export default function CommunitySection() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2"
+              className="bg-gray-50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2 border border-gray-300"
             >
               <div className="text-6xl mb-6 text-center">{feature.icon}</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
                 {feature.title}
               </h3>
               <p className="text-gray-600 text-center leading-relaxed">
@@ -74,19 +74,19 @@ export default function CommunitySection() {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href="/features"
-              className="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200"
+              className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"
             >
               団地の特長を見る
             </a>
             <a
               href="/family"
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
             >
               ファミリー向け情報
             </a>
             <a
               href="/community"
-              className="bg-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200"
+              className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors duration-200"
             >
               コミュニティ活動
             </a>

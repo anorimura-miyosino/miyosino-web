@@ -43,28 +43,28 @@ const highlights = [
 
 const colorClasses = {
   green: {
-    bg: 'bg-green-100',
+    bg: 'bg-gray-100',
     iconBg: 'bg-green-600',
     text: 'text-green-700',
     hover: 'hover:bg-green-200',
     border: 'border-green-200',
   },
   blue: {
-    bg: 'bg-blue-100',
+    bg: 'bg-gray-100',
     iconBg: 'bg-blue-600',
     text: 'text-blue-700',
     hover: 'hover:bg-blue-200',
     border: 'border-blue-200',
   },
   purple: {
-    bg: 'bg-purple-100',
+    bg: 'bg-gray-100',
     iconBg: 'bg-purple-600',
     text: 'text-purple-700',
     hover: 'hover:bg-purple-200',
     border: 'border-purple-200',
   },
   orange: {
-    bg: 'bg-orange-100',
+    bg: 'bg-gray-100',
     iconBg: 'bg-orange-600',
     text: 'text-orange-700',
     hover: 'hover:bg-orange-200',
@@ -74,10 +74,10 @@ const colorClasses = {
 
 export default function FeaturesHighlightSection() {
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-green-50">
+    <section className="py-20 bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
             かわつる三芳野団地へようこそ
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
@@ -148,19 +148,19 @@ export default function FeaturesHighlightSection() {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/features"
-              className="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               団地の特徴を見る
             </Link>
             <Link
               href="/community"
-              className="bg-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               コミュニティ活動
             </Link>
             <Link
               href="/surrounding"
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               周辺環境
             </Link>
@@ -170,3 +170,5 @@ export default function FeaturesHighlightSection() {
     </section>
   );
 }
+
+

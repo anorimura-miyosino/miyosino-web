@@ -26,7 +26,7 @@ export function OrganizationStructureSection() {
               className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200"
             >
               <div className="flex items-center gap-4 mb-6">
-                <div className="h-12 w-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="h-12 w-12 bg-gradient-to-r from-green-600 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-xl">
                     {index + 1}
                   </span>
@@ -43,7 +43,7 @@ export function OrganizationStructureSection() {
 
               <div className="space-y-6">
                 {/* 組織概要 */}
-                <div className="border-l-4 border-green-500 pl-4">
+                <div className="border-l-4 border-green-600 pl-4">
                   <p className="text-base leading-7 text-gray-600">
                     {org.structure.overview}
                   </p>

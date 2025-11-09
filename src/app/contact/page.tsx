@@ -24,7 +24,7 @@ export default function ContactPage() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* 電話でのお問い合わせ */}
           <div className="relative">
-            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-green-500 rounded-full hidden lg:block"></div>
+            <div className="absolute -left-4 top-0 bottom-0 w-1 bg-green-600 rounded-full hidden lg:block"></div>
             <PhoneContactSection />
           </div>
 

@@ -8,7 +8,7 @@ export default function Footer() {
           {/* ロゴと説明 */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">M</span>
               </div>
               <span className="text-xl font-bold">かわつる三芳野団地</span>
@@ -31,7 +31,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/features"
-                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   団地の特長
                 </Link>
@@ -39,7 +39,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/family"
-                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   子育て環境の魅力を見る
                 </Link>
@@ -47,7 +47,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/community"
-                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   コミュニティ
                 </Link>
@@ -55,7 +55,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/shared-facilities"
-                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   共有施設・サービス
                 </Link>
@@ -63,7 +63,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/info"
-                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   お知らせ
                 </Link>
@@ -99,7 +99,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/sitemap"
-                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   サイトマップ
                 </Link>
@@ -107,7 +107,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/privacy"
-                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   プライバシーポリシー
                 </Link>
@@ -115,7 +115,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-300 hover:text-green-500 text-sm transition-colors"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   お問い合わせ
                 </Link>

@@ -33,8 +33,8 @@ export default function CommunityActivitiesSection() {
               onClick={() => setActiveTab('activities')}
               className={`px-6 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'activities'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-green-500'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-green-600'
               }`}
             >
               自治会活動
@@ -43,8 +43,8 @@ export default function CommunityActivitiesSection() {
               onClick={() => setActiveTab('circles')}
               className={`px-6 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'circles'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-green-500'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-green-600'
               }`}
             >
               住人サークル紹介
@@ -71,7 +71,7 @@ export default function CommunityActivitiesSection() {
                 {communityActivities.neighborhoodActivities.map((activity) => (
                   <div
                     key={activity.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{activity.icon}</div>
@@ -137,14 +137,14 @@ export default function CommunityActivitiesSection() {
 
                 return (
                   <div key={category} className="mb-12">
-                    <h4 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-green-500">
+                    <h4 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-green-600">
                       {category}
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {circlesInCategory.map((circle) => (
                         <div
                           key={circle.id}
-                          className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                          className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                         >
                           <h4 className="text-xl font-bold text-gray-900 mb-3">
                             {circle.name}

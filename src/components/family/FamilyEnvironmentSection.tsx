@@ -22,7 +22,7 @@ export default function FamilyEnvironmentSection() {
           {familyEnvironment.topFeatures.map((feature) => (
             <div
               key={feature.id}
-              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2 border border-gray-100"
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2 border border-gray-200"
             >
               <div className="text-6xl mb-6 text-center">{feature.icon}</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center">
@@ -54,7 +54,7 @@ export default function FamilyEnvironmentSection() {
             {familyEnvironment.familyServices.map((service) => (
               <div
                 key={service.id}
-                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200"
               >
                 <h4 className="text-xl font-bold text-gray-900 mb-3">
                   {service.name}

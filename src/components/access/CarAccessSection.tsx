@@ -18,7 +18,7 @@ export function CarAccessSection() {
 
         {/* 車アクセス詳細 */}
         <div className="mx-auto mt-16 max-w-2xl">
-          <div className="rounded-2xl bg-blue-50 p-8 shadow-sm ring-1 ring-blue-200">
+          <div className="rounded-2xl bg-blue-50 p-8 shadow-sm border-2 border-blue-200">
             <div className="flex items-center gap-x-3 mb-6">
               <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <svg
@@ -81,7 +81,7 @@ export function CarAccessSection() {
 
         {/* 駐車場情報 */}
         <div className="mx-auto mt-16 max-w-5xl">
-          <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
+          <div className="rounded-2xl bg-white p-8 shadow-sm border-2 border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-8 text-center">
               駐車場・駐輪場完備
             </h3>

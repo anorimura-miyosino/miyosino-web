@@ -16,8 +16,8 @@ export default function SharedFacilitiesSection() {
               onClick={() => setActiveTab('common')}
               className={`px-6 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'common'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-green-500'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-green-600'
               }`}
             >
               共用部
@@ -26,8 +26,8 @@ export default function SharedFacilitiesSection() {
               onClick={() => setActiveTab('services')}
               className={`px-6 py-3 rounded-md text-sm font-medium transition-all duration-200 ${
                 activeTab === 'services'
-                  ? 'bg-green-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-green-500'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'text-gray-700 hover:text-green-600'
               }`}
             >
               団地内のサービス
@@ -46,9 +46,9 @@ export default function SharedFacilitiesSection() {
                 {sharedFacilities.commonAreas.map((facility) => (
                   <div
                     key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200"
                   >
-                    <div className="h-48 bg-gradient-to-br from-blue-400 to-green-500 flex items-center justify-center">
+                    <div className="h-48 bg-gradient-to-br from-blue-400 to-green-600 flex items-center justify-center">
                       <div className="text-6xl text-white opacity-80">
                         {facility.id === 1
                           ? '🏢'
@@ -119,7 +119,7 @@ export default function SharedFacilitiesSection() {
                 {sharedFacilities.apartmentServices.map((service) => (
                   <div
                     key={service.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">
@@ -169,7 +169,7 @@ export default function SharedFacilitiesSection() {
                             ))}
                           </div>
                         </div>
-                        <button className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm font-medium">
+                        <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm font-medium">
                           予約する
                         </button>
                       </div>

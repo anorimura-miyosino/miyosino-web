@@ -31,10 +31,10 @@ const newsItems = [
 
 export default function NewsSection() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
             お知らせ
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
@@ -46,8 +46,8 @@ export default function NewsSection() {
           {newsItems.map((item) => (
             <article
               key={item.id}
-              className={`bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2 border-l-4 ${
-                item.isImportant ? 'border-green-600' : 'border-green-500'
+              className={`bg-gray-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-2 border-l-4 border-t border-r border-b border-gray-300 ${
+                item.isImportant ? 'border-l-green-600' : 'border-l-green-600'
               }`}
             >
               <div className="flex items-center justify-between mb-4">
@@ -67,7 +67,7 @@ export default function NewsSection() {
                 )}
               </div>
 
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3 line-clamp-2">
                 {item.title}
               </h3>
 
@@ -85,7 +85,7 @@ export default function NewsSection() {
                 </time>
                 <Link
                   href={`/news/${item.id}`}
-                  className="text-green-500 hover:text-green-600 text-sm font-semibold transition-colors"
+                  className="text-green-600 hover:text-green-700 text-sm font-semibold transition-colors"
                 >
                   詳細を見る →
                 </Link>

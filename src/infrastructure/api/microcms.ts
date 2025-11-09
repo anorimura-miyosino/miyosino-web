@@ -52,8 +52,8 @@ export class MicroCMSClient {
       headers: {
         'X-MICROCMS-API-KEY': this.apiKey,
       },
-      // 静的エクスポート時はビルド時に一度だけ実行される
-      cache: 'force-cache',
+      // 開発環境では常に最新データを取得、本番環境ではビルド時に取得
+      cache: process.env.NODE_ENV === 'production' ? 'force-cache' : 'no-store',
     });
 
     if (!response.ok) {

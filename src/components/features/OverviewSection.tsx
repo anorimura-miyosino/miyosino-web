@@ -54,27 +54,21 @@ export function OverviewSection() {
   return (
     <section
       id={sectionMeta.id}
-      className="bg-gray-50 py-24 sm:py-32 scroll-mt-20"
+      className="bg-gray-100 py-24 sm:py-32 scroll-mt-20"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-green-600">
-            {sectionMeta.subtitle}
-          </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl">
             {sectionMeta.title}
-          </p>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            かわつる三芳野団地の基本情報をご紹介します。
           </p>
         </div>
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
           <div className="flex flex-col items-start">
-            <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
+            <div className="rounded-2xl bg-gray-50 p-8 shadow-sm ring-1 ring-gray-300">
               <div className="flex items-center gap-x-3">
                 <div className="h-6 w-6 bg-green-600 rounded"></div>
-                <h3 className="text-lg font-semibold leading-8 tracking-tight text-gray-900">
+                <h3 className="text-lg font-semibold leading-8 tracking-tight text-gray-800">
                   {overviewData.location.title}
                 </h3>
               </div>
@@ -92,10 +86,10 @@ export function OverviewSection() {
           </div>
 
           <div className="flex flex-col items-start">
-            <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
+            <div className="rounded-2xl bg-gray-50 p-8 shadow-sm ring-1 ring-gray-300">
               <div className="flex items-center gap-x-3">
                 <div className="h-6 w-6 bg-green-600 rounded"></div>
-                <h3 className="text-lg font-semibold leading-8 tracking-tight text-gray-900">
+                <h3 className="text-lg font-semibold leading-8 tracking-tight text-gray-800">
                   {overviewData.scale.title}
                 </h3>
               </div>
@@ -113,10 +107,10 @@ export function OverviewSection() {
           </div>
 
           <div className="flex flex-col items-start">
-            <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
+            <div className="rounded-2xl bg-gray-50 p-8 shadow-sm ring-1 ring-gray-300">
               <div className="flex items-center gap-x-3">
                 <div className="h-6 w-6 bg-green-600 rounded"></div>
-                <h3 className="text-lg font-semibold leading-8 tracking-tight text-gray-900">
+                <h3 className="text-lg font-semibold leading-8 tracking-tight text-gray-800">
                   {overviewData.layout.title}
                 </h3>
               </div>
@@ -134,10 +128,10 @@ export function OverviewSection() {
           </div>
 
           <div className="flex flex-col items-start">
-            <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200">
+            <div className="rounded-2xl bg-gray-50 p-8 shadow-sm ring-1 ring-gray-300">
               <div className="flex items-center gap-x-3">
                 <div className="h-6 w-6 bg-green-600 rounded"></div>
-                <h3 className="text-lg font-semibold leading-8 tracking-tight text-gray-900">
+                <h3 className="text-lg font-semibold leading-8 tracking-tight text-gray-800">
                   {overviewData.features.title}
                 </h3>
               </div>

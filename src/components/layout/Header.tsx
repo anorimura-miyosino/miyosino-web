@@ -23,7 +23,7 @@ export default function Header() {
           {/* ロゴ */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-7 h-7 lg:w-8 lg:h-8 bg-green-500 rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 lg:w-8 lg:h-8 bg-green-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xs lg:text-sm">
                   M
                 </span>
@@ -40,7 +40,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-gray-700 hover:text-green-500 px-2 py-2 text-xs lg:text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                className="text-gray-700 hover:text-green-600 px-2 py-2 text-xs lg:text-sm font-medium transition-colors duration-200 whitespace-nowrap"
               >
                 {item.label}
               </Link>
@@ -77,7 +77,7 @@ export default function Header() {
             </Link> */}
             <Link
               href="/contact"
-              className="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs lg:text-sm font-medium hover:bg-green-600 transition-colors duration-200 whitespace-nowrap"
+              className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs lg:text-sm font-medium hover:bg-green-600 transition-colors duration-200 whitespace-nowrap"
             >
               お問い合わせ
             </Link>
@@ -87,7 +87,7 @@ export default function Header() {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-green-500 focus:outline-none focus:text-green-500"
+              className="text-gray-700 hover:text-green-600 focus:outline-none focus:text-green-600"
             >
               <svg
                 className="h-6 w-6"
@@ -118,7 +118,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-gray-700 hover:text-green-500 block px-3 py-2 text-base font-medium"
+                  className="text-gray-700 hover:text-green-600 block px-3 py-2 text-base font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.label}
@@ -154,7 +154,7 @@ export default function Header() {
               </Link> */}
               <Link
                 href="/contact"
-                className="bg-green-500 text-white block px-3 py-2 text-base font-medium rounded-lg mx-3 mt-2 hover:bg-green-600 transition-colors duration-200"
+                className="bg-green-600 text-white block px-3 py-2 text-base font-medium rounded-lg mx-3 mt-2 hover:bg-green-600 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
                 お問い合わせ

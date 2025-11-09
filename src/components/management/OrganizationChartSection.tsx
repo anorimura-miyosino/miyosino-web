@@ -88,7 +88,7 @@ export function OrganizationChartSection() {
                   </h4>
                   <div className="space-y-4">
                     {/* 理事長 */}
-                    <div className="border-l-4 border-green-500 pl-4">
+                    <div className="border-l-4 border-green-600 pl-4">
                       <h5 className="font-semibold text-gray-900">
                         {data.structure.chairman.title}
                       </h5>

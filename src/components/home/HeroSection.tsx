@@ -2,36 +2,86 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import type { Photo } from '@/domains/media';
+import type {
+  Photo,
+  MicroCMSPhoto,
+  MicroCMSPhotoListResponse,
+} from '@/domains/media';
 
-interface HeroSectionProps {
-  photos: Photo[];
-  defaultPhoto?: Photo | null;
-}
-
-export default function HeroSection({
-  photos,
-  defaultPhoto,
-}: HeroSectionProps) {
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(
-    defaultPhoto || null
-  );
+export default function HeroSection() {
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // デバッグ用: 写真データの確認
+  // MicroCMSから写真データを取得
   useEffect(() => {
-    if (photos.length === 0) {
-      console.warn('[HeroSection] 写真データが空です');
-    } else if (!selectedPhoto) {
-      console.warn('[HeroSection] デフォルト写真が設定されていません');
-    } else {
-      console.log('[HeroSection] 画像URL:', selectedPhoto.photo.url);
-    }
-  }, [photos, selectedPhoto]);
+    const fetchPhotos = async () => {
+      try {
+        setLoading(true);
+        const baseURL =
+          process.env.NEXT_PUBLIC_MICROCMS_API_BASE_URL ||
+          'https://k-miyoshino.microcms.io/api/v1';
+        const apiKey = process.env.NEXT_PUBLIC_MICROCMS_API_KEY || '';
 
-  // 写真が空の場合、または画像読み込みエラーの場合のフォールバック
-  if (!selectedPhoto || photos.length === 0 || imageError) {
+        if (!apiKey) {
+          console.warn('[HeroSection] MicroCMS API key is not set');
+          setLoading(false);
+          return;
+        }
+
+        const endpoint = `${baseURL}/photo`;
+        const url = new URL(endpoint);
+        url.searchParams.append('orders', 'order');
+
+        const response = await fetch(url.toString(), {
+          headers: {
+            'X-MICROCMS-API-KEY': apiKey,
+          },
+          cache: 'no-store',
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch photos: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const data: MicroCMSPhotoListResponse = await response.json();
+        const fetchedPhotos: Photo[] = data.contents.map(
+          (photo: MicroCMSPhoto) => ({
+            id: photo.id,
+            createdAt: new Date(photo.createdAt),
+            updatedAt: new Date(photo.updatedAt),
+            title: photo.title,
+            description: photo.description,
+            photo: photo.photo,
+            order: photo.order,
+          })
+        );
+
+        setPhotos(fetchedPhotos);
+
+        // orderが最小の写真をデフォルトとして設定
+        if (fetchedPhotos.length > 0) {
+          const defaultPhoto = fetchedPhotos.reduce((prev, current) =>
+            prev.order <= current.order ? prev : current
+          );
+          setSelectedPhoto(defaultPhoto);
+        }
+      } catch (error) {
+        console.error('[HeroSection] 写真取得エラー:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPhotos();
+  }, []);
+
+  // ローディング中または写真が空の場合、または画像読み込みエラーの場合のフォールバック
+  if (loading || !selectedPhoto || photos.length === 0 || imageError) {
     return (
       <section className="relative bg-gradient-to-br from-green-50 to-green-100 overflow-hidden h-[50vh] min-h-[400px]">
         <div className="absolute inset-0">
@@ -46,55 +96,57 @@ export default function HeroSection({
   }
 
   return (
-    <section className="relative overflow-hidden h-[50vh] min-h-[400px]">
+    <section className="relative overflow-hidden flex flex-col">
       {/* 背景写真 */}
-      <div className="absolute inset-0">
-        <Image
-          src={selectedPhoto.photo.url}
-          alt={selectedPhoto.title || 'ヒーロー画像'}
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-          style={{
-            objectFit: 'cover',
-            objectPosition: 'center',
-          }}
-          unoptimized
-          onLoad={() => {
-            setImageLoaded(true);
-            setImageError(false);
-          }}
-          onError={() => {
-            console.error(
-              '[HeroSection] 画像読み込みエラー:',
-              selectedPhoto.photo.url
-            );
-            setImageError(true);
-            setImageLoaded(false);
-          }}
-        />
-        {/* 画像読み込み中のインジケーター（オプション） */}
-        {!imageLoaded && !imageError && (
-          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
-        )}
-        {/* オーバーレイ（テキストの可読性向上） */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-black/40"></div>
-      </div>
+      <div className="relative h-[50vh] min-h-[400px]">
+        <div className="absolute inset-0">
+          <Image
+            src={selectedPhoto.photo.url}
+            alt={selectedPhoto.title || 'ヒーロー画像'}
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+            style={{
+              objectFit: 'cover',
+              objectPosition: 'center',
+            }}
+            unoptimized
+            onLoad={() => {
+              setImageLoaded(true);
+              setImageError(false);
+            }}
+            onError={() => {
+              console.error(
+                '[HeroSection] 画像読み込みエラー:',
+                selectedPhoto.photo.url
+              );
+              setImageError(true);
+              setImageLoaded(false);
+            }}
+          />
+          {/* 画像読み込み中のインジケーター（オプション） */}
+          {!imageLoaded && !imageError && (
+            <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+          )}
+          {/* オーバーレイ（テキストの可読性向上） */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-black/40"></div>
+        </div>
 
-      <HeroContent />
+        <HeroContent />
+      </div>
 
       {/* 写真選択UI（複数写真がある場合のみ表示） */}
       {photos.length > 1 && (
-        <div className="absolute bottom-4 right-4 z-10">
-          <div className="flex gap-2 bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg">
+        <div className="flex justify-center py-4 bg-white/90 backdrop-blur-sm">
+          <div className="flex gap-2">
             {photos.map((photo) => (
               <button
                 key={photo.id}
                 onClick={() => setSelectedPhoto(photo)}
                 className={`relative w-16 h-16 rounded overflow-hidden transition-all duration-200 ${
                   selectedPhoto.id === photo.id
-                    ? 'ring-2 ring-green-500 ring-offset-2 scale-110'
+                    ? 'ring-2 ring-green-600 ring-offset-2 scale-110'
                     : 'hover:scale-105 opacity-70 hover:opacity-100'
                 }`}
                 aria-label={`写真を選択: ${photo.title}`}

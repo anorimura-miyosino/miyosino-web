@@ -64,7 +64,7 @@ export function OrganizationManagementSection() {
           <p className="mt-6">
             <Link
               href="/management"
-              className="inline-flex items-center text-base font-semibold text-green-600 hover:text-green-500"
+              className="inline-flex items-center text-base font-semibold text-green-600 hover:text-green-700"
             >
               団地運営の詳細を見る
               <svg

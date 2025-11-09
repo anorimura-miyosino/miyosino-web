@@ -27,7 +27,7 @@ export function DirectorDutiesSection() {
                 className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-200"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="h-10 w-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="h-10 w-10 bg-gradient-to-r from-green-600 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
                     <span className="text-white font-bold text-lg">
                       {index + 1}
                     </span>

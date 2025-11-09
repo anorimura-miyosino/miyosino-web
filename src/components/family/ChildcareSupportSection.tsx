@@ -79,7 +79,7 @@ export default function ChildcareSupportSection() {
                 {childcareSupport.childcareCenters.map((center) => (
                   <div
                     key={center.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{center.icon}</div>
@@ -154,7 +154,7 @@ export default function ChildcareSupportSection() {
                 {childcareSupport.supportCenters.map((center) => (
                   <div
                     key={center.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{center.icon}</div>
@@ -226,7 +226,7 @@ export default function ChildcareSupportSection() {
                 {childcareSupport.medicalFacilities.map((facility) => (
                   <div
                     key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{facility.icon}</div>
@@ -303,7 +303,7 @@ export default function ChildcareSupportSection() {
                 {childcareSupport.educationFacilities.map((school) => (
                   <div
                     key={school.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-100"
+                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                   >
                     <div className="flex items-start space-x-4">
                       <div className="text-4xl">{school.icon}</div>

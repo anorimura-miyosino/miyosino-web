@@ -68,7 +68,7 @@ export function ManagementOverviewSection() {
             </h3>
             <div className="space-y-6">
               {data.ownership.items.map((item, index) => (
-                <div key={index} className="border-l-4 border-green-500 pl-4">
+                <div key={index} className="border-l-4 border-green-600 pl-4">
                   <h4 className="text-lg font-semibold text-gray-900 mb-2">
                     {item.type}
                   </h4>
