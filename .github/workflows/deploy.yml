@@ -34,7 +34,9 @@ jobs:
         env:
           NODE_ENV: production
           MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
+          NEXT_PUBLIC_MICROCMS_API_KEY: ${{ secrets.MICROCMS_API_KEY }}
           MICROCMS_API_BASE_URL: ${{ secrets.MICROCMS_API_BASE_URL }}
+          NEXT_PUBLIC_MICROCMS_API_BASE_URL: ${{ secrets.MICROCMS_API_BASE_URL }}
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
         run: npm run build
 
