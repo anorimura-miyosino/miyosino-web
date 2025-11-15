@@ -1,2 +1,0 @@
-// Contentドメインのエクスポート
-export * from './types';

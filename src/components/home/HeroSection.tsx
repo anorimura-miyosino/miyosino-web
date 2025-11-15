@@ -6,7 +6,7 @@ import type {
   Photo,
   MicroCMSPhoto,
   MicroCMSPhotoListResponse,
-} from '@/domains/media';
+} from '@/types/media';
 
 export default function HeroSection() {
   const [photos, setPhotos] = useState<Photo[]>([]);
@@ -15,7 +15,7 @@ export default function HeroSection() {
   const [imageError, setImageError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // MicroCMSから写真データを取得
+  // クライアントサイドでMicroCMSから写真データをリアルタイム取得
   useEffect(() => {
     const fetchPhotos = async () => {
       try {

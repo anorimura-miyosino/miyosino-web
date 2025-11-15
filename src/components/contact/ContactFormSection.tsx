@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
-import { ContactType, CONTACT_TYPE_LABELS } from '@/domains/contact';
+import { ContactType, CONTACT_TYPE_LABELS } from '@/types/contact';
 
 interface FormData {
   name: string;
