@@ -4,7 +4,7 @@
 
 ### 1. GitHub Secretsの設定
 
-GitHub PagesでMicroCMSのAPIデータを取得するには、GitHubリポジトリのSettingsでSecretsを設定する必要があります。
+MicroCMSのAPIデータはクライアントサイドでリアルタイムに取得されます。APIキーはビルド時にクライアントコードに埋め込まれるため、GitHubリポジトリのSettingsでSecretsを設定する必要があります。
 
 #### 設定手順
 
@@ -15,9 +15,10 @@ GitHub PagesでMicroCMSのAPIデータを取得するには、GitHubリポジト
 
 #### 必須のSecret
 
-- **`MICROCMS_API_KEY`**
+- **`MICROCMS_API_KEY`** または **`NEXT_PUBLIC_MICROCMS_API_KEY`**
   - 値：MicroCMSのAPIキー
-  - MicroCMSの管理画面 > API設定 > 書き込みAPIキーまたは読み取り専用APIキー
+  - MicroCMSの管理画面 > API設定 > 読み取り専用APIキー
+  - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれます（公開されるため機密情報ではありません）
 
 - **`TURNSTILE_SECRET_KEY`**
   - 値：Cloudflare Turnstileのシークレットキー（サーバーサイド検証用）
@@ -25,10 +26,11 @@ GitHub PagesでMicroCMSのAPIデータを取得するには、GitHubリポジト
 
 #### オプションのSecret
 
-- **`MICROCMS_API_BASE_URL`**
+- **`MICROCMS_API_BASE_URL`** または **`NEXT_PUBLIC_MICROCMS_API_BASE_URL`**
   - 値：MicroCMSのAPIエンドポイントURL
   - 例：`https://k-miyoshino.microcms.io/api/v1`
   - 未設定の場合は、デフォルト値が使用されます
+  - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれます
 
 - **`NEXT_PUBLIC_TURNSTILE_SITE_KEY`**
   - 値：Cloudflare Turnstileのサイトキー（クライアントサイド表示用）
@@ -49,8 +51,9 @@ GitHub PagesでMicroCMSのAPIデータを取得するには、GitHubリポジト
 
 ```bash
 # .env.local
-MICROCMS_API_KEY=your_api_key_here
-MICROCMS_API_BASE_URL=https://k-miyoshino.microcms.io/api/v1
+# クライアントサイドで使用するため、NEXT_PUBLIC_プレフィックスが必要
+NEXT_PUBLIC_MICROCMS_API_KEY=your_api_key_here
+NEXT_PUBLIC_MICROCMS_API_BASE_URL=https://k-miyoshino.microcms.io/api/v1
 
 # Cloudflare Turnstile（お問い合わせフォームのボット対策）
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_site_key_here
@@ -64,15 +67,74 @@ NEXT_PUBLIC_CONTACT_API_URL=https://your-api-endpoint.com/api/contact
 
 ⚠️ **注意**: `.env.local`はGitにコミットしないでください（`.gitignore`に含まれています）
 
-### 3. APIキーの取得方法
+### 3. Dockerを使用した開発環境
+
+Dockerを使用して開発環境を構築する場合：
+
+#### 初回起動
+
+```bash
+# コンテナをビルドして起動
+docker-compose up --build
+
+# バックグラウンドで起動
+docker-compose up -d --build
+```
+
+#### 基本的なコマンド
+
+```bash
+# コンテナを起動
+docker-compose up
+
+# バックグラウンドで起動
+docker-compose up -d
+
+# コンテナを停止
+docker-compose down
+
+# コンテナを再起動（.env.localを変更した場合など）
+docker-compose restart
+
+# コンテナのログを確認
+docker-compose logs -f
+
+# コンテナ内でコマンドを実行
+docker-compose exec web npm run lint
+```
+
+#### Git設定
+
+Dockerコンテナ上でGitを扱う場合、以下のコマンドを実行して安全なディレクトリとして設定する必要があります：
+
+```bash
+# コンテナ内でGit設定を追加
+docker-compose exec web git config --global --add safe.directory /app
+```
+
+この設定により、コンテナ内の`/app`ディレクトリでGitコマンドが正常に動作します。
+
+#### アクセス
+
+起動後、以下のURLでアクセスできます：
+
+- 開発サーバー: http://localhost:3000
+
+#### 注意事項
+
+- `.env.local`を追加・変更した場合は、コンテナの再起動が必要です（`docker-compose restart`）
+- ソースコードの変更は自動的に反映されます（ホットリロード対応）
+- Windows環境では、`CHOKIDAR_USEPOLLING=true`が設定されており、ファイル監視が安定して動作します
+
+### 4. APIキーの取得方法
 
 #### MicroCMS APIキー
 
 1. [MicroCMS](https://microcms.io/)にログイン
 2. 対象のサービスを選択
 3. **API設定** > **APIキー** からキーを取得
-   - **読み取り専用APIキー**：ビルド時にデータを取得するだけならこちらで十分
-   - **書き込みAPIキー**：データの更新も行う場合はこちら
+   - **読み取り専用APIキー**：クライアントサイドでデータを取得するため、こちらで十分です
+   - **書き込みAPIキー**：データの更新も行う場合はこちら（通常は不要）
 
 #### Cloudflare Turnstileキー
 
@@ -85,7 +147,7 @@ NEXT_PUBLIC_CONTACT_API_URL=https://your-api-endpoint.com/api/contact
 
 ⚠️ **注意**: Site Keyは公開されても問題ありませんが、Secret Keyは絶対に公開してはいけません
 
-### 4. ビルドとデプロイ
+### 5. ビルドとデプロイ
 
 GitHubにpushすると、自動的にビルドとデプロイが実行されます。
 
@@ -96,39 +158,31 @@ GitHubにpushすると、自動的にビルドとデプロイが実行されま�
 
 #### ヒーロー画像が表示されない場合
 
-1. **GitHub Actionsのビルドログを確認**
-   - リポジトリ > Actions > 最新のワークフロー実行を開く
-   - ビルドログで以下のメッセージを確認：
-     - `[Home] MicroCMS API Key: 設定済み` または `未設定`
-     - `[Home] 取得した写真数: X`
-     - `[Home] デフォルト写真URL: https://...`
-   - エラーメッセージがないか確認
+1. **ブラウザのコンソールで確認**
+   - GitHub Pagesで公開されたページを開く
+   - F12 > Consoleで以下を確認：
+     - `[HeroSection] MicroCMS API key is not set` の警告が表示されていないか
+     - `[HeroSection] 写真取得エラー:` のエラーが表示されていないか
+     - 画像読み込みエラーが表示されていないか
+   - NetworkタブでMicroCMS APIリクエストが失敗していないか確認
 
 2. **GitHub Secretsの確認**
    - `MICROCMS_API_KEY`が正しく設定されているか確認
+   - `NEXT_PUBLIC_MICROCMS_API_KEY`として設定されているか確認（クライアントサイドで使用するため`NEXT_PUBLIC_`プレフィックスが必要）
    - Secretsの名前が正確か確認（大文字小文字を区別）
 
 3. **MicroCMSのAPIエンドポイント確認**
    - MicroCMSの管理画面で`photo`エンドポイントが存在するか確認
    - APIキーに読み取り権限があるか確認
 
-4. **ブラウザのコンソールで確認**
-   - GitHub Pagesで公開されたページを開く
-   - F12 > Consoleで以下を確認：
-     - `[HeroSection] 画像URL: ...` のログが表示されているか
-     - 画像読み込みエラーが表示されていないか
-   - Networkタブで画像リクエストが失敗していないか確認
-
-#### ビルド時にデータが取得できない場合
-
-1. GitHub Secretsが正しく設定されているか確認
-2. MicroCMSのAPIキーの権限を確認（読み取り権限があるか）
-3. MicroCMSのAPIエンドポイントURLが正しいか確認
-4. GitHub Actionsのビルドログでエラーメッセージを確認
+4. **環境変数の確認**
+   - ビルド時に`NEXT_PUBLIC_MICROCMS_API_KEY`が正しく設定されているか確認
+   - GitHub Actionsのビルドログで環境変数が設定されているか確認
 
 #### ローカルでデータが取得できない場合
 
 1. `.env.local`ファイルが存在するか確認
-2. `MICROCMS_API_KEY`が正しく設定されているか確認
+2. `NEXT_PUBLIC_MICROCMS_API_KEY`が正しく設定されているか確認（クライアントサイドで使用するため`NEXT_PUBLIC_`プレフィックスが必要）
 3. MicroCMSのAPIが正常に動作しているか確認（ブラウザで直接アクセスしてテスト）
-4. ビルドログで取得した写真数やURLが表示されているか確認
+4. ブラウザのコンソール（F12 > Console）でエラーメッセージを確認
+5. NetworkタブでMicroCMS APIリクエストが失敗していないか確認

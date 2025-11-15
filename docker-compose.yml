@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: miyosino-web
+    ports:
+      - '3000:3000'
+    volumes:
+      # ソースコードの変更をホストと同期（ホットリロード対応）
+      - .:/app
+      # node_modulesはコンテナ内のものを使用
+      - /app/node_modules
+      - /app/.next
+      # 💡 ホストのDockerソケットをコンテナ内にマウント
+      - /var/run/docker.sock:/var/run/docker.sock
+    # 開発サーバーの起動コマンド
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
+      # ホットリロードの安定性のための設定（推奨）
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    tty: true

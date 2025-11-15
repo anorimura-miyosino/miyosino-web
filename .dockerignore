@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.gitignore
+README.md
+# .env.localは開発環境で必要なので除外しない
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+*.pem
+
