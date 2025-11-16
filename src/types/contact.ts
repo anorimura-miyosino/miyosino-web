@@ -15,6 +15,3 @@ export const CONTACT_TYPE_LABELS: Record<ContactType, string> = {
   [ContactType.COMMUNITY]: 'コミュニティについて',
   [ContactType.GENERAL]: 'その他',
 };
-
-
-

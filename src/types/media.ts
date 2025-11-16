@@ -43,6 +43,3 @@ export interface MicroCMSPhotoListResponse {
   offset: number;
   limit: number;
 }
-
-
-

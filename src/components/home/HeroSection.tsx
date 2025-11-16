@@ -21,11 +21,11 @@ export default function HeroSection() {
     const fetchPhotos = async () => {
       try {
         setLoading(true);
-        
+
         // Cloudflare Workersのエンドポイントを取得
         // 環境変数が設定されていない場合は、直接MicroCMSを呼び出す（フォールバック）
         const apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
-        
+
         if (!apiEndpoint) {
           console.warn(
             '[HeroSection] API endpoint is not set. Using direct MicroCMS access (API key will be exposed).'
