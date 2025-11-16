@@ -14,10 +14,7 @@ export async function GET() {
     }
 
     // サイトキーを返す（クライアントに公開されるが、サーバーサイドから取得するため安全）
-    return NextResponse.json(
-      { siteKey: TURNSTILE_SITE_KEY },
-      { status: 200 }
-    );
+    return NextResponse.json({ siteKey: TURNSTILE_SITE_KEY }, { status: 200 });
   } catch (error) {
     console.error('サイトキー取得エラー:', error);
     return NextResponse.json(
@@ -26,4 +23,3 @@ export async function GET() {
     );
   }
 }
-
