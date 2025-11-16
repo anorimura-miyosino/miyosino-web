@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 
+// 静的エクスポート時のビルドエラーを防ぐため
+// 実際には静的エクスポートではAPIルートは動作せず、Cloudflare Workersを使用します
+export const dynamic = 'force-static';
+
 export async function GET() {
   try {
     // サーバーサイドの環境変数からサイトキーを取得

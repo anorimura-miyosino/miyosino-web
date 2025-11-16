@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// 静的エクスポート時のビルドエラーを防ぐため
+// 実際には静的エクスポートではAPIルートは動作せず、Cloudflare Workersを使用します
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
