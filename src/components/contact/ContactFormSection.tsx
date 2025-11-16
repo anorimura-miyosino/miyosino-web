@@ -63,7 +63,10 @@ export default function ContactFormSection() {
             const baseUrl = contactApiUrl.replace(/\/$/, '');
             // /api/contactが含まれている場合は置き換え、含まれていない場合は末尾に追加
             if (baseUrl.includes('/api/contact')) {
-              apiUrl = baseUrl.replace('/api/contact', '/api/turnstile-site-key');
+              apiUrl = baseUrl.replace(
+                '/api/contact',
+                '/api/turnstile-site-key'
+              );
             } else {
               // /api/contactが含まれていない場合は、末尾に/api/turnstile-site-keyを追加
               apiUrl = `${baseUrl}/api/turnstile-site-key`;
@@ -86,27 +89,37 @@ export default function ContactFormSection() {
         console.log(
           '[ContactForm] サイトキー取得レスポンス:',
           response.status,
-          response.statusText
+          response.statusText,
+          'Content-Type:',
+          response.headers.get('content-type')
         );
 
         if (response.ok) {
           const data = await response.json();
           console.log('[ContactForm] サイトキー取得データ:', data);
+          console.log('[ContactForm] データの型:', typeof data);
+          console.log('[ContactForm] siteKeyプロパティ:', data.siteKey);
+
           const siteKey = data.siteKey || '';
-          setTurnstileSiteKey(siteKey);
           if (!siteKey) {
-            console.error('[ContactForm] サイトキーが空です');
+            console.error(
+              '[ContactForm] サイトキーが空です。レスポンスデータ:',
+              JSON.stringify(data)
+            );
           } else {
             console.log(
               '[ContactForm] サイトキー設定完了:',
               siteKey.substring(0, 10) + '...'
             );
+            setTurnstileSiteKey(siteKey);
           }
         } else {
           const errorText = await response.text();
           console.error(
             '[ContactForm] サイトキーの取得に失敗しました:',
             response.status,
+            response.statusText,
+            'エラー内容:',
             errorText
           );
         }
