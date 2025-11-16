@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// 開発時は動的に動作させる（静的エクスポート時のみforce-static）
+// 開発時は動的に動作させる
 // 本番環境（静的エクスポート）ではAPIルートは動作せず、Cloudflare Workersを使用します
-export const dynamic =
-  process.env.NODE_ENV === 'production' ? 'force-static' : 'force-dynamic';
+// ビルド時に条件式が使えないため、常にforce-dynamicに設定
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {

@@ -41,9 +41,11 @@ export default function ContactFormSection() {
       try {
         // 開発環境（localhost）では常にローカルのAPIルートを使用
         // 本番環境（静的エクスポート）では外部APIエンドポイントを使用
-        const isDevelopment = typeof window !== 'undefined' && 
-          (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-        
+        const isDevelopment =
+          typeof window !== 'undefined' &&
+          (window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1');
+
         let apiUrl: string;
         if (isDevelopment) {
           // 開発環境: ローカルのAPIルートを使用
@@ -52,17 +54,29 @@ export default function ContactFormSection() {
           // 本番環境: Cloudflare Workerを使用
           if (process.env.NEXT_PUBLIC_CONTACT_API_URL) {
             // URLの末尾のスラッシュを削除してから置き換え
-            const baseUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL.replace(/\/$/, '');
+            const baseUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL.replace(
+              /\/$/,
+              ''
+            );
             apiUrl = baseUrl.replace('/api/contact', '/api/turnstile-site-key');
           } else {
             apiUrl = '/api/turnstile-site-key';
           }
         }
 
-        console.log('[ContactForm] サイトキー取得URL:', apiUrl, 'isDevelopment:', isDevelopment);
+        console.log(
+          '[ContactForm] サイトキー取得URL:',
+          apiUrl,
+          'isDevelopment:',
+          isDevelopment
+        );
         const response = await fetch(apiUrl);
-        console.log('[ContactForm] サイトキー取得レスポンス:', response.status, response.statusText);
-        
+        console.log(
+          '[ContactForm] サイトキー取得レスポンス:',
+          response.status,
+          response.statusText
+        );
+
         if (response.ok) {
           const data = await response.json();
           console.log('[ContactForm] サイトキー取得データ:', data);
@@ -71,21 +85,34 @@ export default function ContactFormSection() {
           if (!siteKey) {
             console.error('[ContactForm] サイトキーが空です');
           } else {
-            console.log('[ContactForm] サイトキー設定完了:', siteKey.substring(0, 10) + '...');
+            console.log(
+              '[ContactForm] サイトキー設定完了:',
+              siteKey.substring(0, 10) + '...'
+            );
           }
         } else {
           const errorText = await response.text();
-          console.error('[ContactForm] サイトキーの取得に失敗しました:', response.status, errorText);
+          console.error(
+            '[ContactForm] サイトキーの取得に失敗しました:',
+            response.status,
+            errorText
+          );
         }
       } catch (error) {
         console.error('[ContactForm] サイトキー取得エラー:', error);
       } finally {
         setIsLoadingSiteKey(false);
-        console.log('[ContactForm] サイトキー読み込み完了, isLoadingSiteKey:', false, 'turnstileSiteKey:', turnstileSiteKey ? '設定済み' : '未設定');
+        console.log(
+          '[ContactForm] サイトキー読み込み完了, isLoadingSiteKey:',
+          false,
+          'turnstileSiteKey:',
+          turnstileSiteKey ? '設定済み' : '未設定'
+        );
       }
     };
 
     fetchSiteKey();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleInputChange = (
@@ -431,7 +458,10 @@ export default function ContactFormSection() {
               ref={turnstileRef}
               siteKey={turnstileSiteKey}
               onSuccess={(token) => {
-                console.log('[ContactForm] Turnstile成功:', token.substring(0, 20) + '...');
+                console.log(
+                  '[ContactForm] Turnstile成功:',
+                  token.substring(0, 20) + '...'
+                );
                 setTurnstileToken(token);
               }}
               onError={(error) => {
