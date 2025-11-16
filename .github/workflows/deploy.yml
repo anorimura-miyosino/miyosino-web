@@ -39,6 +39,12 @@ jobs:
           # お問い合わせフォーム用Workerのエンドポイント（静的エクスポートの場合に必須）
           # 例: https://miyosino-contact-api.your-subdomain.workers.dev
           NEXT_PUBLIC_CONTACT_API_URL: ${{ secrets.NEXT_PUBLIC_CONTACT_API_URL }}
+          # コンテンツ取得用Workerのエンドポイント（お知らせなど）
+          # 例: https://miyosino-contents-api.your-subdomain.workers.dev
+          NEXT_PUBLIC_CONTENTS_API_ENDPOINT: ${{ secrets.NEXT_PUBLIC_CONTENTS_API_ENDPOINT }}
+          # 写真データ取得用Workerのエンドポイント（フォールバック用）
+          # 例: https://miyosino-photos-api.your-subdomain.workers.dev
+          NEXT_PUBLIC_PHOTOS_API_ENDPOINT: ${{ secrets.NEXT_PUBLIC_PHOTOS_API_ENDPOINT }}
           # Cloudflare Turnstileのサイトキー（オプション、サーバーサイドAPI経由で取得するため不要）
           # NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
         run: npm run build
