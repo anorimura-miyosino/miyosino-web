@@ -36,8 +36,11 @@ jobs:
           # Cloudflare Workersのエンドポイント（必須）
           # 例: https://miyosino-api.your-subdomain.workers.dev
           NEXT_PUBLIC_API_ENDPOINT: ${{ secrets.NEXT_PUBLIC_API_ENDPOINT }}
-          # Cloudflare Turnstileのサイトキー（オプション）
-          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+          # お問い合わせフォーム用Workerのエンドポイント（静的エクスポートの場合に必須）
+          # 例: https://miyosino-contact-api.your-subdomain.workers.dev
+          NEXT_PUBLIC_CONTACT_API_URL: ${{ secrets.NEXT_PUBLIC_CONTACT_API_URL }}
+          # Cloudflare Turnstileのサイトキー（オプション、サーバーサイドAPI経由で取得するため不要）
+          # NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
         run: npm run build
 
       - name: Upload artifact

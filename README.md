@@ -43,14 +43,44 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
 
 2. Cloudflareにログイン:
 
+   **通常の環境（ブラウザが使用可能な場合）:**
+
    ```bash
    cd workers
    npx wrangler login
    ```
 
-3. 環境変数を設定:
+   **Dockerコンテナ内やCI/CD環境の場合:**
+
+   Cloudflare APIトークンを使用して認証します。
+   1. [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens)でAPIトークンを作成
+      - **Create Token** をクリック
+      - **Edit Cloudflare Workers** テンプレートを選択、または以下の権限を設定:
+        - Account: Cloudflare Workers: Edit
+        - Zone: 必要な権限を設定
+      - トークンを作成してコピー
+   2. 環境変数として設定:
 
    ```bash
+   export CLOUDFLARE_API_TOKEN=your-api-token-here
+   ```
+
+   または、`.dev.vars`ファイルを作成（開発環境用）:
+
+   ```bash
+   cd workers
+   cp .dev.vars.example .dev.vars
+   # .dev.varsファイルを編集してCLOUDFLARE_API_TOKENを設定
+   ```
+
+   ⚠️ **注意**: `.dev.vars`ファイルは`.gitignore`に含まれているため、Gitにコミットされません。
+
+3. 環境変数を設定:
+
+   **写真データ取得用Worker（miyosino-api）:**
+
+   ```bash
+   cd workers
    # MicroCMS APIキーを設定
    npx wrangler secret put MICROCMS_API_KEY
    # プロンプトが表示されたら、MicroCMSの読み取り専用APIキーを入力
@@ -59,15 +89,36 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
    npx wrangler secret put MICROCMS_API_BASE_URL
    ```
 
+   **お問い合わせフォーム用Worker（miyosino-contact-api）:**
+
+   ```bash
+   cd workers
+   # Cloudflare Turnstileキーを設定
+   npx wrangler secret put TURNSTILE_SITE_KEY --config wrangler.contact.toml
+   # プロンプトが表示されたら、Turnstileのサイトキーを入力
+
+   npx wrangler secret put TURNSTILE_SECRET_KEY --config wrangler.contact.toml
+   # プロンプトが表示されたら、Turnstileのシークレットキーを入力
+   ```
+
 4. Workerをデプロイ:
 
    ```bash
-   npm run worker:deploy
+   cd workers
+   # 写真データ取得用Workerをデプロイ
+   npm run deploy
    # または
-   cd workers && npx wrangler deploy
+   npx wrangler deploy
+
+   # お問い合わせフォーム用Workerをデプロイ
+   npm run deploy:contact
+   # または
+   npx wrangler deploy --config wrangler.contact.toml
    ```
 
-5. デプロイ後、WorkerのURLをコピー（例: `https://miyosino-api.your-subdomain.workers.dev`）
+5. デプロイ後、各WorkerのURLをコピー:
+   - 写真データ取得用: `https://miyosino-api.your-subdomain.workers.dev`
+   - お問い合わせフォーム用: `https://miyosino-contact-api.your-subdomain.workers.dev`
 
 #### 1-4. 環境変数の設定
 
@@ -77,6 +128,11 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
 
 - **`NEXT_PUBLIC_API_ENDPOINT`**
   - 値：Cloudflare WorkersのURL（例: `https://miyosino-api.your-subdomain.workers.dev`）
+  - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
+
+- **`NEXT_PUBLIC_CONTACT_API_URL`** (必須)
+  - 値：お問い合わせフォーム用WorkerのURL（例: `https://miyosino-contact-api.your-subdomain.workers.dev`）
+  - ⚠️ **重要**: 静的エクスポート（`output: 'export'`）を使用している場合、この環境変数は必須です
   - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
 
 **ローカル開発用（`.env.local`）:**
@@ -90,10 +146,20 @@ NEXT_PUBLIC_API_ENDPOINT=https://miyosino-api.your-subdomain.workers.dev
 ローカルでWorkerをテストする場合:
 
 ```bash
-# Workerをローカルで起動
-npm run worker:dev
+cd workers
+
+# 写真データ取得用Workerをローカルで起動
+npm run dev
+# または
+npx wrangler dev
+
+# お問い合わせフォーム用Workerをローカルで起動（別のターミナル）
+npm run dev:contact
+# または
+npx wrangler dev --config wrangler.contact.toml
 
 # 別のターミナルでNext.jsを起動
+cd ..
 npm run dev
 ```
 
@@ -122,6 +188,12 @@ MicroCMSのAPIデータを直接クライアントサイドで取得する場合
   - 値：Cloudflare Turnstileのシークレットキー（サーバーサイド検証用）
   - [Cloudflare Dashboard](https://dash.cloudflare.com/) > Turnstile > サイト設定から取得
 
+- **`TURNSTILE_SITE_KEY`**
+  - 値：Cloudflare Turnstileのサイトキー（サーバーサイドで管理、API経由でクライアントに提供）
+  - [Cloudflare Dashboard](https://dash.cloudflare.com/) > Turnstile > サイト設定から取得
+  - 未設定の場合、Turnstileウィジェットは表示されませんが、フォーム送信は動作します
+  - ⚠️ **重要**: このキーはサーバーサイドでのみ管理され、`/api/turnstile-site-key`エンドポイント経由でクライアントに提供されます。クライアントコードに直接埋め込まれることはありません。
+
 #### オプションのSecret
 
 - **`MICROCMS_API_BASE_URL`** または **`NEXT_PUBLIC_MICROCMS_API_BASE_URL`**
@@ -130,17 +202,11 @@ MicroCMSのAPIデータを直接クライアントサイドで取得する場合
   - 未設定の場合は、デフォルト値が使用されます
   - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれます
 
-- **`NEXT_PUBLIC_TURNSTILE_SITE_KEY`**
-  - 値：Cloudflare Turnstileのサイトキー（クライアントサイド表示用）
-  - [Cloudflare Dashboard](https://dash.cloudflare.com/) > Turnstile > サイト設定から取得
-  - 未設定の場合、Turnstileウィジェットは表示されませんが、フォーム送信は動作します
-  - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれます（公開されるため機密情報ではありません）
-
 - **`NEXT_PUBLIC_CONTACT_API_URL`** (オプション)
   - 値：お問い合わせフォーム送信用の外部APIエンドポイントURL
-  - 例：`https://your-api.workers.dev/api/contact` または `https://your-vercel-app.vercel.app/api/contact`
-  - ⚠️ **重要**: 静的エクスポート（`output: 'export'`）を使用している場合、Next.jsのAPIルート（`/api/contact`）は動作しません
-  - 外部APIエンドポイント（Cloudflare Workers、Vercel Functions、AWS Lambdaなど）を設定する必要があります
+  - 例：`https://miyosino-contact-api.your-subdomain.workers.dev`（お問い合わせフォーム用WorkerのURL）
+  - ⚠️ **重要**: 静的エクスポート（`output: 'export'`）を使用している場合、Next.jsのAPIルート（`/api/contact`、`/api/turnstile-site-key`）は動作しません
+  - お問い合わせフォーム用Worker（`miyosino-contact-api`）のURLを設定してください
   - 未設定の場合、フォーム送信時にエラーが発生します
 
 ### 3. ローカル開発環境の設定
@@ -158,13 +224,15 @@ NEXT_PUBLIC_API_ENDPOINT=https://miyosino-api.your-subdomain.workers.dev
 # NEXT_PUBLIC_MICROCMS_API_BASE_URL=https://k-miyoshino.microcms.io/api/v1
 
 # Cloudflare Turnstile（お問い合わせフォームのボット対策）
-NEXT_PUBLIC_TURNSTILE_SITE_KEY=your_site_key_here
+# サイトキーはサーバーサイドで管理され、API経由でクライアントに提供されます
+TURNSTILE_SITE_KEY=your_site_key_here
 TURNSTILE_SECRET_KEY=your_secret_key_here
 
 # お問い合わせフォームAPIエンドポイント（静的エクスポートの場合に必須）
+# お問い合わせフォーム用Worker（miyosino-contact-api）を使用する場合
 # ローカル開発時は '/api/contact' を使用可能（next dev の場合）
-# 本番環境では外部APIエンドポイントを設定（Cloudflare Workers、Vercel Functionsなど）
-NEXT_PUBLIC_CONTACT_API_URL=https://your-api-endpoint.com/api/contact
+# 本番環境ではお問い合わせフォーム用WorkerのURLを設定（例: https://miyosino-contact-api.your-subdomain.workers.dev）
+NEXT_PUBLIC_CONTACT_API_URL=https://miyosino-contact-api.your-subdomain.workers.dev
 ```
 
 ⚠️ **注意**: `.env.local`はGitにコミットしないでください（`.gitignore`に含まれています）
@@ -244,7 +312,7 @@ docker-compose exec web git config --global --add safe.directory /app
 2. **Turnstile** を選択
 3. 新しいサイトを追加（まだ作成していない場合）
 4. **Site Key**（サイトキー）と**Secret Key**（シークレットキー）をコピー
-   - **Site Key** → `NEXT_PUBLIC_TURNSTILE_SITE_KEY`に設定
+   - **Site Key** → `TURNSTILE_SITE_KEY`に設定（サーバーサイドでのみ管理）
    - **Secret Key** → `TURNSTILE_SECRET_KEY`に設定
 
 ⚠️ **注意**: Site Keyは公開されても問題ありませんが、Secret Keyは絶対に公開してはいけません

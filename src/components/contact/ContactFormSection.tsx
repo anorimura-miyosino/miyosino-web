@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { ContactType, CONTACT_TYPE_LABELS } from '@/types/contact';
 
@@ -31,9 +31,39 @@ export default function ContactFormSection() {
     'idle' | 'success' | 'error'
   >('idle');
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileSiteKey, setTurnstileSiteKey] = useState<string>('');
+  const [isLoadingSiteKey, setIsLoadingSiteKey] = useState(true);
   const turnstileRef = useRef<TurnstileInstance>(null);
 
-  const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
+  // サーバーサイドAPIからサイトキーを取得
+  useEffect(() => {
+    const fetchSiteKey = async () => {
+      try {
+        // 静的エクスポートの場合は外部APIエンドポイントを使用
+        // ローカル開発時は '/api/turnstile-site-key' を使用可能（next dev の場合）
+        const apiUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL
+          ? process.env.NEXT_PUBLIC_CONTACT_API_URL.replace(
+              '/api/contact',
+              '/api/turnstile-site-key'
+            )
+          : '/api/turnstile-site-key';
+
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+          const data = await response.json();
+          setTurnstileSiteKey(data.siteKey || '');
+        } else {
+          console.error('サイトキーの取得に失敗しました');
+        }
+      } catch (error) {
+        console.error('サイトキー取得エラー:', error);
+      } finally {
+        setIsLoadingSiteKey(false);
+      }
+    };
+
+    fetchSiteKey();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -362,11 +392,11 @@ export default function ContactFormSection() {
         </div>
 
         {/* Cloudflare Turnstile */}
-        {TURNSTILE_SITE_KEY && (
+        {!isLoadingSiteKey && turnstileSiteKey && (
           <div className="flex justify-center">
             <Turnstile
               ref={turnstileRef}
-              siteKey={TURNSTILE_SITE_KEY}
+              siteKey={turnstileSiteKey}
               onSuccess={(token) => setTurnstileToken(token)}
               onError={() => setTurnstileToken(null)}
               onExpire={() => setTurnstileToken(null)}

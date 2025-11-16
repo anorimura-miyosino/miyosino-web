@@ -3,10 +3,12 @@
 
 export default {
   async fetch(request, env) {
+    const url = new URL(request.url);
+    
     // CORSヘッダーの設定
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*', // 本番では実際のドメインを指定
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
 
@@ -15,14 +17,32 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    if (request.method !== 'POST') {
-      return new Response('Method not allowed', { 
-        status: 405,
-        headers: corsHeaders 
-      });
+    // サイトキー取得エンドポイント
+    if (url.pathname === '/api/turnstile-site-key' && request.method === 'GET') {
+      const TURNSTILE_SITE_KEY = env.TURNSTILE_SITE_KEY;
+      
+      if (!TURNSTILE_SITE_KEY) {
+        return new Response(
+          JSON.stringify({ error: 'サイトキーが設定されていません' }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ siteKey: TURNSTILE_SITE_KEY }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
-    try {
+    // お問い合わせフォーム送信エンドポイント
+    if (url.pathname === '/api/contact' && request.method === 'POST') {
+      try {
       const body = await request.json();
       const { turnstileToken, ...formData } = body;
 
@@ -94,7 +114,14 @@ export default {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
+      }
     }
+
+    // その他のリクエストは404を返す
+    return new Response('Not found', { 
+      status: 404,
+      headers: corsHeaders 
+    });
   },
 };
 

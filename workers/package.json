@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
+    "dev:contact": "wrangler dev --config wrangler.contact.toml",
+    "deploy:contact": "wrangler deploy --config wrangler.contact.toml",
     "build": "tsc",
     "build:watch": "tsc --watch"
   },
