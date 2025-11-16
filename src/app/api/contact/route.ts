@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // 開発時は動的に動作させる
-// 本番環境（静的エクスポート）ではAPIルートは動作せず、Cloudflare Workersを使用します
-// ビルド時に条件式が使えないため、常にforce-dynamicに設定
-export const dynamic = 'force-dynamic';
+// 本番環境（静的エクスポート）ではAPIルートは自動的に除外され、Cloudflare Workersを使用します
+// 静的エクスポート時はdynamicを設定できないため、削除（開発時は自動的に動的ルートとして動作）
 
 export async function POST(request: NextRequest) {
   try {
