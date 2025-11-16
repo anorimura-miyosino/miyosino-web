@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
-// 開発時は動的に動作させる
-// 本番環境（静的エクスポート）ではAPIルートは自動的に除外され、Cloudflare Workersを使用します
-// 静的エクスポート時はdynamicを設定できないため、削除（開発時は自動的に動的ルートとして動作）
+// 静的エクスポート時はforce-staticを設定（ビルドエラー回避）
+// 開発時はnext.config.tsでoutput: 'export'が無効化されているため、動的に動作
+export const dynamic = 'force-static';
 
 export async function GET() {
   try {

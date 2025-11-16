@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "prebuild": "node scripts/exclude-api-routes.js",
     "build": "next build",
+    "postbuild": "node scripts/restore-api-routes.js",
     "start": "next start",
     "lint": "eslint",
     "worker:dev": "cd workers && wrangler dev",
