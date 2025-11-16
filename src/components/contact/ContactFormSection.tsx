@@ -52,15 +52,27 @@ export default function ContactFormSection() {
           apiUrl = '/api/turnstile-site-key';
         } else {
           // 本番環境: Cloudflare Workerを使用
-          if (process.env.NEXT_PUBLIC_CONTACT_API_URL) {
-            // URLの末尾のスラッシュを削除してから置き換え
-            const baseUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL.replace(
-              /\/$/,
-              ''
-            );
-            apiUrl = baseUrl.replace('/api/contact', '/api/turnstile-site-key');
+          const contactApiUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL;
+          console.log(
+            '[ContactForm] NEXT_PUBLIC_CONTACT_API_URL:',
+            contactApiUrl
+          );
+
+          if (contactApiUrl) {
+            // URLの末尾のスラッシュを削除
+            const baseUrl = contactApiUrl.replace(/\/$/, '');
+            // /api/contactが含まれている場合は置き換え、含まれていない場合は末尾に追加
+            if (baseUrl.includes('/api/contact')) {
+              apiUrl = baseUrl.replace('/api/contact', '/api/turnstile-site-key');
+            } else {
+              // /api/contactが含まれていない場合は、末尾に/api/turnstile-site-keyを追加
+              apiUrl = `${baseUrl}/api/turnstile-site-key`;
+            }
           } else {
-            apiUrl = '/api/turnstile-site-key';
+            console.error(
+              '[ContactForm] NEXT_PUBLIC_CONTACT_API_URLが設定されていません'
+            );
+            apiUrl = '/api/turnstile-site-key'; // フォールバック（動作しない）
           }
         }
 
