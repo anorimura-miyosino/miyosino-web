@@ -1,45 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type {
+  News,
+  MicroCMSNews,
+  MicroCMSNewsListResponse,
+} from '@/types/news';
 
-// NewsSection component
-
-// 仮のお知らせデータ（後でMicroCMSから取得する予定）
-const newsItems = [
-  {
-    id: '1',
-    title: '2024年度 自治会総会の開催について',
-    date: '2024-12-15',
-    category: '自治会',
-    excerpt: '2024年度の自治会総会を以下の日程で開催いたします。',
-    content:
-      '2024年度の自治会総会を以下の日程で開催いたします。\n\n日時：2024年12月20日（金）19:00～\n場所：集会所\n\n議題：\n- 2024年度の活動報告\n- 2025年度の活動計画\n- 予算案の審議\n\n皆様のご参加をお願いいたします。',
-    isImportant: true,
-  },
-  {
-    id: '2',
-    title: '年末年始のごみ収集スケジュール',
-    date: '2024-12-10',
-    category: 'お知らせ',
-    excerpt: '年末年始期間中のごみ収集スケジュールをご確認ください。',
-    content:
-      '年末年始期間中のごみ収集スケジュールについてお知らせいたします。\n\n12月29日（日）：通常通り\n12月30日（月）：通常通り\n12月31日（火）：休止\n1月1日（水）：休止\n1月2日（木）：休止\n1月3日（金）：休止\n1月4日（土）：通常通り\n\n大型ごみの収集については、事前にお問い合わせください。',
-    isImportant: false,
-  },
-  {
-    id: '3',
-    title: '団地内イベント「もちつき大会」開催のお知らせ',
-    date: '2024-12-05',
-    category: 'イベント',
-    excerpt:
-      '恒例のもちつき大会を開催いたします。皆様のご参加をお待ちしております。',
-    content:
-      '恒例のもちつき大会を開催いたします。\n\n日時：2024年12月23日（月・祝）10:00～14:00\n場所：団地内広場\n\n内容：\n- もちつき体験\n- おもちの試食\n- お楽しみ抽選会\n\n参加費：無料\n\n皆様のご参加をお待ちしております。',
-    isImportant: false,
-  },
-];
-
-type NewsItem = (typeof newsItems)[number];
+type NewsItem = News;
 
 function NewsModal({
   item,
@@ -56,10 +24,11 @@ function NewsModal({
   useEffect(() => {
     if (isOpen && item) {
       setShouldRender(true);
-      // アニメーション開始のため、少し遅延を入れる
-      requestAnimationFrame(() => {
+      // アニメーション開始のため、DOMに追加された後に少し遅延を入れる
+      const timer = setTimeout(() => {
         setIsAnimating(true);
-      });
+      }, 10);
+      return () => clearTimeout(timer);
     } else {
       setIsAnimating(false);
       // アニメーション完了後にDOMから削除
@@ -76,7 +45,7 @@ function NewsModal({
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 ease-in-out ${
         isAnimating ? 'opacity-100' : 'opacity-0'
-      } bg-black bg-opacity-30 backdrop-blur-sm`}
+      } bg-black/30 backdrop-blur-sm`}
       onClick={onClose}
     >
       <div
@@ -88,16 +57,19 @@ function NewsModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                item.isImportant
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-green-100 text-green-800'
-              }`}
-            >
-              {item.category}
-            </span>
+          <div className="flex items-center gap-3 flex-wrap">
+            {item.category.map((cat, index) => (
+              <span
+                key={index}
+                className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  item.isImportant
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-green-100 text-green-800'
+                }`}
+              >
+                {cat}
+              </span>
+            ))}
             {item.isImportant && (
               <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">
                 重要
@@ -140,11 +112,10 @@ function NewsModal({
             </time>
           </div>
 
-          <div className="prose prose-sm max-w-none">
-            <p className="text-gray-700 whitespace-pre-line leading-relaxed">
-              {item.content}
-            </p>
-          </div>
+          <div
+            className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: item.content }}
+          />
         </div>
 
         <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end">
@@ -161,8 +132,151 @@ function NewsModal({
 }
 
 export default function NewsSection() {
+  const [newsItems, setNewsItems] = useState<News[]>([]);
   const [selectedItem, setSelectedItem] = useState<NewsItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Cloudflare Workers経由でMicroCMSからお知らせデータを取得
+  // APIキーはサーバーサイド（Cloudflare Workers）で管理され、クライアントに露出しません
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoading(true);
+
+        // Cloudflare Workersのエンドポイントを取得
+        // NEXT_PUBLIC_CONTENTS_API_ENDPOINTが設定されていない場合は、NEXT_PUBLIC_PHOTOS_API_ENDPOINTをベースに推測
+        const contentsApiEndpoint =
+          process.env.NEXT_PUBLIC_CONTENTS_API_ENDPOINT ||
+          process.env.NEXT_PUBLIC_PHOTOS_API_ENDPOINT?.replace(
+            'miyosino-photos-api',
+            'miyosino-contents-api'
+          );
+
+        if (!contentsApiEndpoint) {
+          console.error(
+            '[NewsSection] API endpoint is not set. Please configure NEXT_PUBLIC_CONTENTS_API_ENDPOINT or NEXT_PUBLIC_PHOTOS_API_ENDPOINT environment variable.'
+          );
+          setLoading(false);
+          return;
+        }
+
+        // Cloudflare Workers経由で取得
+        const url = new URL(contentsApiEndpoint);
+        url.searchParams.append('category', 'news'); // カテゴリIDでフィルタ（category.idが"news"のものを取得）
+        url.searchParams.append('orders', '-date'); // 日付の降順（新しい順）
+        url.searchParams.append('getAll', 'true'); // 全件取得（ページネーションで取得）
+
+        const response = await fetch(url.toString(), {
+          cache: 'no-store',
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch news: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const data: MicroCMSNewsListResponse = await response.json();
+
+        // デバッグ: 取得した全データのIDを確認
+        const allIds = data.contents.map((item) => item.id);
+        console.log(
+          `[NewsSection] 取得した全データ数: ${data.contents.length}, 全ID: [${allIds.join(', ')}]`
+        );
+        const targetId = 'f2mxyeesekf';
+        if (allIds.includes(targetId)) {
+          console.log(
+            `[NewsSection] ✅ ターゲットID "${targetId}" が取得データに含まれています`
+          );
+        } else {
+          console.log(
+            `[NewsSection] ❌ ターゲットID "${targetId}" が取得データに含まれていません`
+          );
+        }
+
+        // クライアント側でカテゴリフィルタリング（category.idが"news"のもののみ）
+        const filteredContents = data.contents.filter((news: MicroCMSNews) => {
+          // categoryが配列で、その中にidが"news"のものがあるかチェック
+          if (!Array.isArray(news.category)) {
+            return false;
+          }
+
+          // デバッグ: 各アイテムのカテゴリ情報を確認
+          const categoryIds = news.category
+            .map((cat) => cat?.id)
+            .filter(Boolean);
+          const hasNews = news.category.some((cat) => cat && cat.id === 'news');
+
+          console.log(
+            `[NewsSection] "${news.title}": カテゴリ数=${news.category.length}, カテゴリID=[${categoryIds.join(', ')}], news含む=${hasNews}`
+          );
+
+          return hasNews;
+        });
+
+        if (filteredContents.length === 0) {
+          // 全カテゴリIDを表示
+          const allCategoryIds = new Set<string>();
+          data.contents.forEach((item) => {
+            if (Array.isArray(item.category)) {
+              item.category.forEach((cat) => {
+                if (cat?.id) {
+                  allCategoryIds.add(cat.id);
+                }
+              });
+            }
+          });
+          console.log(
+            '[NewsSection] 存在するカテゴリID:',
+            Array.from(allCategoryIds)
+          );
+        }
+
+        console.log(
+          '[NewsSection] フィルタリング後のデータ数:',
+          filteredContents.length
+        );
+
+        const fetchedNews: News[] = filteredContents.map(
+          (news: MicroCMSNews) => {
+            const newsWithOptional = news as MicroCMSNews & {
+              description?: string;
+              body?: string;
+            };
+            const categories = Array.isArray(news.category)
+              ? news.category.map((cat) => cat.name).filter(Boolean)
+              : ['お知らせ']; // 複数のカテゴリ名を配列で保持
+
+            // デバッグ: カテゴリ情報を確認
+            console.log(
+              `[NewsSection] "${news.title}": カテゴリ数=${news.category?.length || 0}, カテゴリ名=[${categories.join(', ')}]`
+            );
+
+            return {
+              id: news.id,
+              createdAt: new Date(news.createdAt),
+              updatedAt: new Date(news.updatedAt),
+              title: news.title,
+              date: news.date || news.createdAt.split('T')[0], // dateがない場合はcreatedAtから取得
+              category: categories,
+              excerpt: news.excerpt || newsWithOptional.description || '', // excerptがない場合はdescriptionを使用
+              content: news.content || newsWithOptional.body || '', // contentがない場合はbodyを使用
+              isImportant: news.isImportant || false,
+            };
+          }
+        );
+
+        setNewsItems(fetchedNews);
+      } catch (error) {
+        console.error('[NewsSection] お知らせ取得エラー:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
 
   const handleOpenModal = (item: NewsItem) => {
     setSelectedItem(item);
@@ -190,52 +304,69 @@ export default function NewsSection() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {newsItems.map((item) => (
-              <article
-                key={item.id}
-                onClick={() => handleOpenModal(item)}
-                className={`bg-gray-50 hover:bg-green-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-t border-r border-b border-gray-300 cursor-pointer ${
-                  item.isImportant ? 'border-l-green-600' : 'border-l-green-600'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      item.isImportant
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-green-100 text-green-800'
-                    }`}
-                  >
-                    {item.category}
-                  </span>
-                  {item.isImportant && (
-                    <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">
-                      重要
-                    </span>
-                  )}
-                </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">お知らせを読み込み中...</p>
+            </div>
+          ) : newsItems.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-600">お知らせはありません。</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {newsItems.map((item) => (
+                <article
+                  key={item.id}
+                  onClick={() => handleOpenModal(item)}
+                  className={`bg-gray-50 hover:bg-green-50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border-l-4 border-t border-r border-b border-gray-300 cursor-pointer ${
+                    item.isImportant
+                      ? 'border-l-green-600'
+                      : 'border-l-green-600'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {item.category.map((cat, index) => (
+                        <span
+                          key={index}
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            item.isImportant
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-green-100 text-green-800'
+                          }`}
+                        >
+                          {cat}
+                        </span>
+                      ))}
+                    </div>
+                    {item.isImportant && (
+                      <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-semibold">
+                        重要
+                      </span>
+                    )}
+                  </div>
 
-                <h3 className="text-lg font-semibold text-gray-800 mb-3 line-clamp-2">
-                  {item.title}
-                </h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3 line-clamp-2">
+                    {item.title}
+                  </h3>
 
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                  {item.excerpt}
-                </p>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {item.excerpt}
+                  </p>
 
-                <div className="flex items-center justify-end">
-                  <time className="text-sm text-gray-500">
-                    {new Date(item.date).toLocaleDateString('ja-JP', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </time>
-                </div>
-              </article>
-            ))}
-          </div>
+                  <div className="flex items-center justify-end">
+                    <time className="text-sm text-gray-500">
+                      {new Date(item.date).toLocaleDateString('ja-JP', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </time>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

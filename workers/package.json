@@ -7,6 +7,8 @@
     "deploy": "wrangler deploy",
     "dev:contact": "wrangler dev --config wrangler.contact.toml",
     "deploy:contact": "wrangler deploy --config wrangler.contact.toml",
+    "dev:contents": "wrangler dev --config wrangler.contents.toml",
+    "deploy:contents": "wrangler deploy --config wrangler.contents.toml",
     "build": "tsc",
     "build:watch": "tsc --watch"
   },

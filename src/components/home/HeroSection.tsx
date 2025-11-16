@@ -23,11 +23,11 @@ export default function HeroSection() {
         setLoading(true);
 
         // Cloudflare Workersのエンドポイントを取得
-        const apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
+        const apiEndpoint = process.env.NEXT_PUBLIC_PHOTOS_API_ENDPOINT;
 
         if (!apiEndpoint) {
           console.error(
-            '[HeroSection] API endpoint is not set. Please configure NEXT_PUBLIC_API_ENDPOINT environment variable.'
+            '[HeroSection] API endpoint is not set. Please configure NEXT_PUBLIC_PHOTOS_API_ENDPOINT environment variable.'
           );
           setLoading(false);
           return;
