@@ -1,7 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export',
+  // 開発時は静的エクスポートを無効化（HMRとAPIルートを有効にするため）
+  ...(process.env.NODE_ENV === 'production' && { output: 'export' }),
   trailingSlash: true,
   images: {
     unoptimized: true,
