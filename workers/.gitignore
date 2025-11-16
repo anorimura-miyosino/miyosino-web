@@ -1,0 +1,16 @@
+# TypeScript コンパイル出力
+dist/
+*.js
+*.js.map
+
+# Wrangler
+.wrangler/
+.dev.vars
+
+# 環境変数
+.env
+.env.local
+
+# 依存関係
+node_modules/
+

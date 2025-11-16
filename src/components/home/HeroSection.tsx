@@ -15,30 +15,79 @@ export default function HeroSection() {
   const [imageError, setImageError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // クライアントサイドでMicroCMSから写真データをリアルタイム取得
+  // サーバーサイド（Cloudflare Workers）経由でMicroCMSから写真データを取得
+  // APIキーはサーバーサイドで管理され、クライアントに露出しません
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
         setLoading(true);
-        const baseURL =
-          process.env.NEXT_PUBLIC_MICROCMS_API_BASE_URL ||
-          'https://k-miyoshino.microcms.io/api/v1';
-        const apiKey = process.env.NEXT_PUBLIC_MICROCMS_API_KEY || '';
+        
+        // Cloudflare Workersのエンドポイントを取得
+        // 環境変数が設定されていない場合は、直接MicroCMSを呼び出す（フォールバック）
+        const apiEndpoint = process.env.NEXT_PUBLIC_API_ENDPOINT;
+        
+        if (!apiEndpoint) {
+          console.warn(
+            '[HeroSection] API endpoint is not set. Using direct MicroCMS access (API key will be exposed).'
+          );
+          // フォールバック: 直接MicroCMSを呼び出す（開発用）
+          const baseURL =
+            process.env.NEXT_PUBLIC_MICROCMS_API_BASE_URL ||
+            'https://k-miyoshino.microcms.io/api/v1';
+          const apiKey = process.env.NEXT_PUBLIC_MICROCMS_API_KEY || '';
 
-        if (!apiKey) {
-          console.warn('[HeroSection] MicroCMS API key is not set');
-          setLoading(false);
+          if (!apiKey) {
+            console.warn('[HeroSection] MicroCMS API key is not set');
+            setLoading(false);
+            return;
+          }
+
+          const endpoint = `${baseURL}/photo`;
+          const url = new URL(endpoint);
+          url.searchParams.append('orders', 'order');
+
+          const response = await fetch(url.toString(), {
+            headers: {
+              'X-MICROCMS-API-KEY': apiKey,
+            },
+            cache: 'no-store',
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch photos: ${response.status} ${response.statusText}`
+            );
+          }
+
+          const data: MicroCMSPhotoListResponse = await response.json();
+          const fetchedPhotos: Photo[] = data.contents.map(
+            (photo: MicroCMSPhoto) => ({
+              id: photo.id,
+              createdAt: new Date(photo.createdAt),
+              updatedAt: new Date(photo.updatedAt),
+              title: photo.title,
+              description: photo.description,
+              photo: photo.photo,
+              order: photo.order,
+            })
+          );
+
+          setPhotos(fetchedPhotos);
+
+          if (fetchedPhotos.length > 0) {
+            const defaultPhoto = fetchedPhotos.reduce((prev, current) =>
+              prev.order <= current.order ? prev : current
+            );
+            setSelectedPhoto(defaultPhoto);
+          }
           return;
         }
 
-        const endpoint = `${baseURL}/photo`;
-        const url = new URL(endpoint);
+        // Cloudflare Workers経由で取得
+        const url = new URL(apiEndpoint);
         url.searchParams.append('orders', 'order');
 
         const response = await fetch(url.toString(), {
-          headers: {
-            'X-MICROCMS-API-KEY': apiKey,
-          },
           cache: 'no-store',
         });
 

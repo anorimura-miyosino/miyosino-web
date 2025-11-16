@@ -1,0 +1,7 @@
+# Cloudflare API Token
+# このファイルをコピーして .dev.vars を作成し、実際のトークンを設定してください
+# cp .dev.vars.example .dev.vars
+# その後、.dev.vars を編集して CLOUDFLARE_API_TOKEN に実際のトークンを設定
+
+CLOUDFLARE_API_TOKEN=your-api-token-here
+
