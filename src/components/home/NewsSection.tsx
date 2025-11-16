@@ -86,6 +86,7 @@ export default function NewsSection() {
                 <Link
                   href={`/news/${item.id}`}
                   className="text-green-600 hover:text-green-700 text-sm font-semibold transition-colors"
+                  prefetch={false}
                 >
                   詳細を見る →
                 </Link>
@@ -99,6 +100,7 @@ export default function NewsSection() {
           <Link
             href="/news"
             className="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+            prefetch={false}
           >
             すべてのお知らせを見る
             <svg
