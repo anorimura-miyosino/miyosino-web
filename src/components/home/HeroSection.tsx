@@ -82,7 +82,7 @@ export default function HeroSection() {
   // ローディング中または写真が空の場合、または画像読み込みエラーの場合のフォールバック
   if (loading || !selectedPhoto || photos.length === 0 || imageError) {
     return (
-      <section className="relative bg-gradient-to-br from-green-50 to-green-100 overflow-hidden h-[50vh] min-h-[400px]">
+      <section className="relative bg-gradient-to-br from-green-50 to-green-100 overflow-hidden h-[70vh] min-h-[500px]">
         <div className="absolute inset-0">
           <div className="absolute top-10 left-10 w-20 h-20 bg-green-200 rounded-full opacity-30"></div>
           <div className="absolute top-32 right-20 w-16 h-16 bg-green-300 rounded-full opacity-40"></div>
@@ -97,7 +97,7 @@ export default function HeroSection() {
   return (
     <section className="relative overflow-hidden flex flex-col">
       {/* 背景写真 */}
-      <div className="relative h-[50vh] min-h-[400px]">
+      <div className="relative h-[70vh] min-h-[500px]">
         <div className="absolute inset-0">
           <Image
             src={selectedPhoto.photo.url}
@@ -143,11 +143,10 @@ export default function HeroSection() {
               <button
                 key={photo.id}
                 onClick={() => setSelectedPhoto(photo)}
-                className={`relative w-16 h-16 rounded overflow-hidden transition-all duration-200 ${
-                  selectedPhoto.id === photo.id
-                    ? 'ring-2 ring-green-600 ring-offset-2 scale-110'
-                    : 'hover:scale-105 opacity-70 hover:opacity-100'
-                }`}
+                className={`relative w-16 h-16 rounded overflow-hidden transition-all duration-200 ${selectedPhoto.id === photo.id
+                  ? 'ring-2 ring-green-600 ring-offset-2 scale-110'
+                  : 'hover:scale-105 opacity-70 hover:opacity-100'
+                  }`}
                 aria-label={`写真を選択: ${photo.title}`}
               >
                 <Image
@@ -168,5 +167,26 @@ export default function HeroSection() {
 }
 
 function HeroContent() {
-  return <div className="relative h-full w-full"></div>;
+  return (
+    <div className="relative h-full w-full flex items-start pt-12 md:pt-16 lg:pt-24">
+      <div className="w-full px-4 sm:px-6 lg:px-12">
+        <div className="text-left text-white z-10 max-w-5xl">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 tracking-widest drop-shadow-lg opacity-0 animate-fade-in-up whitespace-nowrap">
+            かわつる三芳野団地へようこそ。
+          </h1>
+          <p className="text-sm md:text-base lg:text-lg mb-10 font-light tracking-wider drop-shadow-md opacity-0 animate-fade-in-up delay-300">
+            団地の活動と暮らしをご紹介します。
+          </p>
+          <div className="opacity-0 animate-fade-in-up delay-500">
+            <a
+              href="/features"
+              className="inline-block bg-white/90 text-green-800 hover:bg-white px-8 py-3 rounded-full font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 backdrop-blur-sm"
+            >
+              団地の特徴を見る
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

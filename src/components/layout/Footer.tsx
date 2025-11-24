@@ -18,9 +18,7 @@ export default function Footer() {
               <br />
               埼玉県川越市、武蔵野台地の北端で、豊かな緑に包まれた団地空間。
               <br />
-              そこには、安心感のある暮らしとコミュニティが息づいています。
-              <br />
-              新しい生活を、ここから始めてみませんか。
+              ここには、安心感のある暮らしとコミュニティが息づいています。
             </p>
           </div>
 
@@ -38,14 +36,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/family"
-                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
-                >
-                  子育て環境の魅力を見る
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/community"
                   className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
@@ -58,14 +48,6 @@ export default function Footer() {
                   className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   共有施設・サービス
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/info"
-                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
-                >
-                  お知らせ
                 </Link>
               </li>
             </ul>

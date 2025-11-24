@@ -21,7 +21,7 @@ const highlights = [
       '団地内および周辺に公園が複数あり、子供たちがのびのびと遊べます。近隣には保育園や小学校もあり、子育て世代に安心の環境です。',
     icon: UsersIcon,
     color: 'blue',
-    link: '/family',
+    link: '/shared-facilities',
   },
   {
     name: '快適な住空間',
@@ -77,11 +77,8 @@ export default function FeaturesHighlightSection() {
     <section className="py-20 bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
-            かわつる三芳野団地へようこそ
-          </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            当団地の魅力をご紹介します。
+            かわつる三芳野団地のホームページです。当団地の魅力をご紹介します。
           </p>
         </div>
 

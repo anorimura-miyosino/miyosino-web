@@ -28,7 +28,7 @@ export default function Header() {
                   M
                 </span>
               </div>
-              <span className="text-lg lg:text-xl font-bold text-gray-900">
+              <span className="text-lg lg:text-xl font-bold text-gray-900 tracking-wide">
                 かわつる三芳野団地
               </span>
             </Link>
