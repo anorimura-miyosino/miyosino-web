@@ -3,7 +3,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'サイトマップ | かわつる三芳野団地',
-    description: 'かわつる三芳野団地のサイトマップです。各ページへのリンクを一覧でご案内しています。',
+    description:
+        'かわつる三芳野団地のサイトマップです。各ページへのリンクを一覧でご案内しています。',
 };
 
 type SitemapItem = {
@@ -21,28 +22,76 @@ const sitemapData: SitemapSection[] = [
     {
         title: 'メインメニュー',
         items: [
-            { title: 'ホーム', href: '/', description: 'トップページへ戻ります' },
-            { title: '団地の特長', href: '/features', description: 'かわつる三芳野団地の魅力をご紹介します' },
-            { title: 'コミュニティ', href: '/community', description: '団地内のコミュニティ活動について' },
-            { title: '共有施設・サービス', href: '/shared-facilities', description: '集会所や公園などの施設案内' },
-            { title: '周辺環境', href: '/surrounding', description: 'お買い物や病院、学校などの周辺情報' },
-            { title: 'アクセス', href: '/access', description: '団地への交通アクセス' },
+            {
+                title: 'ホーム',
+                href: '/',
+                description: 'トップページへ戻ります',
+            },
+            {
+                title: '団地の特長',
+                href: '/features',
+                description: 'かわつる三芳野団地の魅力をご紹介します',
+            },
+            {
+                title: 'コミュニティ',
+                href: '/community',
+                description: '団地内のコミュニティ活動について',
+            },
+            {
+                title: '共有施設・サービス',
+                href: '/shared-facilities',
+                description: '集会所や公園などの施設案内',
+            },
+            {
+                title: '周辺環境',
+                href: '/surrounding',
+                description: 'お買い物や病院、学校などの周辺情報',
+            },
+            {
+                title: 'アクセス',
+                href: '/access',
+                description: '団地への交通アクセス',
+            },
         ],
     },
     {
         title: '居住者・入居検討中の方へ',
         items: [
-            { title: '子育て・ファミリー', href: '/family', description: '子育て環境やファミリー向け情報' },
-            { title: '管理組合について', href: '/management', description: '管理組合の活動や組織について' },
-            { title: '組合員専用ページ', href: '/member', description: '居住者専用の情報ページ（要ログイン）' },
+            {
+                title: '子育て・ファミリー',
+                href: '/family',
+                description: '子育て環境やファミリー向け情報',
+            },
+            {
+                title: '管理組合について',
+                href: '/management',
+                description: '管理組合の活動や組織について',
+            },
+            {
+                title: '組合員専用ページ',
+                href: '/member',
+                description: '居住者専用の情報ページ（要ログイン）',
+            },
         ],
     },
     {
         title: 'その他',
         items: [
-            { title: 'お問い合わせ', href: '/contact', description: 'ご質問・ご相談はこちらから' },
-            { title: 'プライバシーポリシー', href: '/privacy', description: '個人情報の取り扱いについて' },
-            { title: 'サイトマップ', href: '/sitemap', description: 'このページです' },
+            {
+                title: 'お問い合わせ',
+                href: '/contact',
+                description: 'ご質問・ご相談はこちらから',
+            },
+            {
+                title: 'プライバシーポリシー',
+                href: '/privacy',
+                description: '個人情報の取り扱いについて',
+            },
+            {
+                title: 'サイトマップ',
+                href: '/sitemap',
+                description: 'このページです',
+            },
         ],
     },
 ];
@@ -62,17 +111,17 @@ export default function SitemapPage() {
 
                 <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     {sitemapData.map((section) => (
-                        <div key={section.title} className="bg-gray-50 rounded-2xl p-8 shadow-sm ring-1 ring-gray-900/5">
+                        <div
+                            key={section.title}
+                            className="bg-gray-50 rounded-2xl p-8 shadow-sm ring-1 ring-gray-900/5"
+                        >
                             <h2 className="text-xl font-semibold leading-7 text-gray-900 border-b border-gray-200 pb-4 mb-6">
                                 {section.title}
                             </h2>
                             <ul className="space-y-4">
                                 {section.items.map((item) => (
                                     <li key={item.href}>
-                                        <Link
-                                            href={item.href}
-                                            className="group block"
-                                        >
+                                        <Link href={item.href} className="group block">
                                             <span className="text-base font-medium text-green-700 group-hover:text-green-900 transition-colors">
                                                 {item.title}
                                             </span>
