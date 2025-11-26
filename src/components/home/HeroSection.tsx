@@ -143,9 +143,11 @@ export default function HeroSection() {
               <button
                 key={photo.id}
                 onClick={() => setSelectedPhoto(photo)}
-                className={`relative w-16 h-16 rounded overflow-hidden transition-all duration-200 ${selectedPhoto.id === photo.id
-                  ? 'ring-2 ring-green-600 ring-offset-2 scale-110'
-                  : 'hover:scale-105 opacity-70 hover:opacity-100'
+                className={`relative w-16 h-16 rounded overflow-hidden transition-all duration-200
+                  ${
+                    selectedPhoto.id === photo.id
+                      ? 'ring-2 ring-green-600 ring-offset-2 scale-110'
+                      : 'hover:scale-105 opacity-70 hover:opacity-100'
                   }`}
                 aria-label={`写真を選択: ${photo.title}`}
               >
