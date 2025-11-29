@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   checkAuthStatus,
   redirectToLogin,
@@ -13,8 +13,13 @@ import {
 
 export default function MemberPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const hasCheckedAuth = useRef(false);
 
   useEffect(() => {
+    // React Strict Modeで2回実行されるのを防ぐ
+    if (hasCheckedAuth.current) return;
+    hasCheckedAuth.current = true;
+
     async function verifyAuth() {
       // URLからトークンを取得してlocalStorageに保存（認証後のリダイレクト時）
       handleAuthCallback();

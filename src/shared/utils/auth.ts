@@ -29,25 +29,36 @@ export interface AuthStatus {
 export function handleAuthCallback(): void {
   if (typeof window === 'undefined') return;
 
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('token');
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
 
-  console.log('[Auth Debug] URL:', window.location.href);
-  console.log('[Auth Debug] Token from URL:', token ? 'Found' : 'Not found');
+    console.log('[Auth Debug] URL:', window.location.href);
+    console.log('[Auth Debug] Token from URL:', token ? 'Found' : 'Not found');
 
-  if (token) {
-    // トークンをlocalStorageに保存
-    localStorage.setItem(TOKEN_KEY, token);
-    console.log('[Auth Debug] Token saved to localStorage');
+    if (token) {
+      // トークンをlocalStorageに保存
+      localStorage.setItem(TOKEN_KEY, token);
+      console.log('[Auth Debug] Token saved to localStorage');
 
-    // URLからトークンを削除（セキュリティ対策）
-    params.delete('token');
-    const newUrl =
-      window.location.pathname +
-      (params.toString() ? '?' + params.toString() : '') +
-      window.location.hash;
-    window.history.replaceState({}, '', newUrl);
-    console.log('[Auth Debug] URL cleaned:', newUrl);
+      // 保存されたことを確認
+      const savedToken = localStorage.getItem(TOKEN_KEY);
+      console.log(
+        '[Auth Debug] Token verification:',
+        savedToken ? 'OK' : 'FAILED'
+      );
+
+      // URLからトークンを削除（セキュリティ対策）
+      params.delete('token');
+      const newUrl =
+        window.location.pathname +
+        (params.toString() ? '?' + params.toString() : '') +
+        window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+      console.log('[Auth Debug] URL cleaned:', newUrl);
+    }
+  } catch (error) {
+    console.error('[Auth] handleAuthCallback error:', error);
   }
 }
 
