@@ -21,22 +21,30 @@ export default function MemberPage() {
     hasCheckedAuth.current = true;
 
     async function verifyAuth() {
+      console.log('[Member Page] Starting auth verification');
+      
       // URLからトークンを取得してlocalStorageに保存（認証後のリダイレクト時）
-      handleAuthCallback();
+      const tokenSaved = handleAuthCallback();
+      console.log('[Member Page] Token saved from callback:', tokenSaved);
 
-      // handleAuthCallbackの処理が完了するまで少し待つ
-      // (同期処理だが、念のため次のイベントループで実行)
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      // トークンが保存された場合、少し待つ
+      if (tokenSaved) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
 
+      console.log('[Member Page] Checking auth status...');
       const status = await checkAuthStatus();
+      console.log('[Member Page] Auth status:', status);
 
       if (!status.authenticated) {
+        console.log('[Member Page] Not authenticated, redirecting to login');
         // 未認証の場合、ログインページへリダイレクト
         // 引数なしで呼び出すことで、現在のURL（basePathを含む）がそのまま使われる
         redirectToLogin();
         return;
       }
 
+      console.log('[Member Page] Authenticated, showing page');
       setIsLoading(false);
     }
 

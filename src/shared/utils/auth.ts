@@ -25,9 +25,10 @@ export interface AuthStatus {
 /**
  * URLからトークンを取得してlocalStorageに保存
  * 認証後のリダイレクト時に呼び出される
+ * @returns トークンが保存された場合true、そうでない場合false
  */
-export function handleAuthCallback(): void {
-  if (typeof window === 'undefined') return;
+export function handleAuthCallback(): boolean {
+  if (typeof window === 'undefined') return false;
 
   try {
     const params = new URLSearchParams(window.location.search);
@@ -47,6 +48,7 @@ export function handleAuthCallback(): void {
         '[Auth Debug] Token verification:',
         savedToken ? 'OK' : 'FAILED'
       );
+      console.log('[Auth Debug] Token match:', savedToken === token);
 
       // URLからトークンを削除（セキュリティ対策）
       params.delete('token');
@@ -56,9 +58,13 @@ export function handleAuthCallback(): void {
         window.location.hash;
       window.history.replaceState({}, '', newUrl);
       console.log('[Auth Debug] URL cleaned:', newUrl);
+      
+      return true;
     }
+    return false;
   } catch (error) {
     console.error('[Auth] handleAuthCallback error:', error);
+    return false;
   }
 }
 
