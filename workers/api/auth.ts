@@ -140,16 +140,23 @@ function corsHeaders(origin?: string): Record<string, string> {
     const allowedOrigins = [
         'http://localhost:3000',
         'https://anorimura.github.io',
+        'https://anorimura-miyosino.github.io',
         // 必要に応じて追加
     ];
 
+    console.log('[CORS] Received origin:', origin);
+    console.log('[CORS] Allowed origins:', allowedOrigins);
+    console.log('[CORS] Origin in allowed list:', origin && allowedOrigins.includes(origin));
+
     const allowOrigin =
         origin && allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+    
+    console.log('[CORS] Selected origin:', allowOrigin);
 
     return {
         'Access-Control-Allow-Origin': allowOrigin,
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Cookie',
+        'Access-Control-Allow-Headers': 'Content-Type, Cookie, Authorization',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Max-Age': '86400',
     };
@@ -160,8 +167,12 @@ export default {
         const url = new URL(request.url);
         const origin = request.headers.get('Origin') || undefined;
 
+        console.log('[Auth] Request:', request.method, url.pathname);
+        console.log('[Auth] Origin header:', origin);
+
         // CORSプリフライトリクエストの処理
         if (request.method === 'OPTIONS') {
+            console.log('[Auth] Handling OPTIONS preflight request');
             return new Response(null, {
                 headers: corsHeaders(origin),
             });
