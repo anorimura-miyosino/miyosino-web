@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Metadata } from 'next';
 import { checkAuthStatus, redirectToLogin, logout } from '@/shared/utils/auth';
 
 // Note: metadata export is not supported in client components
@@ -9,7 +8,6 @@ import { checkAuthStatus, redirectToLogin, logout } from '@/shared/utils/auth';
 
 export default function MemberPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     async function verifyAuth() {
@@ -21,7 +19,6 @@ export default function MemberPage() {
         return;
       }
 
-      setIsAuthenticated(true);
       setIsLoading(false);
     }
 
