@@ -15,7 +15,8 @@ export default function MemberPage() {
 
       if (!status.authenticated) {
         // 未認証の場合、ログインページへリダイレクト
-        redirectToLogin('/member/');
+        // 引数なしで呼び出すことで、現在のURL（basePathを含む）がそのまま使われる
+        redirectToLogin();
         return;
       }
 
