@@ -145,12 +145,19 @@ export async function logout(): Promise<void> {
 
     // localStorageからトークンを削除
     localStorage.removeItem(TOKEN_KEY);
-    window.location.href = '/';
+
+    // GitHub Pages（デモ環境）ではbasePathを使用、本番環境ではルート
+    // ホスト名がgithub.ioを含む場合はGitHub Pages（デモ環境）
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const basePath = isGitHubPages ? '/miyosino-web' : '';
+    window.location.href = basePath + '/';
   } catch (error) {
     console.error('[Auth] Logout failed:', error);
     // エラーが発生してもトークンは削除してトップページへ
     localStorage.removeItem(TOKEN_KEY);
-    window.location.href = '/';
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const basePath = isGitHubPages ? '/miyosino-web' : '';
+    window.location.href = basePath + '/';
   }
 }
 

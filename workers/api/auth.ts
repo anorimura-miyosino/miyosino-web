@@ -139,9 +139,9 @@ function corsHeaders(origin?: string): Record<string, string> {
     // 本番環境では特定のオリジンのみ許可することを推奨
     const allowedOrigins = [
         'http://localhost:3000',
-        'https://anorimura.github.io',
         'https://anorimura-miyosino.github.io',
-        // 必要に応じて追加
+        // 本番環境ドメイン
+        'https://www.k-miyosino.com',
     ];
 
     console.log('[CORS] Received origin:', origin);
