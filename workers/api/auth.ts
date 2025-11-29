@@ -379,6 +379,8 @@ async function handleCallback(
         const redirectUrl = new URL(redirectUri);
         redirectUrl.searchParams.set('token', jwt);
 
+        console.log('[Auth] Redirecting to:', redirectUrl.toString());
+
         const headers = new Headers({
             Location: redirectUrl.toString(),
             ...corsHeaders(origin),

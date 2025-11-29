@@ -19,6 +19,10 @@ export default function MemberPage() {
       // URLからトークンを取得してlocalStorageに保存（認証後のリダイレクト時）
       handleAuthCallback();
 
+      // handleAuthCallbackの処理が完了するまで少し待つ
+      // (同期処理だが、念のため次のイベントループで実行)
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const status = await checkAuthStatus();
 
       if (!status.authenticated) {
