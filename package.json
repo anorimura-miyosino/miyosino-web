@@ -9,18 +9,9 @@
     "postbuild": "node scripts/restore-api-routes.js",
     "start": "next start",
     "lint": "eslint",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "worker:dev": "cd workers && wrangler dev",
-    "worker:deploy": "cd workers && wrangler deploy",
-    "prepare": "husky install"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.{json,md,css}": [
-      "prettier --write"
-    ]
+    "worker:deploy": "cd workers && wrangler deploy"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
