@@ -235,7 +235,18 @@ async function handleLogin(
     env: Env,
     origin?: string
 ): Promise<Response> {
-    const redirectUri = url.searchParams.get('redirect_uri') || '/member/';
+    let redirectUri = url.searchParams.get('redirect_uri') || '/member/';
+    
+    // redirectUriが相対パスの場合、絶対URLに変換
+    try {
+        new URL(redirectUri);
+        // 既に絶対URLの場合はそのまま
+    } catch {
+        // 相対パスの場合、originを使って絶対URLに変換
+        const baseOrigin = origin || url.origin;
+        redirectUri = new URL(redirectUri, baseOrigin).toString();
+    }
+    
     const state = crypto.randomUUID();
 
     // Kintone OAuth認証URLを構築
@@ -376,7 +387,20 @@ async function handleCallback(
         const jwt = await generateJWT(jwtPayload, env.JWT_SECRET);
 
         // JWTをURLパラメータとして渡す（クロスドメインCookie問題の回避）
-        const redirectUrl = new URL(redirectUri);
+        // redirectUriが相対パスの場合、originを使って絶対URLに変換
+        let redirectUrl: URL;
+        try {
+            // 既に絶対URLの場合はそのまま使う
+            redirectUrl = new URL(redirectUri);
+        } catch {
+            // 相対パスの場合、originを使って絶対URLに変換
+            // originが指定されている場合はそれを使い、なければRefererヘッダーから取得
+            const baseOrigin = origin || request.headers.get('Origin') || request.headers.get('Referer')?.match(/^https?:\/\/[^/]+/)?.[0];
+            if (!baseOrigin) {
+                throw new Error('Cannot determine base URL for redirect');
+            }
+            redirectUrl = new URL(redirectUri, baseOrigin);
+        }
         redirectUrl.searchParams.set('token', jwt);
 
         console.log('[Auth] Redirecting to:', redirectUrl.toString());
