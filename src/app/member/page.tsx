@@ -22,7 +22,7 @@ export default function MemberPage() {
 
     async function verifyAuth() {
       console.log('[Member Page] Starting auth verification');
-      
+
       // URLからトークンを取得してlocalStorageに保存（認証後のリダイレクト時）
       const tokenSaved = handleAuthCallback();
       console.log('[Member Page] Token saved from callback:', tokenSaved);

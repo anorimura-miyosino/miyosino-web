@@ -58,7 +58,7 @@ export function handleAuthCallback(): boolean {
         window.location.hash;
       window.history.replaceState({}, '', newUrl);
       console.log('[Auth Debug] URL cleaned:', newUrl);
-      
+
       return true;
     }
     return false;
