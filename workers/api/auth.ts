@@ -375,16 +375,14 @@ async function handleCallback(
 
         const jwt = await generateJWT(jwtPayload, env.JWT_SECRET);
 
-        // JWTをCookieに保存してリダイレクト
+        // JWTをURLパラメータとして渡す（クロスドメインCookie問題の回避）
+        const redirectUrl = new URL(redirectUri);
+        redirectUrl.searchParams.set('token', jwt);
+
         const headers = new Headers({
-            Location: redirectUri,
+            Location: redirectUrl.toString(),
             ...corsHeaders(origin),
         });
-
-        headers.append(
-            'Set-Cookie',
-            `auth_token=${jwt}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${60 * 60 * 24 * 7}`
-        );
 
         // 一時的なCookieを削除
         headers.append(
@@ -424,8 +422,11 @@ async function handleVerify(
     env: Env,
     origin?: string
 ): Promise<Response> {
-    const cookies = parseCookies(request.headers.get('Cookie') || '');
-    const token = cookies.auth_token;
+    // Authorization ヘッダーからトークンを取得（localStorage方式）
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.startsWith('Bearer ')
+        ? authHeader.substring(7)
+        : null;
 
     if (!token) {
         return new Response(JSON.stringify({ authenticated: false }), {
@@ -468,21 +469,14 @@ async function handleVerify(
     );
 }
 
-// ログアウト
+// ログアウト（localStorage方式ではクライアント側で削除）
 async function handleLogout(origin?: string): Promise<Response> {
-    const headers = new Headers({
-        Location: '/',
-        ...corsHeaders(origin),
-    });
-
-    headers.append(
-        'Set-Cookie',
-        'auth_token=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0'
-    );
-
-    return new Response(null, {
-        status: 302,
-        headers,
+    return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders(origin),
+        },
     });
 }
 
@@ -492,8 +486,11 @@ async function handleGetUser(
     env: Env,
     origin?: string
 ): Promise<Response> {
-    const cookies = parseCookies(request.headers.get('Cookie') || '');
-    const token = cookies.auth_token;
+    // Authorization ヘッダーからトークンを取得（localStorage方式）
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.startsWith('Bearer ')
+        ? authHeader.substring(7)
+        : null;
 
     if (!token) {
         return new Response(JSON.stringify({ error: 'Not authenticated' }), {

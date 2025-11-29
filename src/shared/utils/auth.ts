@@ -2,11 +2,14 @@
  * 認証関連のユーティリティ関数
  *
  * Kintone OAuth 2.0認証を使用した認証状態の管理
+ * localStorage方式（クロスドメインCookie問題の回避）
  */
 
 const AUTH_API_ENDPOINT =
   process.env.NEXT_PUBLIC_AUTH_API_URL ||
   'https://miyosino-auth.anorimura-miyosino.workers.dev';
+
+const TOKEN_KEY = 'auth_token';
 
 export interface AuthUser {
   id: string;
@@ -20,15 +23,57 @@ export interface AuthStatus {
 }
 
 /**
+ * URLからトークンを取得してlocalStorageに保存
+ * 認証後のリダイレクト時に呼び出される
+ */
+export function handleAuthCallback(): void {
+  if (typeof window === 'undefined') return;
+
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+
+  if (token) {
+    // トークンをlocalStorageに保存
+    localStorage.setItem(TOKEN_KEY, token);
+
+    // URLからトークンを削除（セキュリティ対策）
+    params.delete('token');
+    const newUrl =
+      window.location.pathname +
+      (params.toString() ? '?' + params.toString() : '') +
+      window.location.hash;
+    window.history.replaceState({}, '', newUrl);
+  }
+}
+
+/**
+ * localStorageからトークンを取得
+ */
+function getToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+/**
  * 認証状態を確認
  */
 export async function checkAuthStatus(): Promise<AuthStatus> {
   try {
+    const token = getToken();
+
+    if (!token) {
+      return { authenticated: false };
+    }
+
     const response = await fetch(`${AUTH_API_ENDPOINT}/verify`, {
-      credentials: 'include', // Cookieを含める
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {
+      // トークンが無効な場合は削除
+      localStorage.removeItem(TOKEN_KEY);
       return { authenticated: false };
     }
 
@@ -58,12 +103,23 @@ export function redirectToLogin(redirectUri?: string): void {
  */
 export async function logout(): Promise<void> {
   try {
-    await fetch(`${AUTH_API_ENDPOINT}/logout`, {
-      credentials: 'include',
-    });
+    const token = getToken();
+
+    if (token) {
+      await fetch(`${AUTH_API_ENDPOINT}/logout`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
+
+    // localStorageからトークンを削除
+    localStorage.removeItem(TOKEN_KEY);
     window.location.href = '/';
   } catch (error) {
     console.error('[Auth] Logout failed:', error);
+    // エラーが発生してもトークンは削除してトップページへ
+    localStorage.removeItem(TOKEN_KEY);
     window.location.href = '/';
   }
 }
@@ -73,8 +129,16 @@ export async function logout(): Promise<void> {
  */
 export async function getUserInfo(): Promise<AuthUser | null> {
   try {
+    const token = getToken();
+
+    if (!token) {
+      return null;
+    }
+
     const response = await fetch(`${AUTH_API_ENDPOINT}/user`, {
-      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!response.ok) {

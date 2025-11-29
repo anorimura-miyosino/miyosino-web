@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { checkAuthStatus, redirectToLogin, logout } from '@/shared/utils/auth';
+import {
+  checkAuthStatus,
+  redirectToLogin,
+  logout,
+  handleAuthCallback,
+} from '@/shared/utils/auth';
 
 // Note: metadata export is not supported in client components
 // Move metadata to layout.tsx if needed
@@ -11,6 +16,9 @@ export default function MemberPage() {
 
   useEffect(() => {
     async function verifyAuth() {
+      // URLからトークンを取得してlocalStorageに保存（認証後のリダイレクト時）
+      handleAuthCallback();
+
       const status = await checkAuthStatus();
 
       if (!status.authenticated) {
