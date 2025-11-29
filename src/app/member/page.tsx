@@ -1,17 +1,72 @@
-import { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: '組合員専用ページ | かわつる三芳野団地',
-  description:
-    'かわつる三芳野団地の組合員専用ページです。組合員向けの情報やサービスをご利用いただけます。',
-};
+import { useEffect, useState } from 'react';
+import { Metadata } from 'next';
+import { checkAuthStatus, redirectToLogin, logout } from '@/shared/utils/auth';
+
+// Note: metadata export is not supported in client components
+// Move metadata to layout.tsx if needed
 
 export default function MemberPage() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    async function verifyAuth() {
+      const status = await checkAuthStatus();
+
+      if (!status.authenticated) {
+        // 未認証の場合、ログインページへリダイレクト
+        redirectToLogin('/member/');
+        return;
+      }
+
+      setIsAuthenticated(true);
+      setIsLoading(false);
+    }
+
+    verifyAuth();
+  }, []);
+
+  // ローディング中
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-gray-600">認証状態を確認中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 認証済みの場合のみコンテンツを表示
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダーセクション */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
+          <div className="absolute top-4 right-4 sm:top-8 sm:right-8">
+            <button
+              onClick={() => logout()}
+              className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg transition-colors flex items-center text-sm shadow-md"
+            >
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              ログアウト
+            </button>
+          </div>
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
               <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-3">

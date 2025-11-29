@@ -9,6 +9,8 @@
     "deploy:contact": "wrangler deploy --config wrangler.contact.toml",
     "dev:contents": "wrangler dev --config wrangler.contents.toml",
     "deploy:contents": "wrangler deploy --config wrangler.contents.toml",
+    "dev:auth": "wrangler dev --config wrangler.auth.toml",
+    "deploy:auth": "wrangler deploy --config wrangler.auth.toml",
     "build": "tsc",
     "build:watch": "tsc --watch"
   },
@@ -18,4 +20,3 @@
     "typescript": "^5"
   }
 }
-

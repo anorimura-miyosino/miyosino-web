@@ -5,3 +5,9 @@
 
 CLOUDFLARE_API_TOKEN=your-api-token-here
 
+# Kintone OAuth 2.0 認証設定（認証Worker用）
+# Kintone管理画面で OAuth 2.0 クライアントを登録後、以下を設定
+KINTONE_DOMAIN=your-subdomain.cybozu.com
+KINTONE_CLIENT_ID=your-client-id
+KINTONE_CLIENT_SECRET=your-client-secret
+JWT_SECRET=your-random-secret-key-here

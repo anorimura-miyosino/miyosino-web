@@ -30,6 +30,16 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '2mb',
     },
   },
+  // Docker環境でのホットリロード対応（開発時のみ）
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.watchOptions = {
+        poll: 1000, // 1秒ごとにファイル変更をチェック
+        aggregateTimeout: 300, // 変更検知後300ms待ってからリロード
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

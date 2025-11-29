@@ -101,6 +101,27 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
    # プロンプトが表示されたら、Turnstileのシークレットキーを入力
    ```
 
+   **Kintone OAuth 2.0認証用Worker（miyosino-auth）:**
+
+   ```bash
+   cd workers
+   # Kintone OAuth 2.0設定
+   npx wrangler secret put KINTONE_DOMAIN --config wrangler.auth.toml
+   # プロンプトが表示されたら、Kintoneのドメインを入力（例: your-subdomain.cybozu.com）
+
+   npx wrangler secret put KINTONE_CLIENT_ID --config wrangler.auth.toml
+   # プロンプトが表示されたら、Kintone OAuth 2.0のClient IDを入力
+
+   npx wrangler secret put KINTONE_CLIENT_SECRET --config wrangler.auth.toml
+   # プロンプトが表示されたら、Kintone OAuth 2.0のClient Secretを入力
+
+   npx wrangler secret put JWT_SECRET --config wrangler.auth.toml
+   # プロンプトが表示されたら、ランダムな文字列を入力（例: openssl rand -base64 32 で生成）
+   ```
+
+   ⚠️ **注意**: Kintone OAuth 2.0認証を使用するには、事前にKintone管理画面でOAuth 2.0クライアントの登録が必要です。詳細は後述の「Kintone OAuth 2.0設定」を参照してください。
+
+
 4. Workerをデプロイ:
 
    ```bash
@@ -114,11 +135,17 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
    npm run deploy:contact
    # または
    npx wrangler deploy --config wrangler.contact.toml
+
+   # Kintone OAuth 2.0認証用Workerをデプロイ
+   npm run deploy:auth
+   # または
+   npx wrangler deploy --config wrangler.auth.toml
    ```
 
 5. デプロイ後、各WorkerのURLをコピー:
-   - 写真データ取得用: `https://miyosino-api.your-subdomain.workers.dev`
+   - 写真データ取得用: `https://miyosino-photos-api.your-subdomain.workers.dev`
    - お問い合わせフォーム用: `https://miyosino-contact-api.your-subdomain.workers.dev`
+   - Kintone OAuth 2.0認証用: `https://miyosino-auth.your-subdomain.workers.dev`
 
 #### 1-4. 環境変数の設定
 
@@ -135,10 +162,16 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
   - ⚠️ **重要**: 静的エクスポート（`output: 'export'`）を使用している場合、この環境変数は必須です
   - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
 
+- **`NEXT_PUBLIC_AUTH_API_URL`** (組合員専用ページを使用する場合に必須)
+  - 値：Kintone OAuth 2.0認証用WorkerのURL（例: `https://miyosino-auth.your-subdomain.workers.dev`）
+  - ⚠️ **重要**: 組合員専用ページ（`/member/`）にアクセス制限を設定する場合、この環境変数は必須です
+  - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
+
 **ローカル開発用（`.env.local`）:**
 
 ```bash
 NEXT_PUBLIC_API_ENDPOINT=https://miyosino-api.your-subdomain.workers.dev
+NEXT_PUBLIC_AUTH_API_URL=https://miyosino-auth.your-subdomain.workers.dev
 ```
 
 #### 1-5. ローカル開発でのWorkerテスト
@@ -316,6 +349,26 @@ docker-compose exec web git config --global --add safe.directory /app
    - **Secret Key** → `TURNSTILE_SECRET_KEY`に設定
 
 ⚠️ **注意**: Site Keyは公開されても問題ありませんが、Secret Keyは絶対に公開してはいけません
+
+#### Kintone OAuth 2.0設定
+
+組合員専用ページ（`/member/`）にアクセス制限を設定する場合、Kintone OAuth 2.0クライアントの登録が必要です。
+
+1. [Kintone](https://www.cybozu.com/jp/kintone/)にログイン
+2. 管理画面にアクセス
+3. **設定** > **OAuth 2.0クライアント** を選択
+4. **新しいクライアントを追加** をクリック
+5. 以下の情報を入力：
+   - **クライアント名**: 任意の名前（例: `みよしのウェブサイト`）
+   - **リダイレクトURI**: `https://miyosino-auth.your-subdomain.workers.dev/callback`
+     - `your-subdomain`は、Cloudflare Workersのサブドメインに置き換えてください
+     - 例: `https://miyosino-auth.abc123.workers.dev/callback`
+   - **スコープ**: `k:app_record:read`（最小限の権限）
+6. **保存** をクリック
+7. **Client ID** と **Client Secret** をコピーして保存
+   - これらの値は、Cloudflare Workersの環境変数設定で使用します
+
+⚠️ **重要**: Client Secretは絶対に公開しないでください。Cloudflare Workersの環境変数として安全に管理されます。
 
 ### 6. ビルドとデプロイ
 
