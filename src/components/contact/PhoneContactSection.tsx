@@ -28,7 +28,10 @@ export default function PhoneContactSection() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border-2 border-green-600 p-8 lg:p-10 relative">
+    <div
+      id="phone"
+      className="bg-white rounded-2xl shadow-lg border-2 border-green-600 p-8 lg:p-10 relative"
+    >
       {/* セクション識別用のバッジ */}
       <div className="absolute top-4 right-4 bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">
         電話

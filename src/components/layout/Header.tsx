@@ -17,7 +17,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-white shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 lg:h-16">
           {/* ロゴ */}
@@ -154,7 +154,7 @@ export default function Header() {
               </Link> */}
               <Link
                 href="/contact"
-                className="bg-green-600 text-white block px-3 py-2 text-base font-medium rounded-lg mx-3 mt-2 hover:bg-green-600 transition-colors duration-200"
+                className="bg-green-600 text-white px-3 py-2 text-base font-medium rounded-lg mx-3 mt-2 hover:bg-green-600 transition-colors duration-200 flex items-center justify-center"
                 onClick={() => setIsMenuOpen(false)}
               >
                 お問い合わせ

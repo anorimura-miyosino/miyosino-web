@@ -1,9 +1,9 @@
 'use client';
 
-import { managementSections } from './data';
+import { contactSections } from './data';
 
 export function TableOfContents() {
-  const sections = managementSections.map(({ id, label, icon }) => ({
+  const sections = contactSections.map(({ id, label, icon }) => ({
     id,
     label,
     icon,
@@ -43,3 +43,4 @@ export function TableOfContents() {
     </nav>
   );
 }
+

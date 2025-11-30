@@ -232,7 +232,10 @@ export default function ContactFormSection() {
     turnstileToken;
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border-2 border-blue-500 p-8 lg:p-10 relative">
+    <div
+      id="form"
+      className="bg-white rounded-2xl shadow-lg border-2 border-blue-500 p-8 lg:p-10 relative"
+    >
       {/* セクション識別用のバッジ */}
       <div className="absolute top-4 right-4 bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
         フォーム
