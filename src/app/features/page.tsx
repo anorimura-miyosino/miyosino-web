@@ -1,5 +1,4 @@
 import {
-  OverviewSection,
   OrganizationManagementSection,
   SeasonsSection,
   HistorySection,
@@ -9,7 +8,7 @@ import {
 export const metadata = {
   title: '団地の特徴 | かわつる三芳野団地',
   description:
-    'かわつる三芳野団地の特徴をご紹介。団地の概要、組織・あゆみなど、団地の魅力を詳しく解説します。',
+    'かわつる三芳野団地の特徴をご紹介します。運営体制やあゆみ、四季の様子など、団地の魅力を解説します。',
 };
 
 export default function FeaturesPage() {
@@ -20,16 +19,15 @@ export default function FeaturesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">団地の特徴</h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-            かわつる三芳野団地の魅力と特徴を詳しくご紹介
+            かわつる三芳野団地の特徴をご紹介します。
             <br />
-            団地の概要、組織・あゆみ、四季の様子など、団地の魅力を解説します
+            運営体制やあゆみ、四季の様子など、団地の魅力を解説します。
           </p>
         </div>
       </section>
 
       <TableOfContents />
 
-      <OverviewSection />
       <OrganizationManagementSection />
       <SeasonsSection />
       <HistorySection />

@@ -210,14 +210,14 @@ const historyData = [
     events: [
       {
         event: '第3回、大規模修繕工事実施',
-        description: '',
+        description: '外壁塗装や扉交換、中層棟はインナーサッシ取付による断熱化など',
       },
     ],
   },
 ];
 
 export function HistorySection() {
-  const sectionMeta = featuresSections[3];
+  const sectionMeta = featuresSections[2];
 
   return (
     <section

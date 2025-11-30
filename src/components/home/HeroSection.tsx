@@ -9,8 +9,7 @@ import type {
 } from '@/types/media';
 
 export default function HeroSection() {
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const [heroPhoto, setHeroPhoto] = useState<Photo | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -60,14 +59,12 @@ export default function HeroSection() {
           })
         );
 
-        setPhotos(fetchedPhotos);
-
-        // orderが最小の写真をデフォルトとして設定
+        // orderが最小の写真のみを設定
         if (fetchedPhotos.length > 0) {
-          const defaultPhoto = fetchedPhotos.reduce((prev, current) =>
+          const minOrderPhoto = fetchedPhotos.reduce((prev, current) =>
             prev.order <= current.order ? prev : current
           );
-          setSelectedPhoto(defaultPhoto);
+          setHeroPhoto(minOrderPhoto);
         }
       } catch (error) {
         console.error('[HeroSection] 写真取得エラー:', error);
@@ -80,7 +77,7 @@ export default function HeroSection() {
   }, []);
 
   // ローディング中または写真が空の場合、または画像読み込みエラーの場合のフォールバック
-  if (loading || !selectedPhoto || photos.length === 0 || imageError) {
+  if (loading || !heroPhoto || imageError) {
     return (
       <section className="relative bg-gradient-to-br from-green-50 to-green-100 overflow-hidden h-[70vh] min-h-[500px]">
         <div className="absolute inset-0">
@@ -100,8 +97,8 @@ export default function HeroSection() {
       <div className="relative h-[70vh] min-h-[500px]">
         <div className="absolute inset-0">
           <Image
-            src={selectedPhoto.photo.url}
-            alt={selectedPhoto.title || 'ヒーロー画像'}
+            src={heroPhoto.photo.url}
+            alt={heroPhoto.title || 'ヒーロー画像'}
             fill
             priority
             className="object-cover"
@@ -118,7 +115,7 @@ export default function HeroSection() {
             onError={() => {
               console.error(
                 '[HeroSection] 画像読み込みエラー:',
-                selectedPhoto.photo.url
+                heroPhoto.photo.url
               );
               setImageError(true);
               setImageLoaded(false);
@@ -134,36 +131,6 @@ export default function HeroSection() {
 
         <HeroContent />
       </div>
-
-      {/* 写真選択UI（複数写真がある場合のみ表示） */}
-      {photos.length > 1 && (
-        <div className="flex justify-center py-4 bg-white/90 backdrop-blur-sm">
-          <div className="flex gap-2">
-            {photos.map((photo) => (
-              <button
-                key={photo.id}
-                onClick={() => setSelectedPhoto(photo)}
-                className={`relative w-16 h-16 rounded overflow-hidden transition-all duration-200
-                  ${
-                    selectedPhoto.id === photo.id
-                      ? 'ring-2 ring-green-600 ring-offset-2 scale-110'
-                      : 'hover:scale-105 opacity-70 hover:opacity-100'
-                  }`}
-                aria-label={`写真を選択: ${photo.title}`}
-              >
-                <Image
-                  src={photo.photo.url}
-                  alt={photo.title}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                  unoptimized
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 }

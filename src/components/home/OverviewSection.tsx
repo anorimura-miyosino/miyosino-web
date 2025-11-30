@@ -1,4 +1,4 @@
-import { featuresSections } from './data';
+import { featuresSections } from '../features/data';
 
 const overviewData = {
   location: {
@@ -15,7 +15,7 @@ const overviewData = {
   scale: {
     title: '団地規模・施設',
     description:
-      '総戸数548戸の中規模の団地です。5階建ての中層棟がXX戸、2階建てテラスハウスがXX戸で構成されています。昭和57年（1982年）8月25日に入居開始し、長年にわたって多くの住民に愛されています。',
+      '総戸数548戸の中規模の団地です。5階建ての中層棟と2階建てテラスハウスで構成されています。昭和57年（1982年）8月25日に入居開始し、長年にわたって多くの住民に愛されています。',
     details: [
       '総戸数：548戸',
       '入居開始：昭和57年（1982年）8月25日',

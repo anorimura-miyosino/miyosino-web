@@ -76,12 +76,6 @@ export default function FeaturesHighlightSection() {
   return (
     <section className="py-20 bg-gradient-to-b from-gray-50 to-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            かわつる三芳野団地のホームページです。当団地の魅力をご紹介します。
-          </p>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {highlights.map((highlight) => {
             const colors =

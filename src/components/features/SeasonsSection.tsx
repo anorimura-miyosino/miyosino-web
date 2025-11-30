@@ -48,7 +48,7 @@ const seasonsData = [
 ];
 
 export function SeasonsSection() {
-  const sectionMeta = featuresSections[2];
+  const sectionMeta = featuresSections[1];
 
   return (
     <section
