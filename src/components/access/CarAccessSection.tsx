@@ -111,7 +111,9 @@ export function CarAccessSection() {
                   </p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">臨時来客駐車場(届出制)</p>
+                  <p className="text-sm text-gray-600">
+                    臨時来客駐車場(届出制)
+                  </p>
                   <p className="text-lg font-semibold text-gray-900">
                     都度調整（一部有料）
                   </p>
@@ -186,4 +188,3 @@ export function CarAccessSection() {
     </section>
   );
 }
-

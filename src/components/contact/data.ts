@@ -15,4 +15,3 @@ export const contactSections = [
     title: 'お問い合わせフォーム',
   },
 ];
-
