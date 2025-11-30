@@ -1,53 +1,104 @@
-import { featuresSections } from './data';
+'use client';
 
-const seasonsData = [
-  {
-    season: '春',
-    icon: '🌸',
-    description:
-      '桜の花が咲き誇る春、団地内の緑が新緑に芽吹き、美しい花々が咲き始めます。住民の皆さんが花見を楽しみ、新しい生活の始まりを実感する季節です。',
-    highlights: [
-      '桜並木の開花時期には、住民同士が集まって花見を楽しむ光景が見られます',
-      '新緑に包まれた団地内を散策するのに最適な季節',
-      '春の訪れとともに、団地内の花壇にも色とりどりの花が咲き誇ります',
-    ],
-  },
-  {
-    season: '夏',
-    icon: '🌻',
-    description:
-      '青々と茂る緑に囲まれ、子どもたちの笑い声が響き渡る夏。プールや公園では、家族連れや子どもたちがのびのびと過ごす姿が見られます。',
-    highlights: [
-      '団地内のプールでは、夏休み期間中に子どもたちが水遊びを楽しみます',
-      '夏祭りなどの地域イベントが開催され、住民同士の交流が深まります',
-      '緑豊かな環境が涼しさを提供し、心地よい生活環境を演出します',
-    ],
-  },
-  {
-    season: '秋',
-    icon: '🍂',
-    description:
-      '紅葉が美しく色づく秋、団地内の木々が黄金色や真っ赤に染まります。さわやかな空気の中で、住民の皆さんが団地内を散策する姿が多く見られます。',
-    highlights: [
-      '団地内の樹木が紅葉し、美しい風景が広がります',
-      '秋晴れの日には、団地内を散策する住民の姿が増えます',
-      '収穫の季節を迎え、地域の交流イベントも開催されます',
-    ],
-  },
-  {
-    season: '冬',
-    icon: '❄️',
-    description:
-      '静かに雪が降り積もる冬、団地は静寂に包まれながらも、住民の温かい交流で暖かさが感じられます。クリスマス会などのイベントで、コミュニティの絆が深まります。',
-    highlights: [
-      '雪が降ると、団地内が銀世界に変わり、美しい風景が広がります',
-      'クリスマス会など、冬のイベントが開催され、住民同士の交流が深まります',
-      '冬の静けさの中で、団地の落ち着いた雰囲気を味わえます',
-    ],
-  },
-];
+import { useState, useEffect } from 'react';
+import { featuresSections } from './data';
+import type {
+  Season,
+  MicroCMSSeason,
+  MicroCMSSeasonListResponse,
+} from '@/types/seasons';
 
 export function SeasonsSection() {
+  const [seasonsData, setSeasonsData] = useState<Season[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Cloudflare Workers経由でMicroCMSから四季データを取得
+  // APIキーはサーバーサイド（Cloudflare Workers）で管理され、クライアントに露出しません
+  useEffect(() => {
+    const fetchSeasons = async () => {
+      try {
+        setLoading(true);
+
+        // Cloudflare Workersのエンドポイントを取得
+        const contentsApiEndpoint =
+          process.env.NEXT_PUBLIC_CONTENTS_API_ENDPOINT ||
+          process.env.NEXT_PUBLIC_PHOTOS_API_ENDPOINT?.replace(
+            'miyosino-photos-api',
+            'miyosino-contents-api'
+          );
+
+        if (!contentsApiEndpoint) {
+          console.error(
+            '[SeasonsSection] API endpoint is not set. Please configure NEXT_PUBLIC_CONTENTS_API_ENDPOINT or NEXT_PUBLIC_PHOTOS_API_ENDPOINT environment variable.'
+          );
+          setLoading(false);
+          return;
+        }
+
+        // Cloudflare Workers経由で取得
+        const url = new URL(contentsApiEndpoint);
+        url.searchParams.append('category', 'season'); // カテゴリIDでフィルタ
+        url.searchParams.append('orders', 'order'); // 表示順でソート
+        url.searchParams.append('getAll', 'true'); // 全件取得
+
+        const response = await fetch(url.toString(), {
+          cache: 'no-store',
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch seasons: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const data: MicroCMSSeasonListResponse = await response.json();
+
+        console.log(
+          `[SeasonsSection] 取得した全データ数: ${data.contents.length}`
+        );
+
+        // クライアント側でカテゴリフィルタリング（category.idが"season"のもののみ）
+        const filteredContents = data.contents.filter(
+          (season: MicroCMSSeason) => {
+            if (!Array.isArray(season.category)) {
+              return false;
+            }
+            return season.category.some((cat) => cat && cat.id === 'season');
+          }
+        );
+
+        console.log(
+          `[SeasonsSection] フィルタリング後のデータ数: ${filteredContents.length}`
+        );
+
+        // orderでソート（0=春、1=夏、2=秋、3=冬）
+        const sortedContents = filteredContents.sort(
+          (a, b) => (a.order || 0) - (b.order || 0)
+        );
+
+        const fetchedSeasons: Season[] = sortedContents.map(
+          (season: MicroCMSSeason) => ({
+            id: season.id,
+            createdAt: new Date(season.createdAt),
+            updatedAt: new Date(season.updatedAt),
+            title: season.title,
+            description: season.description,
+            body: season.body,
+            order: season.order,
+          })
+        );
+
+        setSeasonsData(fetchedSeasons);
+      } catch (error) {
+        console.error('[SeasonsSection] 四季データ取得エラー:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSeasons();
+  }, []);
+
   const sectionMeta = featuresSections[1];
 
   return (
@@ -69,40 +120,37 @@ export function SeasonsSection() {
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          {seasonsData.map((season, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-start rounded-2xl bg-gradient-to-br from-gray-50 to-white p-8 shadow-sm ring-1 ring-gray-200 hover:shadow-md transition-shadow duration-300"
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="text-5xl">{season.icon}</div>
-                <h3 className="text-2xl font-bold text-gray-900">
-                  {season.season}
-                </h3>
+        {loading ? (
+          <div className="text-center py-12 mt-16">
+            <p className="text-gray-600">四季の情報を読み込み中...</p>
+          </div>
+        ) : seasonsData.length === 0 ? (
+          <div className="text-center py-12 mt-16">
+            <p className="text-gray-600">四季の情報はありません。</p>
+          </div>
+        ) : (
+          <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+            {seasonsData.map((season) => (
+              <div
+                key={season.id}
+                className="flex flex-col items-start rounded-2xl bg-gradient-to-br from-gray-50 to-white p-8 shadow-sm ring-1 ring-gray-200 hover:shadow-md transition-shadow duration-300"
+              >
+                <div className="mb-6">
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    {season.title}
+                  </h3>
+                </div>
+                <p className="text-base leading-7 text-gray-600 mb-6">
+                  {season.description}
+                </p>
+                <div
+                  className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: season.body }}
+                />
               </div>
-              <p className="text-base leading-7 text-gray-600 mb-6">
-                {season.description}
-              </p>
-              <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-gray-900">
-                  この季節の見どころ：
-                </h4>
-                <ul className="space-y-2">
-                  {season.highlights.map((highlight, highlightIndex) => (
-                    <li
-                      key={highlightIndex}
-                      className="flex items-start gap-2 text-sm text-gray-600"
-                    >
-                      <span className="text-green-600 mt-1">•</span>
-                      <span>{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
