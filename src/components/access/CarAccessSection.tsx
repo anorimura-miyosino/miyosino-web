@@ -95,19 +95,25 @@ export function CarAccessSection() {
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600">住民用共用駐車場</p>
                   <p className="text-lg font-semibold text-gray-900">
-                    387台（月極有料）
+                    428台（月極有料）
                   </p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">日中用来客駐車場</p>
+                  <p className="text-sm text-gray-600">テラスハウス専用庭内</p>
                   <p className="text-lg font-semibold text-gray-900">
-                    5台（無料・届出制）
+                    42台（無料）
                   </p>
                 </div>
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">宿泊用来客駐車場</p>
+                  <p className="text-sm text-gray-600">来客駐車場(届出制)</p>
                   <p className="text-lg font-semibold text-gray-900">
-                    5台（有料・届出制）
+                    31台（夜間有料）
+                  </p>
+                </div>
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600">臨時来客駐車場(届出制)</p>
+                  <p className="text-lg font-semibold text-gray-900">
+                    都度調整（一部有料）
                   </p>
                 </div>
               </div>
@@ -180,3 +186,4 @@ export function CarAccessSection() {
     </section>
   );
 }
+
