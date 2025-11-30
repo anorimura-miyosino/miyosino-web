@@ -1,5 +1,6 @@
 import {
   HeroSection,
+  IntroductionSection,
   FeaturesHighlightSection,
   NewsSection,
   InstagramSection,
@@ -9,9 +10,10 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <InstagramSection />
+      <IntroductionSection />
       <FeaturesHighlightSection />
       <NewsSection />
-      <InstagramSection />
     </>
   );
 }

@@ -10,10 +10,14 @@ export default function InstagramSection() {
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const iframeLoadedRef = useRef(false);
 
+  // ローカル開発環境ではhttpを使用、本番環境ではhttpsを使用
+  const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+  const iframeSrc = `${protocol}://lightwidget.com/widgets/452c04d998335181ae6d7536f4f8d3f7.html`;
+
   useEffect(() => {
     // LightWidgetのスクリプトを読み込む
     const script = document.createElement('script');
-    script.src = 'https://cdn.lightwidget.com/widgets/lightwidget.js';
+    script.src = `${protocol}://cdn.lightwidget.com/widgets/lightwidget.js`;
     script.async = true;
     script.crossOrigin = 'anonymous';
     script.onload = () => {
@@ -69,13 +73,6 @@ export default function InstagramSection() {
             Instagramギャラリー
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            団地の日常やイベントの様子をInstagramで発信しています。
-            <br />
-            ハッシュタグ{' '}
-            <span className="text-green-600 font-semibold">
-              #かわつる三芳野
-            </span>{' '}
-            でご投稿ください。
           </p>
         </div>
 
@@ -131,7 +128,7 @@ export default function InstagramSection() {
               )}
               {/* LightWidget iframe */}
               <iframe
-                src="https://lightwidget.com/widgets/b2ca5c6547aa5c0d84d708754dbe84d3.html"
+                src={iframeSrc}
                 scrolling="no"
                 allowTransparency
                 className="lightwidget-widget"
