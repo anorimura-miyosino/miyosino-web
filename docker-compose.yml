@@ -22,5 +22,6 @@ services:
       - NODE_ENV=development
       # ホットリロードの安定性のための設定（推奨）
       - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
     stdin_open: true
     tty: true

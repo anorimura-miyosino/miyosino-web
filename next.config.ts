@@ -32,12 +32,12 @@ const nextConfig: NextConfig = {
   },
   // Docker環境でのホットリロード対応（開発時のみ）
   webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.watchOptions = {
-        poll: 1000, // 1秒ごとにファイル変更をチェック
-        aggregateTimeout: 300, // 変更検知後300ms待ってからリロード
-      };
-    }
+    // ファイル監視設定を強化（Windows Docker対応）
+    config.watchOptions = {
+      poll: 1000, // 1秒ごとにファイル変更をチェック
+      aggregateTimeout: 300, // 変更検知後300ms待ってからリロード
+      ignored: /node_modules/, // node_modulesは監視対象外
+    };
     return config;
   },
 };
