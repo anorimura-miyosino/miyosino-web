@@ -130,33 +130,6 @@ export default function FeaturesHighlightSection() {
             );
           })}
         </div>
-
-        {/* その他の魅力へのリンク */}
-        <div className="text-center">
-          <p className="text-lg text-gray-700 mb-6">
-            さらに詳しく知りたい方は、こちらもご覧ください
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/features"
-              className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200 shadow-md hover:shadow-lg"
-            >
-              団地の特徴を見る
-            </Link>
-            <Link
-              href="/community"
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors duration-200 shadow-md hover:shadow-lg"
-            >
-              コミュニティ活動
-            </Link>
-            <Link
-              href="/surrounding"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
-            >
-              周辺環境
-            </Link>
-          </div>
-        </div>
       </div>
     </section>
   );
