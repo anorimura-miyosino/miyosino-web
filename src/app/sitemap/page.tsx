@@ -42,11 +42,12 @@ const sitemapData: SitemapSection[] = [
         href: '/shared-facilities',
         description: '集会所や公園などの施設案内',
       },
-      {
-        title: '周辺環境',
-        href: '/surrounding',
-        description: 'お買い物や病院、学校などの周辺情報',
-      },
+      // TODO: コンテンツの準備ができたら追加
+      // {
+      //   title: '周辺環境',
+      //   href: '/surrounding',
+      //   description: 'お買い物や病院、学校などの周辺情報',
+      // },
       {
         title: 'アクセス',
         href: '/access',

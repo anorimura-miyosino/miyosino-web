@@ -28,10 +28,34 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
+                  href="/"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
+                >
+                  ホーム
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/features"
                   className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
-                  団地の特長
+                  特徴
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/management"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
+                >
+                  団地運営
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/access"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
+                >
+                  アクセス
                 </Link>
               </li>
               <li>
@@ -47,9 +71,18 @@ export default function Footer() {
                   href="/shared-facilities"
                   className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
-                  共有施設・サービス
+                  共有施設
                 </Link>
               </li>
+              {/* TODO: コンテンツの準備ができたら追加 */}
+              {/* <li>
+                <Link
+                  href="/surrounding"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
+                >
+                  周辺環境
+                </Link>
+              </li> */}
             </ul>
           </div>
 
