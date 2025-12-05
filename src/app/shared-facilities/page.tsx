@@ -1,4 +1,4 @@
-import { SharedFacilitiesSection } from '@/components/community';
+import { SharedFacilitiesSection } from '@/components/shared-facilities';
 
 export default function SharedFacilitiesPage() {
   return (

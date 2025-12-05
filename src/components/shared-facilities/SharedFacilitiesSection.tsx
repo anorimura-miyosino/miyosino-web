@@ -184,3 +184,4 @@ export default function SharedFacilitiesSection() {
     </section>
   );
 }
+
