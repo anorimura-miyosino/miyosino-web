@@ -6,6 +6,7 @@ import type {
   MicroCMSNews,
   MicroCMSNewsListResponse,
 } from '@/types/news';
+import { CONTENT_CATEGORIES } from '@/types/categories';
 
 type NewsItem = News;
 
@@ -163,7 +164,7 @@ export default function NewsSection() {
 
         // Cloudflare Workers経由で取得
         const url = new URL(contentsApiEndpoint);
-        url.searchParams.append('category', 'news'); // カテゴリIDでフィルタ（category.idが"news"のものを取得）
+        url.searchParams.append('category', CONTENT_CATEGORIES.NEWS); // カテゴリIDでフィルタ（category.idが"news"のものを取得）
         url.searchParams.append('orders', '-date'); // 日付の降順（新しい順）
         url.searchParams.append('getAll', 'true'); // 全件取得（ページネーションで取得）
 
@@ -195,7 +196,7 @@ export default function NewsSection() {
           );
         }
 
-        // クライアント側でカテゴリフィルタリング（category.idが"news"のもののみ）
+        // クライアント側でカテゴリフィルタリング（category.idがCONTENT_CATEGORIES.NEWSのもののみ）
         const filteredContents = data.contents.filter((news: MicroCMSNews) => {
           // categoryが配列で、その中にidが"news"のものがあるかチェック
           if (!Array.isArray(news.category)) {
@@ -206,7 +207,7 @@ export default function NewsSection() {
           const categoryIds = news.category
             .map((cat) => cat?.id)
             .filter(Boolean);
-          const hasNews = news.category.some((cat) => cat && cat.id === 'news');
+          const hasNews = news.category.some((cat) => cat && cat.id === CONTENT_CATEGORIES.NEWS);
 
           console.log(
             `[NewsSection] "${news.title}": カテゴリ数=${news.category.length}, カテゴリID=[${categoryIds.join(', ')}], news含む=${hasNews}`

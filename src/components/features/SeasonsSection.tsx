@@ -7,6 +7,7 @@ import type {
   MicroCMSSeason,
   MicroCMSSeasonListResponse,
 } from '@/types/seasons';
+import { CONTENT_CATEGORIES } from '@/types/categories';
 
 export function SeasonsSection() {
   const [seasonsData, setSeasonsData] = useState<Season[]>([]);
@@ -37,7 +38,7 @@ export function SeasonsSection() {
 
         // Cloudflare Workers経由で取得
         const url = new URL(contentsApiEndpoint);
-        url.searchParams.append('category', 'season'); // カテゴリIDでフィルタ
+        url.searchParams.append('category', CONTENT_CATEGORIES.SEASON); // カテゴリIDでフィルタ
         url.searchParams.append('orders', 'order'); // 表示順でソート
         url.searchParams.append('getAll', 'true'); // 全件取得
 
@@ -57,13 +58,13 @@ export function SeasonsSection() {
           `[SeasonsSection] 取得した全データ数: ${data.contents.length}`
         );
 
-        // クライアント側でカテゴリフィルタリング（category.idが"season"のもののみ）
+        // クライアント側でカテゴリフィルタリング（category.idがCONTENT_CATEGORIES.SEASONのもののみ）
         const filteredContents = data.contents.filter(
           (season: MicroCMSSeason) => {
             if (!Array.isArray(season.category)) {
               return false;
             }
-            return season.category.some((cat) => cat && cat.id === 'season');
+            return season.category.some((cat) => cat && cat.id === CONTENT_CATEGORIES.SEASON);
           }
         );
 
