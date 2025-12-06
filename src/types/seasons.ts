@@ -28,6 +28,7 @@ export interface MicroCMSSeason {
     revisedAt?: string;
     order?: number;
   }>;
+  icon?: string; // アイコン（1行テキスト）
 }
 
 // MicroCMSのレスポンス型（contents配列）

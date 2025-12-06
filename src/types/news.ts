@@ -33,6 +33,7 @@ export interface MicroCMSNews {
   body?: string; // contentの代わりにbodyが使われている可能性
   content?: string;
   isImportant?: boolean;
+  icon?: string; // アイコン（1行テキスト）
 }
 
 // MicroCMSのレスポンス型（contents配列）

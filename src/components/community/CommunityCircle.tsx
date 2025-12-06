@@ -1,23 +1,167 @@
 'use client';
 
-import { communityActivities } from './data';
-
-type ResidentCircle = {
-  id: number;
-  name: string;
-  category: string;
-  description: string;
-  activities: string[];
-  members: string;
-  meetingFrequency: string;
-  contact: string;
-  website?: string;
-  instagram?: string;
-  facebook?: string;
-  websiteLabel?: string;
-};
+import { useState, useEffect } from 'react';
+import type {
+  ResidentCircle,
+  MicroCMSResidentCircle,
+  MicroCMSResidentCircleListResponse,
+} from '@/types/community';
+import { CONTENT_CATEGORIES } from '@/types/categories';
 
 export default function CommunityCircle() {
+  const [sportsCircles, setSportsCircles] = useState<ResidentCircle[]>([]);
+  const [cultureCircles, setCultureCircles] = useState<ResidentCircle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Cloudflare Workers経由でMicroCMSから住民サークルデータを取得
+  // APIキーはサーバーサイド（Cloudflare Workers）で管理され、クライアントに露出しません
+  useEffect(() => {
+    const fetchCircles = async () => {
+      try {
+        setLoading(true);
+
+        // Cloudflare Workersのエンドポイントを取得
+        const contentsApiEndpoint =
+          process.env.NEXT_PUBLIC_CONTENTS_API_ENDPOINT ||
+          process.env.NEXT_PUBLIC_PHOTOS_API_ENDPOINT?.replace(
+            'miyosino-photos-api',
+            'miyosino-contents-api'
+          );
+
+        if (!contentsApiEndpoint) {
+          console.error(
+            '[CommunityCircle] API endpoint is not set. Please configure NEXT_PUBLIC_CONTENTS_API_ENDPOINT or NEXT_PUBLIC_PHOTOS_API_ENDPOINT environment variable.'
+          );
+          setLoading(false);
+          return;
+        }
+
+        // スポーツ・運動カテゴリから取得
+        const sportsUrl = new URL(contentsApiEndpoint);
+        sportsUrl.searchParams.append(
+          'category',
+          CONTENT_CATEGORIES.COMMUNITY_CIRCLE_SPORTS
+        );
+        sportsUrl.searchParams.append('orders', 'order');
+        sportsUrl.searchParams.append('getAll', 'true');
+
+        const sportsResponse = await fetch(sportsUrl.toString(), {
+          cache: 'no-store',
+        });
+
+        if (!sportsResponse.ok) {
+          throw new Error(
+            `Failed to fetch sports circles: ${sportsResponse.status} ${sportsResponse.statusText}`
+          );
+        }
+
+        const sportsData: MicroCMSResidentCircleListResponse =
+          await sportsResponse.json();
+
+        // 文化活動カテゴリから取得
+        const cultureUrl = new URL(contentsApiEndpoint);
+        cultureUrl.searchParams.append(
+          'category',
+          CONTENT_CATEGORIES.COMMUNITY_CIRCLE_CULTURE
+        );
+        cultureUrl.searchParams.append('orders', 'order');
+        cultureUrl.searchParams.append('getAll', 'true');
+
+        const cultureResponse = await fetch(cultureUrl.toString(), {
+          cache: 'no-store',
+        });
+
+        if (!cultureResponse.ok) {
+          throw new Error(
+            `Failed to fetch culture circles: ${cultureResponse.status} ${cultureResponse.statusText}`
+          );
+        }
+
+        const cultureData: MicroCMSResidentCircleListResponse =
+          await cultureResponse.json();
+
+        console.log(
+          `[CommunityCircle] スポーツ・運動: ${sportsData.contents.length}件, 文化活動: ${cultureData.contents.length}件`
+        );
+
+        // スポーツ・運動のフィルタリングと変換
+        const filteredSports = sportsData.contents.filter(
+          (circle: MicroCMSResidentCircle) => {
+            if (!Array.isArray(circle.category)) {
+              return false;
+            }
+            return circle.category.some(
+              (cat) => cat && cat.id === CONTENT_CATEGORIES.COMMUNITY_CIRCLE_SPORTS
+            );
+          }
+        );
+
+        const fetchedSports: ResidentCircle[] = filteredSports.map(
+          (circle: MicroCMSResidentCircle) => ({
+            id: circle.id,
+            createdAt: new Date(circle.createdAt),
+            updatedAt: new Date(circle.updatedAt),
+            name: circle.title || circle.name || '',
+            category: 'スポーツ・運動',
+            body: circle.body,
+            icon: circle.icon,
+          })
+        );
+
+        // 文化活動のフィルタリングと変換
+        const filteredCulture = cultureData.contents.filter(
+          (circle: MicroCMSResidentCircle) => {
+            if (!Array.isArray(circle.category)) {
+              return false;
+            }
+            return circle.category.some(
+              (cat) => cat && cat.id === CONTENT_CATEGORIES.COMMUNITY_CIRCLE_CULTURE
+            );
+          }
+        );
+
+        const fetchedCulture: ResidentCircle[] = filteredCulture.map(
+          (circle: MicroCMSResidentCircle) => ({
+            id: circle.id,
+            createdAt: new Date(circle.createdAt),
+            updatedAt: new Date(circle.updatedAt),
+            name: circle.title || circle.name || '',
+            category: '文化活動',
+            body: circle.body,
+            icon: circle.icon,
+          })
+        );
+
+        setSportsCircles(fetchedSports);
+        setCultureCircles(fetchedCulture);
+      } catch (error) {
+        console.error('[CommunityCircle] 住民サークルデータ取得エラー:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCircles();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
+          住人サークル紹介
+        </h3>
+        <div className="text-center py-8">
+          <p className="text-gray-500">読み込み中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const categories = [
+    { name: 'スポーツ・運動', circles: sportsCircles },
+    { name: '文化活動', circles: cultureCircles },
+  ];
+
   return (
     <div className="space-y-8">
       <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
@@ -43,101 +187,34 @@ export default function CommunityCircle() {
       </div>
 
       {/* 分類別に表示 */}
-      {['スポーツ・運動', '文化活動'].map((category) => {
-        const circlesInCategory =
-          communityActivities.residentCircles.filter(
-            (circle) => circle.category === category
-          ) as ResidentCircle[];
-
-        if (circlesInCategory.length === 0) return null;
+      {categories.map(({ name, circles }) => {
+        if (circles.length === 0) return null;
 
         return (
-          <div key={category} className="mb-12">
+          <div key={name} className="mb-12">
             <h4 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-green-600">
-              {category}
+              {name}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {circlesInCategory.map((circle) => (
+              {circles.map((circle) => (
                 <div
                   key={circle.id}
                   className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
                 >
-                  <h4 className="text-xl font-bold text-gray-900 mb-3">
-                    {circle.name}
-                  </h4>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
-                    {circle.description}
-                  </p>
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <span className="font-medium">メンバー数：</span>
-                      <span className="ml-2">{circle.members}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <span className="font-medium">活動頻度：</span>
-                      <span className="ml-2">{circle.meetingFrequency}</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <span className="font-medium">連絡先：</span>
-                      <span className="ml-2">{circle.contact}</span>
+                  <div className="flex items-start space-x-4">
+                    {circle.icon && (
+                      <div className="text-4xl">{circle.icon}</div>
+                    )}
+                    <div className="flex-1">
+                      <h4 className="text-xl font-bold text-gray-900 mb-3">
+                        {circle.name}
+                      </h4>
+                      <div
+                        className="text-gray-600 mb-4 leading-relaxed prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{ __html: circle.body }}
+                      />
                     </div>
                   </div>
-                  <div className="mb-4">
-                    <h5 className="text-sm font-medium text-gray-700 mb-2">
-                      主な活動内容：
-                    </h5>
-                    <div className="flex flex-wrap gap-2">
-                      {circle.activities.map((activity, index) => (
-                        <span
-                          key={index}
-                          className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
-                        >
-                          {activity}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  {circle.website ||
-                  circle.instagram ||
-                  circle.facebook ? (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <h5 className="text-sm font-medium text-gray-700 mb-2">
-                        公式リンク：
-                      </h5>
-                      <div className="flex flex-wrap gap-2">
-                        {circle.website && (
-                          <a
-                            href={circle.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 text-xs underline"
-                          >
-                            🌐 {circle.websiteLabel || 'ホームページ'}
-                          </a>
-                        )}
-                        {circle.instagram && (
-                          <a
-                            href={circle.instagram}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-pink-600 hover:text-pink-800 text-xs underline"
-                          >
-                            📷 Instagram
-                          </a>
-                        )}
-                        {circle.facebook && (
-                          <a
-                            href={circle.facebook}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-700 hover:text-blue-900 text-xs underline"
-                          >
-                            📘 Facebook
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  ) : null}
                 </div>
               ))}
             </div>

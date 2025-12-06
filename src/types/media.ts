@@ -34,6 +34,7 @@ export interface MicroCMSPhoto {
     height?: number;
   };
   order: number;
+  icon?: string; // アイコン（1行テキスト）
 }
 
 // MicroCMSのレスポンス型（contents配列）

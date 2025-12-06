@@ -15,8 +15,10 @@ export const CONTENT_CATEGORIES = {
   SEASON: 'season',
   /** 自治会活動 */
   COMMUNITY_ACTIVITIES: 'community-activities',
-  /** 住民サークル */
-  COMMUNITY_CIRCLE: 'community-circle',
+  /** 住民サークル（スポーツ・運動） */
+  COMMUNITY_CIRCLE_SPORTS: 'community-circle-sports',
+  /** 住民サークル（文化活動） */
+  COMMUNITY_CIRCLE_CULTURE: 'community-circle-culture',
 } as const;
 
 /**
@@ -26,7 +28,8 @@ export type ContentCategoryId =
   | typeof CONTENT_CATEGORIES.NEWS
   | typeof CONTENT_CATEGORIES.SEASON
   | typeof CONTENT_CATEGORIES.COMMUNITY_ACTIVITIES
-  | typeof CONTENT_CATEGORIES.COMMUNITY_CIRCLE;
+  | typeof CONTENT_CATEGORIES.COMMUNITY_CIRCLE_SPORTS
+  | typeof CONTENT_CATEGORIES.COMMUNITY_CIRCLE_CULTURE;
 
 /**
  * カテゴリIDの配列（全カテゴリ）
