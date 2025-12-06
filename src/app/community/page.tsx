@@ -1,4 +1,4 @@
-import { CommunityActivitiesSection } from '@/components/community';
+import { CommunitySection } from '@/components/community';
 
 export default function CommunityPage() {
   return (
@@ -18,7 +18,7 @@ export default function CommunityPage() {
       </section>
 
       {/* コミュニティ活動セクション */}
-      <CommunityActivitiesSection />
+      <CommunitySection />
     </div>
   );
 }
