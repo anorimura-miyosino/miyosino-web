@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import Link from 'next/link';
 import {
   checkAuthStatus,
   redirectToLogin,
@@ -120,6 +121,36 @@ export default function MemberPage() {
 
       {/* メインコンテンツ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* 重要なお知らせ */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg
+                className="w-6 h-6 text-yellow-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-lg font-semibold text-yellow-800">
+                重要なお知らせ
+              </h3>
+              <p className="text-yellow-700 mt-2">
+                このページは組合員専用のページです。個人情報の取り扱いには十分ご注意ください。
+                不明な点がございましたら、管理組合事務所までお問い合わせください。
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* お知らせセクション */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -177,21 +208,26 @@ export default function MemberPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">管理規約</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                グリーンウェルネス（管理規約）
+              </h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              団地の管理規約をダウンロードできます
+              グリーンウェルネスをダウンロードできます
             </p>
-            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-              ダウンロード
-            </button>
+            <Link
+              href="/member/green-wellness"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors block text-center"
+            >
+              ダウンロードページを開く
+            </Link>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center mr-3">
                 <svg
-                  className="w-5 h-5 text-green-600"
+                  className="w-5 h-5 text-teal-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -205,15 +241,80 @@ export default function MemberPage() {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900">
-                お問い合わせ
+                回覧板・戸別配布資料
               </h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              管理組合へのお問い合わせフォーム
+              回覧板や戸別配布資料を閲覧できます
             </p>
-            <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-              お問い合わせ
-            </button>
+            <Link
+              href="/member/circulars"
+              className="w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors block text-center"
+            >
+              資料を見る
+            </Link>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                <svg
+                  className="w-5 h-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">
+                議事録ダウンロード
+              </h3>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              総会や班長会の議事録をダウンロードできます
+            </p>
+            <Link
+              href="/member/minutes"
+              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors block text-center"
+            >
+              議事録を見る
+            </Link>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                <svg
+                  className="w-5 h-5 text-orange-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">各種申請</h3>
+            </div>
+            <p className="text-gray-600 text-sm mb-4">
+              各種申請書の提出やダウンロード
+            </p>
+            <Link
+              href="/member/applications"
+              className="w-full bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors block text-center"
+            >
+              申請ページを開く
+            </Link>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -240,39 +341,12 @@ export default function MemberPage() {
             <p className="text-gray-600 text-sm mb-4">
               団地内のイベントスケジュール
             </p>
-            <button className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors">
+            <Link
+              href="/member/events"
+              className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors block text-center"
+            >
               スケジュールを見る
-            </button>
-          </div>
-        </div>
-
-        {/* 重要なお知らせ */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-          <div className="flex items-start">
-            <div className="flex-shrink-0">
-              <svg
-                className="w-6 h-6 text-yellow-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-lg font-semibold text-yellow-800">
-                重要なお知らせ
-              </h3>
-              <p className="text-yellow-700 mt-2">
-                このページは組合員専用のページです。個人情報の取り扱いには十分ご注意ください。
-                不明な点がございましたら、管理組合事務所までお問い合わせください。
-              </p>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
