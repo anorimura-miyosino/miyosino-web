@@ -143,7 +143,9 @@ export function SeasonsSection() {
               >
                 <div className="mb-6 flex items-center gap-3">
                   {season.icon && (
-                    <span className="text-4xl flex-shrink-0">{season.icon}</span>
+                    <span className="text-4xl flex-shrink-0">
+                      {season.icon}
+                    </span>
                   )}
                   <h3 className="text-2xl font-bold text-gray-900">
                     {season.title}

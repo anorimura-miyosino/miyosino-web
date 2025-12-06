@@ -19,6 +19,10 @@ export const CONTENT_CATEGORIES = {
   COMMUNITY_CIRCLE_SPORTS: 'community-circle-sports',
   /** 住民サークル（文化活動） */
   COMMUNITY_CIRCLE_CULTURE: 'community-circle-culture',
+  /** 共用施設 */
+  FACILITY: 'facility',
+  /** サービス */
+  SERVICE: 'service',
 } as const;
 
 /**
@@ -29,7 +33,9 @@ export type ContentCategoryId =
   | typeof CONTENT_CATEGORIES.SEASON
   | typeof CONTENT_CATEGORIES.COMMUNITY_ACTIVITIES
   | typeof CONTENT_CATEGORIES.COMMUNITY_CIRCLE_SPORTS
-  | typeof CONTENT_CATEGORIES.COMMUNITY_CIRCLE_CULTURE;
+  | typeof CONTENT_CATEGORIES.COMMUNITY_CIRCLE_CULTURE
+  | typeof CONTENT_CATEGORIES.FACILITY
+  | typeof CONTENT_CATEGORIES.SERVICE;
 
 /**
  * カテゴリIDの配列（全カテゴリ）
