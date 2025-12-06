@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 const contactInfo = {
   phone: '049-232-3638',
@@ -100,23 +101,29 @@ export default function PhoneContactSection() {
             営業時間
           </h3>
           <div className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-600">平日/土曜日</span>
-              <span className="font-medium text-gray-900">
-                {contactInfo.businessHours.weekdays}
-              </span>
+            <div className="flex justify-center">
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-600 w-36 text-right">平日/土曜日</span>
+                <span className="font-medium text-gray-900 w-28">
+                  {contactInfo.businessHours.weekdays}
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">日曜日</span>
-              <span className="font-medium text-gray-900">
-                {contactInfo.businessHours.weekends}
-              </span>
+            <div className="flex justify-center">
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-600 w-36 text-right">日曜日</span>
+                <span className="font-medium text-gray-900 w-28">
+                  {contactInfo.businessHours.weekends}
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">祝日</span>
-              <span className="font-medium text-gray-900">
-                {contactInfo.businessHours.holidays}
-              </span>
+            <div className="flex justify-center">
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-600 w-36 text-right">祝日</span>
+                <span className="font-medium text-gray-900 w-28">
+                  {contactInfo.businessHours.holidays}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -174,7 +181,12 @@ export default function PhoneContactSection() {
             </div>
             <div>
               <p className="text-sm text-gray-500">住所</p>
-              <p className="text-gray-900">{contactInfo.address}</p>
+              <Link
+                href="/access"
+                className="text-gray-900 hover:text-purple-600 transition-colors duration-200"
+              >
+                {contactInfo.address}
+              </Link>
             </div>
           </div>
         </div>
