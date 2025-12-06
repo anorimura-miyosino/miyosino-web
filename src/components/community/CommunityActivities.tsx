@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import type {
   CommunityActivity,
   MicroCMSCommunityActivity,
@@ -85,6 +86,7 @@ export default function CommunityActivities() {
             title: activity.title,
             body: activity.body,
             icon: activity.icon,
+            image: activity.image,
           })
         );
 
@@ -151,6 +153,19 @@ export default function CommunityActivities() {
                     className="text-gray-600 mb-4 leading-relaxed prose prose-sm max-w-none"
                     dangerouslySetInnerHTML={{ __html: activity.body }}
                   />
+                  {/* 画像表示（bodyの下） */}
+                  {activity.image && (
+                    <div className="w-full h-64 relative rounded-lg overflow-hidden mt-4">
+                      <Image
+                        src={activity.image.url}
+                        alt={activity.title || '自治会活動の画像'}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        unoptimized
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

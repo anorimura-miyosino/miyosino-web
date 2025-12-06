@@ -71,7 +71,7 @@ export default function Footer() {
                   href="/shared-facilities"
                   className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
-                  共有施設
+                  共有施設・サービス
                 </Link>
               </li>
               {/* TODO: コンテンツの準備ができたら追加 */}

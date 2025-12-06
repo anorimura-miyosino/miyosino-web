@@ -43,6 +43,11 @@ export interface CommunityActivity extends BaseEntity {
   title: string;
   body: string; // HTML（description、frequency、participantsを含む）
   icon?: string; // アイコン（1行テキスト）
+  image?: {
+    url: string;
+    width?: number;
+    height?: number;
+  };
 }
 
 // MicroCMS API用のCommunityActivity型定義
@@ -55,6 +60,11 @@ export interface MicroCMSCommunityActivity {
   title: string;
   body: string; // HTML（description、frequency、participantsを含む）
   icon?: string; // アイコン（1行テキスト）
+  image?: {
+    url: string;
+    width?: number;
+    height?: number;
+  };
   category?: Array<{
     id: string;
     name: string;

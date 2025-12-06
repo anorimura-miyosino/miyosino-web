@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { featuresSections } from './data';
 import type {
   Season,
@@ -88,6 +89,8 @@ export function SeasonsSection() {
             description: season.description,
             body: season.body,
             order: season.order,
+            icon: season.icon,
+            image: season.image,
           })
         );
 
@@ -138,18 +141,31 @@ export function SeasonsSection() {
                 key={season.id}
                 className="flex flex-col items-start rounded-2xl bg-gradient-to-br from-gray-50 to-white p-8 shadow-sm ring-1 ring-gray-200 hover:shadow-md transition-shadow duration-300"
               >
-                <div className="mb-6">
+                <div className="mb-6 flex items-center gap-3">
+                  {season.icon && (
+                    <span className="text-4xl flex-shrink-0">{season.icon}</span>
+                  )}
                   <h3 className="text-2xl font-bold text-gray-900">
                     {season.title}
                   </h3>
                 </div>
-                <p className="text-base leading-7 text-gray-600 mb-6">
-                  {season.description}
-                </p>
                 <div
-                  className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+                  className="prose prose-sm max-w-none text-gray-700 leading-relaxed mb-6"
                   dangerouslySetInnerHTML={{ __html: season.body }}
                 />
+                {/* 画像表示（文章の後、同じ大きさ） */}
+                {season.image && (
+                  <div className="w-full h-64 relative rounded-lg overflow-hidden mt-4">
+                    <Image
+                      src={season.image.url}
+                      alt={season.title || '四季の画像'}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      unoptimized
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>

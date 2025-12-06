@@ -20,7 +20,7 @@ export default function SharedFacilitiesSection() {
                   : 'text-gray-700 hover:text-green-600'
               }`}
             >
-              共用部
+              共用施設
             </button>
             <button
               onClick={() => setActiveTab('services')}
@@ -30,7 +30,7 @@ export default function SharedFacilitiesSection() {
                   : 'text-gray-700 hover:text-green-600'
               }`}
             >
-              団地内のサービス
+              サービス
             </button>
           </div>
         </div>

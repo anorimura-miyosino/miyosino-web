@@ -6,6 +6,12 @@ export interface Season extends BaseEntity {
   description: string; // 説明文
   body: string; // リッチテキスト（HTML）
   order: number; // 表示順（0=春、1=夏、2=秋、3=冬）
+  icon?: string; // アイコン（1行テキスト）
+  image?: {
+    url: string;
+    width?: number;
+    height?: number;
+  };
 }
 
 // MicroCMS API用のSeason型定義
@@ -29,6 +35,11 @@ export interface MicroCMSSeason {
     order?: number;
   }>;
   icon?: string; // アイコン（1行テキスト）
+  image?: {
+    url: string;
+    width?: number;
+    height?: number;
+  };
 }
 
 // MicroCMSのレスポンス型（contents配列）
