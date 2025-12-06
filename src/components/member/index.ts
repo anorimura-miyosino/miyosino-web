@@ -5,3 +5,4 @@ export { default as EventsContent } from './EventsContent';
 export { default as GreenWellnessContent } from './GreenWellnessContent';
 export { default as MinutesContent } from './MinutesContent';
 export { default as ApplicationsContent } from './ApplicationsContent';
+export { default as AnnouncementsSection } from './AnnouncementsSection';

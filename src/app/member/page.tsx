@@ -8,6 +8,7 @@ import {
   logout,
   handleAuthCallback,
 } from '@/shared/utils/auth';
+import { AnnouncementsSection } from '@/components/member';
 
 // Note: metadata export is not supported in client components
 // Move metadata to layout.tsx if needed
@@ -152,42 +153,7 @@ export default function MemberPage() {
         </div>
 
         {/* お知らせセクション */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <svg
-              className="w-6 h-6 text-blue-600 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
-              />
-            </svg>
-            お知らせ
-          </h2>
-          <div className="space-y-4">
-            <div className="border-l-4 border-blue-500 pl-4">
-              <h3 className="font-semibold text-gray-900">
-                2024年12月 - 組合総会のご案内
-              </h3>
-              <p className="text-gray-600 text-sm mt-1">
-                2024年12月15日（日）に組合総会を開催いたします。詳細は後日お知らせいたします。
-              </p>
-            </div>
-            <div className="border-l-4 border-green-600 pl-4">
-              <h3 className="font-semibold text-gray-900">
-                2024年11月 - 駐車場管理について
-              </h3>
-              <p className="text-gray-600 text-sm mt-1">
-                駐車場の管理方法について、新しいルールが制定されました。詳細は管理組合事務所までお問い合わせください。
-              </p>
-            </div>
-          </div>
-        </div>
+        <AnnouncementsSection />
 
         {/* 便利なリンクセクション */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
