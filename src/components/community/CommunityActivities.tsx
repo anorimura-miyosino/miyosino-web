@@ -90,7 +90,10 @@ export default function CommunityActivities() {
 
         setActivities(fetchedActivities);
       } catch (error) {
-        console.error('[CommunityActivities] 自治会活動データ取得エラー:', error);
+        console.error(
+          '[CommunityActivities] 自治会活動データ取得エラー:',
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -157,4 +160,3 @@ export default function CommunityActivities() {
     </div>
   );
 }
-

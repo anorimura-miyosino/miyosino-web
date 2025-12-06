@@ -207,7 +207,9 @@ export default function NewsSection() {
           const categoryIds = news.category
             .map((cat) => cat?.id)
             .filter(Boolean);
-          const hasNews = news.category.some((cat) => cat && cat.id === CONTENT_CATEGORIES.NEWS);
+          const hasNews = news.category.some(
+            (cat) => cat && cat.id === CONTENT_CATEGORIES.NEWS
+          );
 
           console.log(
             `[NewsSection] "${news.title}": カテゴリ数=${news.category.length}, カテゴリID=[${categoryIds.join(', ')}], news含む=${hasNews}`

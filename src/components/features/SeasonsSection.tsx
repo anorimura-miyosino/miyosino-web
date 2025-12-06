@@ -64,7 +64,9 @@ export function SeasonsSection() {
             if (!Array.isArray(season.category)) {
               return false;
             }
-            return season.category.some((cat) => cat && cat.id === CONTENT_CATEGORIES.SEASON);
+            return season.category.some(
+              (cat) => cat && cat.id === CONTENT_CATEGORIES.SEASON
+            );
           }
         );
 

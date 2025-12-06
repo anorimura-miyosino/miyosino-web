@@ -1,6 +1,6 @@
 /**
  * MicroCMSコンテンツのカテゴリ定義
- * 
+ *
  * MicroCMSのコンテンツAPIで使用するカテゴリIDを定義します。
  * カテゴリIDはMicroCMSの管理画面で設定したカテゴリのIDと一致させる必要があります。
  */
@@ -44,4 +44,3 @@ export function isValidCategoryId(
 ): categoryId is ContentCategoryId {
   return ALL_CATEGORY_IDS.includes(categoryId as ContentCategoryId);
 }
-

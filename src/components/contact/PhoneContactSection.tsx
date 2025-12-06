@@ -103,7 +103,9 @@ export default function PhoneContactSection() {
           <div className="space-y-2">
             <div className="flex justify-center">
               <div className="flex items-center space-x-4">
-                <span className="text-gray-600 w-36 text-right">平日/土曜日</span>
+                <span className="text-gray-600 w-36 text-right">
+                  平日/土曜日
+                </span>
                 <span className="font-medium text-gray-900 w-28">
                   {contactInfo.businessHours.weekdays}
                 </span>

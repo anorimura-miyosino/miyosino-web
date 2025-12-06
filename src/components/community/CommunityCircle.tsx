@@ -91,7 +91,8 @@ export default function CommunityCircle() {
               return false;
             }
             return circle.category.some(
-              (cat) => cat && cat.id === CONTENT_CATEGORIES.COMMUNITY_CIRCLE_SPORTS
+              (cat) =>
+                cat && cat.id === CONTENT_CATEGORIES.COMMUNITY_CIRCLE_SPORTS
             );
           }
         );
@@ -115,7 +116,8 @@ export default function CommunityCircle() {
               return false;
             }
             return circle.category.some(
-              (cat) => cat && cat.id === CONTENT_CATEGORIES.COMMUNITY_CIRCLE_CULTURE
+              (cat) =>
+                cat && cat.id === CONTENT_CATEGORIES.COMMUNITY_CIRCLE_CULTURE
             );
           }
         );
@@ -224,4 +226,3 @@ export default function CommunityCircle() {
     </div>
   );
 }
-

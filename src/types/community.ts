@@ -73,4 +73,3 @@ export interface MicroCMSCommunityActivityListResponse {
   offset: number;
   limit: number;
 }
-
