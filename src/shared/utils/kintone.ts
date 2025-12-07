@@ -6,6 +6,7 @@
 
 import { Announcement, GreenWellnessFile } from '@/components/member/data';
 import { Circular } from '@/types/circulars';
+import { Meeting } from '@/types/minutes';
 import { getToken } from './auth';
 
 const ANNOUNCEMENTS_API_ENDPOINT =
@@ -19,6 +20,10 @@ const GREENWELLNESS_API_ENDPOINT =
 const CIRCULARS_API_ENDPOINT =
   process.env.NEXT_PUBLIC_CIRCULARS_API_URL ||
   'https://miyosino-circulars.anorimura-miyosino.workers.dev';
+
+const MINUTES_API_ENDPOINT =
+  process.env.NEXT_PUBLIC_MINUTES_API_URL ||
+  'https://miyosino-minutes.anorimura-miyosino.workers.dev';
 
 export interface YearMonth {
   year: number;
@@ -39,6 +44,10 @@ interface GreenWellnessFilesResponse {
 
 interface CircularsResponse {
   circulars: Circular[];
+}
+
+interface MeetingsResponse {
+  meetings: Meeting[];
 }
 
 /**
@@ -268,6 +277,55 @@ export async function fetchCircularYearMonths(): Promise<YearMonth[]> {
     return data.yearMonths;
   } catch (error) {
     console.error('[Kintone] fetchCircularYearMonths error:', error);
+    throw error;
+  }
+}
+
+/**
+ * kintoneから会議情報一覧を取得
+ * @returns 会議情報データの配列
+ */
+export async function fetchMeetings(): Promise<Meeting[]> {
+  try {
+    const token = getToken();
+    if (!token) {
+      throw new Error('認証トークンがありません');
+    }
+
+    const url = new URL(`${MINUTES_API_ENDPOINT}/minutes`);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        // 401エラーの場合、トークンを削除して認証エラーを投げる
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+        }
+        throw new Error('認証に失敗しました');
+      }
+      throw new Error(
+        `会議情報の取得に失敗しました: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = (await response.json()) as MeetingsResponse;
+
+    // StartDateTimeを文字列として保持（ISO 8601形式）
+    return data.meetings.map((meeting) => ({
+      ...meeting,
+      createdAt: new Date(meeting.createdAt),
+      updatedAt: new Date(meeting.updatedAt),
+    }));
+  } catch (error) {
+    console.error('[Kintone] fetchMeetings error:', error);
     throw error;
   }
 }

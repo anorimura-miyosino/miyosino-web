@@ -24,6 +24,7 @@ if [ -z "$JWT_SECRET" ]; then
 fi
 
 echo "🔑 JWT_SECRETを検出しました（長さ: ${#JWT_SECRET}文字）"
+echo "📝 使用する値: $JWT_SECRET"
 echo ""
 
 # JWT_SECRETを設定するWorkerのリスト
@@ -32,6 +33,7 @@ WORKERS=(
   "wrangler.announcements.toml"
   "wrangler.circulars.toml"
   "wrangler.greenwellness.toml"
+  "wrangler.minutes.toml"
 )
 
 cd "$WORKERS_DIR"
@@ -66,4 +68,10 @@ for worker in "${WORKERS[@]}"; do
 done
 
 echo "✨ すべてのWorkerにJWT_SECRETを設定しました！"
+echo ""
+echo "📋 設定されたJWT_SECRET:"
+echo "   $JWT_SECRET"
+echo ""
+echo "💡 この値は .dev.vars ファイルに保存されています。"
+echo ""
 
