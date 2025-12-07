@@ -7,6 +7,7 @@
 import { Announcement, GreenWellnessFile } from '@/components/member/data';
 import { Circular } from '@/types/circulars';
 import { Meeting } from '@/types/minutes';
+import { Event } from '@/types/events';
 import { getToken } from './auth';
 
 const ANNOUNCEMENTS_API_ENDPOINT =
@@ -24,6 +25,10 @@ const CIRCULARS_API_ENDPOINT =
 const MINUTES_API_ENDPOINT =
   process.env.NEXT_PUBLIC_MINUTES_API_URL ||
   'https://miyosino-minutes.anorimura-miyosino.workers.dev';
+
+const EVENTS_API_ENDPOINT =
+  process.env.NEXT_PUBLIC_EVENTS_API_URL ||
+  'https://miyosino-events.anorimura-miyosino.workers.dev';
 
 export interface YearMonth {
   year: number;
@@ -48,6 +53,11 @@ interface CircularsResponse {
 
 interface MeetingsResponse {
   meetings: Meeting[];
+}
+
+interface EventsResponse {
+  upcomingEvents: Event[];
+  pastEvents: Event[];
 }
 
 /**
@@ -456,6 +466,65 @@ export async function fetchMeetingsYearMonths(): Promise<YearMonth[]> {
     return data.yearMonths;
   } catch (error) {
     console.error('[Kintone] fetchMeetingsYearMonths error:', error);
+    throw error;
+  }
+}
+
+/**
+ * kintoneからイベントデータを取得
+ * @returns 今後のイベントと過去のイベントを含むオブジェクト
+ */
+export async function fetchEvents(): Promise<{
+  upcomingEvents: Event[];
+  pastEvents: Event[];
+}> {
+  try {
+    const token = getToken();
+    if (!token) {
+      throw new Error('認証トークンがありません');
+    }
+
+    const url = new URL(`${EVENTS_API_ENDPOINT}/events`);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        // 401エラーの場合、トークンを削除して認証エラーを投げる
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+        }
+        throw new Error('認証に失敗しました');
+      }
+      throw new Error(
+        `イベントの取得に失敗しました: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = (await response.json()) as EventsResponse;
+
+    // createdAtとupdatedAtをDateオブジェクトに変換
+    return {
+      upcomingEvents: data.upcomingEvents.map((event) => ({
+        ...event,
+        createdAt: new Date(event.createdAt),
+        updatedAt: new Date(event.updatedAt),
+      })),
+      pastEvents: data.pastEvents.map((event) => ({
+        ...event,
+        createdAt: new Date(event.createdAt),
+        updatedAt: new Date(event.updatedAt),
+      })),
+    };
+  } catch (error) {
+    console.error('[Kintone] fetchEvents error:', error);
     throw error;
   }
 }

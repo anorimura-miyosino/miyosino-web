@@ -179,7 +179,7 @@ export default function MemberPage() {
               </h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              グリーンウェルネスをダウンロードできます
+              管理規約であるグリーンウェルネスをダウンロードできます
             </p>
             <Link
               href="/member/green-wellness"
@@ -211,13 +211,13 @@ export default function MemberPage() {
               </h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              回覧板や配布資料を閲覧できます
+              回覧板に挟まれている資料や戸別配布されている資料をダウンロードできます
             </p>
             <Link
               href="/member/circulars"
               className="w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors block text-center"
             >
-              資料を見る
+              ダウンロードページを開く
             </Link>
           </div>
 
@@ -247,7 +247,7 @@ export default function MemberPage() {
               href="/member/minutes"
               className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors block text-center"
             >
-              議事録を見る
+              会議情報を見る
             </Link>
           </div>
 
@@ -271,7 +271,7 @@ export default function MemberPage() {
               <h3 className="text-lg font-semibold text-gray-900">各種申請</h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              各種申請書の提出やダウンロード
+              各種申請書の提出やダウンロードできます
             </p>
             <Link
               href="/member/applications"
@@ -299,17 +299,17 @@ export default function MemberPage() {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900">
-                イベント予定
+                イベントカレンダー
               </h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              団地内のイベントスケジュール
+              団地内のイベント日程を確認できます
             </p>
             <Link
               href="/member/events"
               className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors block text-center"
             >
-              スケジュールを見る
+              カレンダーを見る
             </Link>
           </div>
         </div>
