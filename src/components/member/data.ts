@@ -27,21 +27,13 @@ export function getPriorityBorderColor(priority: 1 | 2 | 3): string {
   }
 }
 
-export const announcements: Announcement[] = [
-  {
-    id: 'announcement-2024-12',
-    title: '2025年12月 - 組合総会のご案内',
-    description:
-      '2025年12月15日（日）に組合総会を開催いたします。詳細は後日お知らせいたします。',
-    importance: 1, // 組合総会は必ず目を通す必要がある
-    date: new Date('2025-12-01'),
-  },
-  {
-    id: 'announcement-2024-11',
-    title: '2025年11月 - 駐車場管理について',
-    description:
-      '駐車場の管理方法について、新しいルールが制定されました。詳細は管理組合事務所までお問い合わせください。',
-    importance: 2, // 全員に目を通してほしい
-    date: new Date('2025-11-21'),
-  },
-];
+export interface GreenWellnessFile {
+  id: string;
+  title: string;
+  description: string;
+  orderNumber: number;
+  file?: {
+    name: string;
+    fileKey: string;
+  };
+}
