@@ -207,11 +207,11 @@ export default function MemberPage() {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900">
-                回覧板・戸別配布資料
+                回覧板・配布資料
               </h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              回覧板や戸別配布資料を閲覧できます
+              回覧板や配布資料を閲覧できます
             </p>
             <Link
               href="/member/circulars"

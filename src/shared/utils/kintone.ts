@@ -5,6 +5,7 @@
  */
 
 import { Announcement, GreenWellnessFile } from '@/components/member/data';
+import { Circular } from '@/types/circulars';
 import { getToken } from './auth';
 
 const ANNOUNCEMENTS_API_ENDPOINT =
@@ -15,7 +16,11 @@ const GREENWELLNESS_API_ENDPOINT =
   process.env.NEXT_PUBLIC_GREENWELLNESS_API_URL ||
   'https://miyosino-greenwellness.anorimura-miyosino.workers.dev';
 
-interface YearMonth {
+const CIRCULARS_API_ENDPOINT =
+  process.env.NEXT_PUBLIC_CIRCULARS_API_URL ||
+  'https://miyosino-circulars.anorimura-miyosino.workers.dev';
+
+export interface YearMonth {
   year: number;
   month: number;
 }
@@ -30,6 +35,10 @@ interface YearMonthsResponse {
 
 interface GreenWellnessFilesResponse {
   files: GreenWellnessFile[];
+}
+
+interface CircularsResponse {
+  circulars: Circular[];
 }
 
 /**
@@ -173,6 +182,92 @@ export async function fetchGreenWellnessFiles(): Promise<GreenWellnessFile[]> {
     return data.files;
   } catch (error) {
     console.error('[Kintone] fetchGreenWellnessFiles error:', error);
+    throw error;
+  }
+}
+
+/**
+ * kintoneから配布資料一覧を取得
+ * @returns 配布資料データの配列
+ */
+export async function fetchCirculars(): Promise<Circular[]> {
+  try {
+    const token = getToken();
+    if (!token) {
+      throw new Error('認証トークンがありません');
+    }
+
+    const url = new URL(`${CIRCULARS_API_ENDPOINT}/circulars`);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        // 401エラーの場合、トークンを削除して認証エラーを投げる
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+        }
+        throw new Error('認証に失敗しました');
+      }
+      throw new Error(
+        `配布資料の取得に失敗しました: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = (await response.json()) as CircularsResponse;
+    return data.circulars;
+  } catch (error) {
+    console.error('[Kintone] fetchCirculars error:', error);
+    throw error;
+  }
+}
+
+/**
+ * kintoneから配布資料が存在する年月の一覧を取得
+ * @returns 年月の配列
+ */
+export async function fetchCircularYearMonths(): Promise<YearMonth[]> {
+  try {
+    const token = getToken();
+    if (!token) {
+      throw new Error('認証トークンがありません');
+    }
+
+    const url = new URL(`${CIRCULARS_API_ENDPOINT}/circulars/years`);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        // 401エラーの場合、トークンを削除して認証エラーを投げる
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+        }
+        throw new Error('認証に失敗しました');
+      }
+      throw new Error(
+        `年月一覧の取得に失敗しました: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = (await response.json()) as YearMonthsResponse;
+    return data.yearMonths;
+  } catch (error) {
+    console.error('[Kintone] fetchCircularYearMonths error:', error);
     throw error;
   }
 }

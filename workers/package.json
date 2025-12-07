@@ -11,6 +11,11 @@
     "deploy:contents": "wrangler deploy --config wrangler.contents.toml",
     "dev:auth": "wrangler dev --config wrangler.auth.toml",
     "deploy:auth": "wrangler deploy --config wrangler.auth.toml",
+    "dev:announcements": "wrangler dev --config wrangler.announcements.toml",
+    "deploy:announcements": "wrangler deploy --config wrangler.announcements.toml",
+    "dev:circulars": "wrangler dev --config wrangler.circulars.toml",
+    "deploy:circulars": "wrangler deploy --config wrangler.circulars.toml",
+    "set-jwt-secret": "node scripts/set-jwt-secret.js",
     "build": "tsc",
     "build:watch": "tsc --watch"
   },
