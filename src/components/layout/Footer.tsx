@@ -52,14 +52,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/access"
-                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
-                >
-                  アクセス
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/community"
                   className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
@@ -83,6 +75,14 @@ export default function Footer() {
                   周辺環境
                 </Link>
               </li> */}
+              <li>
+                <Link
+                  href="/access"
+                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
+                >
+                  アクセス
+                </Link>
+              </li>
             </ul>
           </div>
 

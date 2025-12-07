@@ -7,9 +7,9 @@ const navigationItems = [
   { href: '/', label: 'ホーム' },
   { href: '/features', label: '特徴' },
   { href: '/management', label: '団地運営' },
-  { href: '/access', label: 'アクセス' },
   { href: '/community', label: 'コミュニティ' },
   { href: '/shared-facilities', label: '共有施設・サービス' },
+  { href: '/access', label: 'アクセス' },
   // TODO: コンテンツの準備ができたら追加
   // { href: '/surrounding', label: '周辺環境' },
 ];

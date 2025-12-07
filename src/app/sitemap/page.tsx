@@ -33,6 +33,11 @@ const sitemapData: SitemapSection[] = [
         description: 'かわつる三芳野団地の魅力をご紹介します',
       },
       {
+        title: '団地運営',
+        href: '/management',
+        description: '管理組合の活動や組織について',
+      },
+      {
         title: 'コミュニティ',
         href: '/community',
         description: '団地内のコミュニティ活動について',
@@ -42,12 +47,6 @@ const sitemapData: SitemapSection[] = [
         href: '/shared-facilities',
         description: '集会所や公園などの施設案内',
       },
-      // TODO: コンテンツの準備ができたら追加
-      // {
-      //   title: '周辺環境',
-      //   href: '/surrounding',
-      //   description: 'お買い物や病院、学校などの周辺情報',
-      // },
       {
         title: 'アクセス',
         href: '/access',
@@ -56,22 +55,37 @@ const sitemapData: SitemapSection[] = [
     ],
   },
   {
-    title: '居住者・入居検討中の方へ',
+    title: '組合員専用ページ',
     items: [
       {
-        title: '子育て・ファミリー',
-        href: '/family',
-        description: '子育て環境やファミリー向け情報',
+        title: 'お知らせ',
+        href: '/member/announcements',
+        description: '組合員向けのお知らせ一覧（要ログイン）',
       },
       {
-        title: '管理組合について',
-        href: '/management',
-        description: '管理組合の活動や組織について',
+        title: 'グリーンウェルネス',
+        href: '/member/green-wellness',
+        description: '管理規約のダウンロード（要ログイン）',
       },
       {
-        title: '組合員専用ページ',
-        href: '/member',
-        description: '居住者専用の情報ページ（要ログイン）',
+        title: '回覧板・配布資料',
+        href: '/member/circulars',
+        description: '回覧板や配布資料を閲覧（要ログイン）',
+      },
+      {
+        title: '会議情報・議事録',
+        href: '/member/minutes',
+        description: '総会や班長会などの会議情報・議事録（要ログイン）',
+      },
+      {
+        title: '各種申請',
+        href: '/member/applications',
+        description: '各種申請書の提出やダウンロード（要ログイン）',
+      },
+      {
+        title: 'イベント予定',
+        href: '/member/events',
+        description: '団地内のイベントスケジュール（要ログイン）',
       },
     ],
   },
@@ -98,6 +112,8 @@ const sitemapData: SitemapSection[] = [
 ];
 
 export default function SitemapPage() {
+  const isMemberSection = (title: string) => title === '組合員専用ページ';
+
   return (
     <div className="bg-white py-12 sm:py-16">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -110,31 +126,59 @@ export default function SitemapPage() {
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 space-y-12">
           {sitemapData.map((section) => (
             <div
               key={section.title}
               className="bg-gray-50 rounded-2xl p-8 shadow-sm ring-1 ring-gray-900/5"
             >
-              <h2 className="text-xl font-semibold leading-7 text-gray-900 border-b border-gray-200 pb-4 mb-6">
-                {section.title}
-              </h2>
-              <ul className="space-y-4">
+              <div className="flex items-center mb-6">
+                <h2 className="text-2xl font-bold leading-7 text-gray-900 border-b-2 border-green-600 pb-2 flex-1">
+                  {section.title}
+                </h2>
+                {isMemberSection(section.title) && (
+                  <span className="ml-4 px-3 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded-full">
+                    要ログイン
+                  </span>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {section.items.map((item) => (
-                  <li key={item.href}>
-                    <Link href={item.href} className="group block">
-                      <span className="text-base font-medium text-green-700 group-hover:text-green-900 transition-colors">
-                        {item.title}
-                      </span>
-                      {item.description && (
-                        <p className="mt-1 text-sm text-gray-500 group-hover:text-gray-700 transition-colors">
-                          {item.description}
-                        </p>
-                      )}
-                    </Link>
-                  </li>
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="group block bg-white rounded-lg p-4 hover:shadow-md transition-all border border-gray-200 hover:border-green-300"
+                  >
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mt-1">
+                        <svg
+                          className="w-5 h-5 text-green-600 group-hover:text-green-700"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <span className="text-base font-semibold text-gray-900 group-hover:text-green-700 transition-colors block">
+                          {item.title}
+                        </span>
+                        {item.description && (
+                          <p className="mt-1 text-sm text-gray-600 leading-relaxed">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
                 ))}
-              </ul>
+              </div>
             </div>
           ))}
         </div>
