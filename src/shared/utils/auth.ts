@@ -71,7 +71,7 @@ export function handleAuthCallback(): boolean {
 /**
  * localStorageからトークンを取得
  */
-function getToken(): string | null {
+export function getToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem(TOKEN_KEY);
 }

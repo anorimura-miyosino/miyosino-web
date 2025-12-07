@@ -121,6 +121,23 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
 
    ⚠️ **注意**: Kintone OAuth 2.0認証を使用するには、事前にKintone管理画面でOAuth 2.0クライアントの登録が必要です。詳細は後述の「Kintone OAuth 2.0設定」を参照してください。
 
+   **Kintoneお知らせAPI用Worker（miyosino-announcements）:**
+
+   ```bash
+   cd workers
+   # Kintone API設定
+   npx wrangler secret put KINTONE_DOMAIN --config wrangler.announcements.toml
+   # プロンプトが表示されたら、Kintoneのドメインを入力（例: k-miyosino.cybozu.com）
+
+   npx wrangler secret put KINTONE_API_TOKEN --config wrangler.announcements.toml
+   # プロンプトが表示されたら、kintoneアプリ（アプリID: 53）のAPIトークンを入力
+
+   npx wrangler secret put JWT_SECRET --config wrangler.announcements.toml
+   # プロンプトが表示されたら、認証用Workerと同じJWT_SECRETを入力
+   ```
+
+   ⚠️ **注意**: kintone APIトークンは、kintone管理画面の「アプリ設定」→「API」から発行できます。アプリID: 53のお知らせアプリに対して「レコードの閲覧」権限を付与してください。
+
 
 4. Workerをデプロイ:
 
@@ -140,12 +157,16 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
    npm run deploy:auth
    # または
    npx wrangler deploy --config wrangler.auth.toml
+
+   # Kintoneお知らせAPI用Workerをデプロイ
+   npx wrangler deploy --config wrangler.announcements.toml
    ```
 
 5. デプロイ後、各WorkerのURLをコピー:
    - 写真データ取得用: `https://miyosino-photos-api.your-subdomain.workers.dev`
    - お問い合わせフォーム用: `https://miyosino-contact-api.your-subdomain.workers.dev`
    - Kintone OAuth 2.0認証用: `https://miyosino-auth.your-subdomain.workers.dev`
+   - Kintoneお知らせAPI用: `https://miyosino-announcements.your-subdomain.workers.dev`
 
 #### 1-4. 環境変数の設定
 
@@ -167,11 +188,17 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
   - ⚠️ **重要**: 組合員専用ページ（`/member/`）にアクセス制限を設定する場合、この環境変数は必須です
   - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
 
+- **`NEXT_PUBLIC_ANNOUNCEMENTS_API_URL`** (組合員専用ページのお知らせ機能を使用する場合に必須)
+  - 値：Kintoneお知らせAPI用WorkerのURL（例: `https://miyosino-announcements.your-subdomain.workers.dev`）
+  - ⚠️ **重要**: 組合員専用ページのお知らせ機能を使用する場合、この環境変数は必須です
+  - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
+
 **ローカル開発用（`.env.local`）:**
 
 ```bash
 NEXT_PUBLIC_API_ENDPOINT=https://miyosino-api.your-subdomain.workers.dev
 NEXT_PUBLIC_AUTH_API_URL=https://miyosino-auth.your-subdomain.workers.dev
+NEXT_PUBLIC_ANNOUNCEMENTS_API_URL=https://miyosino-announcements.your-subdomain.workers.dev
 ```
 
 #### 1-5. ローカル開発でのWorkerテスト
