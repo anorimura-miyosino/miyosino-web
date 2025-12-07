@@ -285,7 +285,16 @@ export async function fetchCircularYearMonths(): Promise<YearMonth[]> {
  * kintoneから会議情報一覧を取得
  * @returns 会議情報データの配列
  */
-export async function fetchMeetings(): Promise<Meeting[]> {
+/**
+ * kintoneから会議情報データを取得
+ * @param year 年（オプション）
+ * @param month 月（オプション）
+ * @returns 会議情報データの配列
+ */
+export async function fetchMeetings(
+  year?: number,
+  month?: number
+): Promise<Meeting[]> {
   try {
     const token = getToken();
     if (!token) {
@@ -293,6 +302,12 @@ export async function fetchMeetings(): Promise<Meeting[]> {
     }
 
     const url = new URL(`${MINUTES_API_ENDPOINT}/minutes`);
+    if (year) {
+      url.searchParams.append('year', year.toString());
+    }
+    if (month) {
+      url.searchParams.append('month', month.toString());
+    }
 
     const response = await fetch(url.toString(), {
       method: 'GET',
@@ -326,6 +341,53 @@ export async function fetchMeetings(): Promise<Meeting[]> {
     }));
   } catch (error) {
     console.error('[Kintone] fetchMeetings error:', error);
+    throw error;
+  }
+}
+
+interface MeetingsYearMonthsResponse {
+  yearMonths: YearMonth[];
+}
+
+/**
+ * kintoneから会議情報が存在する年月の一覧を取得
+ * @returns 年月の配列
+ */
+export async function fetchMeetingsYearMonths(): Promise<YearMonth[]> {
+  try {
+    const token = getToken();
+    if (!token) {
+      throw new Error('認証トークンがありません');
+    }
+
+    const url = new URL(`${MINUTES_API_ENDPOINT}/minutes/years`);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        // 401エラーの場合、トークンを削除して認証エラーを投げる
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+        }
+        throw new Error('認証に失敗しました');
+      }
+      throw new Error(
+        `年月一覧の取得に失敗しました: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = (await response.json()) as MeetingsYearMonthsResponse;
+    return data.yearMonths;
+  } catch (error) {
+    console.error('[Kintone] fetchMeetingsYearMonths error:', error);
     throw error;
   }
 }

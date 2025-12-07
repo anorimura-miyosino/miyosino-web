@@ -142,11 +142,28 @@ async function verifyJWT(
 }
 
 // kintone APIから会議情報データを取得
-async function fetchKintoneRecords(env: Env): Promise<KintoneRecordsResponse> {
+async function fetchKintoneRecords(
+  env: Env,
+  year?: number,
+  month?: number
+): Promise<KintoneRecordsResponse> {
   const appId = 48;
+  let query = '';
+
+  if (year && month) {
+    // 指定された年月のデータを取得
+    const startDate = `${year}-${String(month).padStart(2, '0')}-01T00:00:00Z`;
+    const nextMonth = month === 12 ? 1 : month + 1;
+    const nextYear = month === 12 ? year + 1 : year;
+    const endDate = `${nextYear}-${String(nextMonth).padStart(2, '0')}-01T00:00:00Z`;
+    query = `StartDateTime >= "${startDate}" and StartDateTime < "${endDate}"`;
+  }
 
   const url = new URL(`https://${env.KINTONE_DOMAIN}/k/v1/records.json`);
   url.searchParams.append('app', appId.toString());
+  if (query) {
+    url.searchParams.append('query', query);
+  }
 
   const response = await fetch(url.toString(), {
     method: 'GET',
@@ -484,8 +501,14 @@ export default {
 
       // ルーティング
       if (path === '/minutes' || path === '/minutes/') {
+        // クエリパラメータから年月を取得
+        const yearParam = url.searchParams.get('year');
+        const monthParam = url.searchParams.get('month');
+        const year = yearParam ? parseInt(yearParam, 10) : undefined;
+        const month = monthParam ? parseInt(monthParam, 10) : undefined;
+
         // 会議情報データを取得
-        const kintoneResponse = await fetchKintoneRecords(env);
+        const kintoneResponse = await fetchKintoneRecords(env, year, month);
 
         // デバッグ: 最初のレコードの構造を確認
         if (kintoneResponse.records.length > 0) {
@@ -538,6 +561,39 @@ export default {
         });
 
         return new Response(JSON.stringify({ meetings }), {
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders(origin),
+          },
+        });
+      } else if (path === '/minutes/years') {
+        // 会議情報が存在する年月の一覧を取得
+        const kintoneResponse = await fetchKintoneRecords(env);
+        const yearMonths = new Set<string>();
+
+        kintoneResponse.records.forEach((record) => {
+          const startDateTime = record.StartDateTime?.value;
+          if (!startDateTime) {
+            return;
+          }
+
+          const date = new Date(startDateTime);
+          const year = date.getFullYear();
+          const month = date.getMonth() + 1;
+          yearMonths.add(`${year}-${month}`);
+        });
+
+        const yearMonthList = Array.from(yearMonths)
+          .map((ym) => {
+            const [year, month] = ym.split('-').map(Number);
+            return { year, month };
+          })
+          .sort((a, b) => {
+            if (a.year !== b.year) return b.year - a.year;
+            return b.month - a.month;
+          });
+
+        return new Response(JSON.stringify({ yearMonths: yearMonthList }), {
           headers: {
             'Content-Type': 'application/json',
             ...corsHeaders(origin),
