@@ -238,12 +238,10 @@ export default function MemberPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                議事録ダウンロード
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900">会議情報</h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              総会や班長会の議事録をダウンロードできます
+              総会や班長会などの会議情報の参照、議事録、録音ファイルのダウンロードができます
             </p>
             <Link
               href="/member/minutes"

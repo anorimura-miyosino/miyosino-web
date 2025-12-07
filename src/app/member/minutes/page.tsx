@@ -11,8 +11,8 @@ export default function MinutesPage() {
     <MemberAuthWrapper>
       <div className="min-h-screen bg-gray-50">
         <MemberPageHeader
-          title="議事録ダウンロード"
-          description="総会や班長会の議事録をダウンロードできます"
+          title="会議情報"
+          description="総会や班長会などの会議情報の参照、議事録、録音ファイルのダウンロードができます"
           gradientFrom="from-indigo-600"
           gradientTo="to-indigo-800"
           textColor="text-indigo-100"
