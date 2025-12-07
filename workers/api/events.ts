@@ -26,7 +26,10 @@ interface KintoneRecord {
   startDateTime: {
     value: string; // ISO 8601形式: YYYY-MM-DDTHH:mm:ss
   };
-  venue: {
+  endDateTime?: {
+    value: string; // ISO 8601形式: YYYY-MM-DDTHH:mm:ss
+  };
+  venue?: {
     value: string;
   };
   owner: {
@@ -178,6 +181,7 @@ function convertKintoneRecordToEvent(record: KintoneRecord): {
   id: string;
   title: string;
   startDateTime: string;
+  endDateTime?: string;
   venue: string;
   owner: string;
   category?: string;
@@ -194,9 +198,6 @@ function convertKintoneRecordToEvent(record: KintoneRecord): {
   }
   if (!record.startDateTime?.value) {
     throw new Error('startDateTime is missing');
-  }
-  if (!record.venue?.value) {
-    throw new Error('Venue is missing');
   }
 
   // createdAtとupdatedAtは現在時刻をデフォルトとして使用
@@ -223,7 +224,8 @@ function convertKintoneRecordToEvent(record: KintoneRecord): {
     id: record.$id.value,
     title: record.title.value,
     startDateTime: record.startDateTime.value,
-    venue: record.venue.value,
+    endDateTime: record.endDateTime?.value,
+    venue: record.venue?.value || '',
     owner: ownerNames,
     category: categoryValue,
     description: record.description?.value || '',

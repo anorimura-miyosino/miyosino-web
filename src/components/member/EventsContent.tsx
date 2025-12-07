@@ -17,18 +17,263 @@ function formatDateTime(dateTimeString: string): string {
   const month = date.getMonth() + 1;
   const day = date.getDate();
   const weekday = weekdays[date.getDay()];
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
 
-  return `${year}年${month}月${day}日（${weekday}） ${hours}:${minutes}`;
+  // 時刻が00:00の場合は時刻部分を省略
+  if (hours === 0 && minutes === 0) {
+    return `${year}年${month}月${day}日（${weekday}）`;
+  }
+
+  const hoursStr = hours.toString().padStart(2, '0');
+  const minutesStr = minutes.toString().padStart(2, '0');
+  return `${year}年${month}月${day}日（${weekday}） ${hoursStr}:${minutesStr}`;
 }
 
-// 日時から時間のみを取得する関数
+// 日時から時間のみを取得する関数（00:00の場合は空文字列を返す）
 function formatTime(dateTimeString: string): string {
   const date = new Date(dateTimeString);
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${hours}:${minutes}`;
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  // 時刻が00:00の場合は空文字列を返す
+  if (hours === 0 && minutes === 0) {
+    return '';
+  }
+
+  const hoursStr = hours.toString().padStart(2, '0');
+  const minutesStr = minutes.toString().padStart(2, '0');
+  return `${hoursStr}:${minutesStr}`;
+}
+
+// 日時をフォーマットする関数（年を省略可能）
+function formatDateTimeWithoutYear(dateTimeString: string): string {
+  const date = new Date(dateTimeString);
+  const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const weekday = weekdays[date.getDay()];
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  // 時刻が00:00の場合は時刻部分を省略
+  if (hours === 0 && minutes === 0) {
+    return `${month}月${day}日（${weekday}）`;
+  }
+
+  const hoursStr = hours.toString().padStart(2, '0');
+  const minutesStr = minutes.toString().padStart(2, '0');
+  return `${month}月${day}日（${weekday}） ${hoursStr}:${minutesStr}`;
+}
+
+// 日付のみを返す関数（時刻なし）
+function formatDateOnly(dateTimeString: string): string {
+  const date = new Date(dateTimeString);
+  const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const weekday = weekdays[date.getDay()];
+  return `${year}年${month}月${day}日（${weekday}）`;
+}
+
+// 年を省略した日付のみを返す関数（時刻なし）
+function formatDateOnlyWithoutYear(
+  dateTimeString: string,
+  startYear: number
+): string {
+  const date = new Date(dateTimeString);
+  const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const weekday = weekdays[date.getDay()];
+
+  // 年が同じなら年を省略
+  if (year === startYear) {
+    return `${month}月${day}日（${weekday}）`;
+  }
+  // 年が異なる場合は年を含める
+  return `${year}年${month}月${day}日（${weekday}）`;
+}
+
+// 日付と時間を統合した表示を生成する関数
+function formatEventDateTime(event: Event): string {
+  const startDate = new Date(event.startDateTime);
+  const startTime = formatTime(event.startDateTime); // 00:00の場合は空文字列
+  const startDateStr = formatDateOnly(event.startDateTime); // 日付のみ（時刻なし）
+
+  // 終了日時なし
+  if (!event.endDateTime) {
+    return startTime ? `${startDateStr} ${startTime}` : startDateStr;
+  }
+
+  const endDate = new Date(event.endDateTime);
+  const endTime = formatTime(event.endDateTime);
+  const startDateOnly = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate()
+  );
+  const endDateOnly = new Date(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate()
+  );
+
+  // 同じ日付
+  if (startDateOnly.getTime() === endDateOnly.getTime()) {
+    if (!startTime && !endTime) return startDateStr;
+    if (!startTime) return `${startDateStr} ～${endTime}`;
+    if (!endTime) return `${startDateStr} ${startTime}～`;
+    return `${startDateStr} ${startTime}～${endTime}`;
+  }
+
+  // 異なる日付
+  const endDateStr = formatDateOnlyWithoutYear(
+    event.endDateTime,
+    startDate.getFullYear()
+  );
+  if (!startTime && !endTime) return `${startDateStr} ～ ${endDateStr}`;
+  if (!startTime) return `${startDateStr} ～ ${endDateStr} ${endTime}`;
+  if (!endTime) return `${startDateStr} ${startTime} ～ ${endDateStr}`;
+  return `${startDateStr} ${startTime} ～ ${endDateStr} ${endTime}`;
+}
+
+// イベントの位置（開始日・中間日・終了日）を判定する関数
+function getEventPosition(
+  event: Event,
+  currentDate: Date
+): 'start' | 'middle' | 'end' | 'single' {
+  const startDate = new Date(event.startDateTime);
+  const startDateOnly = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate()
+  );
+  const currentDateOnly = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate()
+  );
+
+  // 終了日時がない場合は単一日
+  if (!event.endDateTime) {
+    return startDateOnly.getTime() === currentDateOnly.getTime()
+      ? 'single'
+      : 'middle';
+  }
+
+  const endDate = new Date(event.endDateTime);
+  const endDateOnly = new Date(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate()
+  );
+
+  // 開始日と終了日が同じ場合は単一日
+  if (startDateOnly.getTime() === endDateOnly.getTime()) {
+    return 'single';
+  }
+
+  // 現在の日付が開始日の場合
+  if (startDateOnly.getTime() === currentDateOnly.getTime()) {
+    return 'start';
+  }
+
+  // 現在の日付が終了日の場合
+  if (endDateOnly.getTime() === currentDateOnly.getTime()) {
+    return 'end';
+  }
+
+  // それ以外は中間日
+  return 'middle';
+}
+
+// 期間表示を生成する関数（後方互換性のため残す）
+function formatEventPeriod(event: Event): { label: string; value: string } {
+  const startDate = new Date(event.startDateTime);
+
+  // 終了日時が空の場合
+  if (!event.endDateTime) {
+    const startTime = formatTime(event.startDateTime);
+    // 時刻が00:00の場合は表示しない
+    if (!startTime) {
+      return {
+        label: '',
+        value: '',
+      };
+    }
+    return {
+      label: '開始時刻',
+      value: startTime,
+    };
+  }
+
+  const endDate = new Date(event.endDateTime);
+  const startDateOnly = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate()
+  );
+  const endDateOnly = new Date(
+    endDate.getFullYear(),
+    endDate.getMonth(),
+    endDate.getDate()
+  );
+
+  // 開始日時と終了日時が同じ日付の場合
+  if (startDateOnly.getTime() === endDateOnly.getTime()) {
+    const startTime = formatTime(event.startDateTime);
+    const endTime = formatTime(event.endDateTime);
+
+    // 両方とも00:00の場合は表示しない
+    if (!startTime && !endTime) {
+      return {
+        label: '',
+        value: '',
+      };
+    }
+
+    // 開始時刻のみ00:00の場合
+    if (!startTime) {
+      return {
+        label: '終了時刻',
+        value: endTime,
+      };
+    }
+
+    // 終了時刻のみ00:00の場合
+    if (!endTime) {
+      return {
+        label: '開始時刻',
+        value: startTime,
+      };
+    }
+
+    return {
+      label: '時間',
+      value: `${startTime}～${endTime}`,
+    };
+  }
+
+  // 開始日時より終了日時が後日の場合
+  const startYear = startDate.getFullYear();
+  const endYear = endDate.getFullYear();
+
+  if (startYear === endYear) {
+    // 年が同じなら終了日時の年を省略
+    return {
+      label: '期間',
+      value: `${formatDateTime(event.startDateTime)}～${formatDateTimeWithoutYear(event.endDateTime)}`,
+    };
+  } else {
+    // 年が異なる場合は両方に年を含める
+    return {
+      label: '期間',
+      value: `${formatDateTime(event.startDateTime)}～${formatDateTime(event.endDateTime)}`,
+    };
+  }
 }
 
 export default function EventsContent({
@@ -190,12 +435,41 @@ export default function EventsContent({
   const eventsByDate = useMemo(() => {
     const grouped: Record<string, Event[]> = {};
     filteredEvents.forEach((event) => {
-      const eventDate = new Date(event.startDateTime);
-      const dateKey = `${eventDate.getFullYear()}-${String(eventDate.getMonth() + 1).padStart(2, '0')}-${String(eventDate.getDate()).padStart(2, '0')}`;
-      if (!grouped[dateKey]) {
-        grouped[dateKey] = [];
+      const startDate = new Date(event.startDateTime);
+      const startDateOnly = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate()
+      );
+
+      // 終了日時がない場合は開始日のみ
+      if (!event.endDateTime) {
+        const dateKey = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}-${String(startDate.getDate()).padStart(2, '0')}`;
+        if (!grouped[dateKey]) {
+          grouped[dateKey] = [];
+        }
+        grouped[dateKey].push(event);
+        return;
       }
-      grouped[dateKey].push(event);
+
+      // 終了日時がある場合は開始日から終了日までのすべての日付に追加
+      const endDate = new Date(event.endDateTime);
+      const endDateOnly = new Date(
+        endDate.getFullYear(),
+        endDate.getMonth(),
+        endDate.getDate()
+      );
+
+      // 開始日から終了日まで1日ずつループ
+      const currentDate = new Date(startDateOnly);
+      while (currentDate <= endDateOnly) {
+        const dateKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+        if (!grouped[dateKey]) {
+          grouped[dateKey] = [];
+        }
+        grouped[dateKey].push(event);
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
     });
     return grouped;
   }, [filteredEvents]);
@@ -415,35 +689,30 @@ export default function EventsContent({
                   <div className="space-y-4">
                     {filteredUpcomingEvents.length > 0 ? (
                       filteredUpcomingEvents.map((event) => (
-                        <div
+                        <button
                           key={event.id}
-                          className="border-l-4 border-purple-500 pl-4 py-2"
+                          onClick={() => handleEventClick(event)}
+                          className="w-full text-left border-l-4 border-purple-500 pl-4 py-2 hover:bg-gray-100 transition-colors rounded-r-lg cursor-pointer"
                         >
-                          <h3 className="font-semibold text-gray-900">
-                            {formatDateTime(event.startDateTime)} -{' '}
-                            {event.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mt-1">
-                            時間: {formatTime(event.startDateTime)} / 場所:{' '}
-                            {event.venue}
-                            {event.owner && ` / 主催: ${event.owner}`}
-                          </p>
-                          {event.description && (
-                            <div
-                              className="text-gray-700 text-sm mt-2"
-                              dangerouslySetInnerHTML={{
-                                __html: event.description,
-                              }}
-                            />
-                          )}
                           {event.category && (
-                            <div className="mt-2">
+                            <div className="mb-2">
                               <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
                                 {event.category}
                               </span>
                             </div>
                           )}
-                        </div>
+                          <div className="text-sm text-gray-500 mb-1">
+                            {formatEventDateTime(event)}
+                          </div>
+                          <h3 className="font-semibold text-gray-900 text-lg">
+                            {event.title}
+                          </h3>
+                          <p className="text-gray-600 text-sm mt-1">
+                            {event.venue && `場所: ${event.venue}`}
+                            {event.venue && event.owner && ' / '}
+                            {event.owner && `主催: ${event.owner}`}
+                          </p>
+                        </button>
                       ))
                     ) : (
                       <p className="text-gray-500 text-sm">
@@ -461,35 +730,30 @@ export default function EventsContent({
                   <div className="space-y-4">
                     {filteredPastEvents.length > 0 ? (
                       filteredPastEvents.map((event) => (
-                        <div
+                        <button
                           key={event.id}
-                          className="border-l-4 border-gray-300 pl-4 py-2"
+                          onClick={() => handleEventClick(event)}
+                          className="w-full text-left border-l-4 border-gray-300 pl-4 py-2 hover:bg-gray-100 transition-colors rounded-r-lg cursor-pointer"
                         >
-                          <h3 className="font-semibold text-gray-900">
-                            {formatDateTime(event.startDateTime)} -{' '}
-                            {event.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mt-1">
-                            時間: {formatTime(event.startDateTime)} / 場所:{' '}
-                            {event.venue}
-                            {event.owner && ` / 主催: ${event.owner}`}
-                          </p>
-                          {event.description && (
-                            <div
-                              className="text-gray-700 text-sm mt-2"
-                              dangerouslySetInnerHTML={{
-                                __html: event.description,
-                              }}
-                            />
-                          )}
                           {event.category && (
-                            <div className="mt-2">
+                            <div className="mb-2">
                               <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
                                 {event.category}
                               </span>
                             </div>
                           )}
-                        </div>
+                          <div className="text-sm text-gray-500 mb-1">
+                            {formatEventDateTime(event)}
+                          </div>
+                          <h3 className="font-semibold text-gray-900 text-lg">
+                            {event.title}
+                          </h3>
+                          <p className="text-gray-600 text-sm mt-1">
+                            {event.venue && `場所: ${event.venue}`}
+                            {event.venue && event.owner && ' / '}
+                            {event.owner && `主催: ${event.owner}`}
+                          </p>
+                        </button>
                       ))
                     ) : (
                       <p className="text-gray-500 text-sm">
@@ -673,28 +937,69 @@ export default function EventsContent({
                               : 'bg-gray-50 text-gray-400'
                           } ${day.date.getDay() === 0 ? 'text-red-600' : ''} ${
                             day.date.getDay() === 6 ? 'text-blue-600' : ''
-                          } ${isToday ? 'bg-purple-50 border-2 border-purple-500' : ''}`}
+                          }`}
                         >
                           <div
-                            className={`text-sm font-medium mb-1 ${
+                            className={`text-sm font-medium h-7 flex items-center ${
                               isToday
-                                ? 'bg-purple-600 text-white rounded-full w-7 h-7 flex items-center justify-center'
+                                ? 'bg-purple-600 text-white rounded-full w-7 justify-center'
                                 : ''
                             }`}
                           >
                             {day.date.getDate()}
                           </div>
                           <div className="space-y-1">
-                            {day.events.slice(0, 3).map((event) => (
-                              <button
-                                key={event.id}
-                                onClick={() => handleEventClick(event)}
-                                className="w-full text-left text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded truncate hover:bg-purple-200 transition-colors cursor-pointer"
-                                title={event.title}
-                              >
-                                {formatTime(event.startDateTime)} {event.title}
-                              </button>
-                            ))}
+                            {day.events.slice(0, 3).map((event) => {
+                              const position = getEventPosition(
+                                event,
+                                day.date
+                              );
+                              let className =
+                                'w-full text-left text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded truncate hover:bg-purple-200 transition-colors cursor-pointer';
+                              let displayText = '';
+
+                              // 位置に応じてスタイルとテキストを変更
+                              if (position === 'start') {
+                                className += ' border-l-4 border-purple-600';
+                                const startTime = formatTime(
+                                  event.startDateTime
+                                );
+                                displayText = startTime
+                                  ? `${startTime} ${event.title}`
+                                  : event.title;
+                              } else if (position === 'end') {
+                                className += ' border-r-4 border-purple-600';
+                                const endTime = event.endDateTime
+                                  ? formatTime(event.endDateTime)
+                                  : '';
+                                displayText = endTime
+                                  ? `${event.title} ${endTime}`
+                                  : event.title;
+                              } else if (position === 'middle') {
+                                className +=
+                                  ' border-l-2 border-purple-400 opacity-90';
+                                displayText = event.title;
+                              } else {
+                                // single
+                                const startTime = formatTime(
+                                  event.startDateTime
+                                );
+                                displayText = startTime
+                                  ? `${startTime} ${event.title}`
+                                  : event.title;
+                              }
+
+                              return (
+                                <button
+                                  key={event.id}
+                                  onClick={() => handleEventClick(event)}
+                                  className={className}
+                                  title={event.title}
+                                >
+                                  {displayText}
+                                </button>
+                              );
+                            })}
                             {day.events.length > 3 && (
                               <div className="text-xs text-gray-500">
                                 +{day.events.length - 3}件
