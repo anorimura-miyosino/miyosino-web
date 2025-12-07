@@ -8,14 +8,18 @@ import {
   YearMonth,
 } from '@/shared/utils/kintone';
 import { getToken } from '@/shared/utils/auth';
+import { downloadFile as downloadFileUtil } from '@/shared/utils/fileDownload';
+import FileDownloadButton from '@/components/shared/FileDownloadButton';
 
 // 音声プレーヤーコンポーネント
 function AudioPlayer({
   fileKey,
   fileName,
+  hideDownloadButton = false,
 }: {
   fileKey: string;
   fileName: string;
+  hideDownloadButton?: boolean;
 }) {
   const [audioUrl, setAudioUrl] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -78,7 +82,7 @@ function AudioPlayer({
 
     setDownloading(true);
     try {
-      await downloadFile(fileKey, fileName);
+      await downloadFileUtil(fileKey, fileName, 'minutes');
     } catch (err) {
       console.error('[AudioPlayer] download error:', err);
       alert(
@@ -103,41 +107,43 @@ function AudioPlayer({
   return (
     <div className="space-y-3">
       {/* ファイル名とダウンロードボタン（関連資料・議事録と同じスタイル） */}
-      <button
-        onClick={handleDownload}
-        disabled={downloading}
-        className="w-full text-left px-3 py-2 bg-white rounded-md border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <span className="text-sm text-gray-700 group-hover:text-indigo-700 truncate">
-          {downloading ? 'ダウンロード中...' : fileName}
-        </span>
-        {downloading ? (
-          <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400 flex-shrink-0 ml-2"></div>
-        ) : (
-          <svg
-            className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 flex-shrink-0 ml-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-            />
-          </svg>
-        )}
-      </button>
+      {!hideDownloadButton && (
+        <button
+          onClick={handleDownload}
+          disabled={downloading}
+          className="w-full text-left px-3 py-2 bg-white rounded-md border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span className="text-sm text-gray-700 group-hover:text-indigo-700 truncate">
+            {downloading ? 'ダウンロード中...' : fileName}
+          </span>
+          {downloading ? (
+            <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400 flex-shrink-0 ml-2"></div>
+          ) : (
+            <svg
+              className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 flex-shrink-0 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+          )}
+        </button>
+      )}
 
       {/* 再生コントロール */}
       {!audioUrl && !loading && !error && (
         <button
           onClick={handleLoadAudio}
-          className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm transition-colors flex items-center justify-center gap-2"
+          className="w-full px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm transition-colors flex items-center justify-center gap-3 border-2 border-blue-500"
         >
           <svg
-            className="w-4 h-4"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -146,16 +152,10 @@ function AudioPlayer({
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
             />
           </svg>
-          <span>音声を読み込む</span>
+          <span className="font-medium">音声プレーヤーを開く</span>
         </button>
       )}
 
@@ -209,57 +209,6 @@ function formatDateTime(dateTimeString: string): {
   };
 }
 
-// ファイルをダウンロードする関数
-async function downloadFile(fileKey: string, fileName: string) {
-  try {
-    const token = getToken();
-    if (!token) {
-      throw new Error('認証トークンがありません');
-    }
-
-    const apiEndpoint =
-      process.env.NEXT_PUBLIC_MINUTES_API_URL ||
-      'https://miyosino-minutes.anorimura-miyosino.workers.dev';
-    const url = `${apiEndpoint}/minutes/file?fileKey=${encodeURIComponent(fileKey)}`;
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('auth_token');
-        }
-        throw new Error('認証に失敗しました');
-      }
-      throw new Error(
-        `ファイルのダウンロードに失敗しました: ${response.status}`
-      );
-    }
-
-    const blob = await response.blob();
-    const downloadUrl = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(downloadUrl);
-  } catch (error) {
-    console.error('[MinutesContent] downloadFile error:', error);
-    alert(
-      error instanceof Error
-        ? error.message
-        : 'ファイルのダウンロードに失敗しました'
-    );
-  }
-}
-
 export default function MinutesContent() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [yearMonths, setYearMonths] = useState<YearMonth[]>([]);
@@ -280,13 +229,34 @@ export default function MinutesContent() {
     };
   };
 
-  // 選択された年月（デフォルトは現在月）
-  const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonth>(
-    getCurrentYearMonth()
-  );
+  // 選択された年（全期間は空文字列）
+  const [selectedYear, setSelectedYear] = useState<string>('');
 
-  // 選択されたカテゴリ（空文字列は「すべて」を意味する）
+  // 選択された月（全月は空文字列）
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+
+  // 選択されたカテゴリ（全カテゴリは空文字列）
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+
+  // 年と月の一覧を取得
+  const years = useMemo(() => {
+    const yearSet = new Set<number>();
+    yearMonths.forEach((ym) => {
+      yearSet.add(ym.year);
+    });
+    return Array.from(yearSet).sort((a, b) => b - a); // 新しい順
+  }, [yearMonths]);
+
+  const months = useMemo(() => {
+    if (!selectedYear) return [];
+    const monthSet = new Set<number>();
+    yearMonths
+      .filter((ym) => ym.year.toString() === selectedYear)
+      .forEach((ym) => {
+        monthSet.add(ym.month);
+      });
+    return Array.from(monthSet).sort((a, b) => b - a); // 新しい順
+  }, [yearMonths, selectedYear]);
 
   // カテゴリの一覧を取得
   const categories = useMemo(() => {
@@ -302,20 +272,43 @@ export default function MinutesContent() {
   // フィルタリングされた会議情報
   const filteredMeetings = useMemo(() => {
     return meetings.filter((meeting) => {
+      // 年でフィルタリング
+      if (selectedYear) {
+        const meetingDate = new Date(meeting.StartDateTime);
+        const meetingYear = meetingDate.getFullYear();
+        if (meetingYear.toString() !== selectedYear) {
+          return false;
+        }
+      }
+
+      // 月でフィルタリング
+      if (selectedMonth) {
+        const meetingDate = new Date(meeting.StartDateTime);
+        const meetingMonth = meetingDate.getMonth() + 1;
+        if (meetingMonth.toString() !== selectedMonth) {
+          return false;
+        }
+      }
+
       // カテゴリでフィルタリング
       if (selectedCategory && meeting.category !== selectedCategory) {
         return false;
       }
+
       return true;
     });
-  }, [meetings, selectedCategory]);
+  }, [meetings, selectedYear, selectedMonth, selectedCategory]);
 
-  // 初期表示時に年月一覧を取得
+  // 年月一覧と会議情報一覧を取得
   useEffect(() => {
-    const loadYearMonths = async () => {
+    async function loadData() {
       try {
         setLoading(true);
-        const yearMonthsData = await fetchMeetingsYearMonths();
+        setError(null);
+        const [meetingsData, yearMonthsData] = await Promise.all([
+          fetchMeetings(), // 全件取得
+          fetchMeetingsYearMonths(),
+        ]);
 
         // 現在の年月より未来の年月を除外
         const now = new Date();
@@ -332,9 +325,10 @@ export default function MinutesContent() {
           return true;
         });
 
+        setMeetings(meetingsData);
         setYearMonths(filteredYearMonths);
 
-        // 現在月が存在する場合は選択、存在しない場合は最新の年月を選択
+        // デフォルトで現在月を選択（存在しない場合は最新の年月を選択）
         const currentYearMonth = getCurrentYearMonth();
         const hasCurrentMonth = filteredYearMonths.some(
           (ym: YearMonth) =>
@@ -343,45 +337,38 @@ export default function MinutesContent() {
         );
 
         if (hasCurrentMonth) {
-          setSelectedYearMonth(currentYearMonth);
+          setSelectedYear(currentYearMonth.year.toString());
+          setSelectedMonth(currentYearMonth.month.toString());
         } else if (filteredYearMonths.length > 0) {
-          setSelectedYearMonth(filteredYearMonths[0]);
+          setSelectedYear(filteredYearMonths[0].year.toString());
+          setSelectedMonth(filteredYearMonths[0].month.toString());
         }
-      } catch (err) {
-        console.error('[MinutesContent] Failed to load year months:', err);
-        setError('年月一覧の取得に失敗しました');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadYearMonths();
-  }, []);
-
-  // 選択された年月が変更されたらデータを取得
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const meetingsData = await fetchMeetings(
-          selectedYearMonth.year,
-          selectedYearMonth.month
-        );
-        setMeetings(meetingsData);
       } catch (err) {
         console.error('[MinutesContent] loadData error:', err);
         setError(
           err instanceof Error ? err.message : '会議情報の取得に失敗しました'
         );
         setMeetings([]);
+        setYearMonths([]);
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     loadData();
-  }, [selectedYearMonth]);
+  }, []);
+
+  // 年が変更されたら月をリセット
+  useEffect(() => {
+    if (selectedYear && months.length > 0) {
+      // 選択された年に対応する月が存在する場合、最初の月を選択
+      if (!months.includes(parseInt(selectedMonth))) {
+        setSelectedMonth(months[0].toString());
+      }
+    } else {
+      setSelectedMonth('');
+    }
+  }, [selectedYear, months, selectedMonth]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -419,30 +406,59 @@ export default function MinutesContent() {
                 )}
 
                 {/* 年月フィルタ */}
-                {yearMonths.length > 0 && (
+                {years.length > 0 && (
                   <div>
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">
                       年月で絞り込み
                     </h3>
-                    <div className="space-y-1 max-h-[300px] overflow-y-auto">
-                      {yearMonths.map((ym) => {
-                        const isSelected =
-                          selectedYearMonth?.year === ym.year &&
-                          selectedYearMonth?.month === ym.month;
-                        return (
-                          <button
-                            key={`${ym.year}-${ym.month}`}
-                            onClick={() => setSelectedYearMonth(ym)}
-                            className={`w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                              isSelected
-                                ? 'bg-blue-600 text-white'
-                                : 'text-gray-700 hover:bg-gray-200'
-                            }`}
+                    <div className="space-y-3">
+                      {/* 年フィルター */}
+                      <div>
+                        <label
+                          htmlFor="year-filter"
+                          className="text-sm text-gray-700 mb-1 block"
+                        >
+                          年
+                        </label>
+                        <select
+                          id="year-filter"
+                          value={selectedYear}
+                          onChange={(e) => setSelectedYear(e.target.value)}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="">すべて</option>
+                          {years.map((year) => (
+                            <option key={year} value={year.toString()}>
+                              {year}年
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* 月フィルター（年が選択されている場合のみ表示） */}
+                      {selectedYear && (
+                        <div>
+                          <label
+                            htmlFor="month-filter"
+                            className="text-sm text-gray-700 mb-1 block"
                           >
-                            {formatYearMonth(ym.year, ym.month)}
-                          </button>
-                        );
-                      })}
+                            月
+                          </label>
+                          <select
+                            id="month-filter"
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          >
+                            <option value="">すべて</option>
+                            {months.map((month) => (
+                              <option key={month} value={month.toString()}>
+                                {month}月
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -464,8 +480,8 @@ export default function MinutesContent() {
             ) : filteredMeetings.length === 0 ? (
               <div className="bg-gray-50 rounded-lg p-8 text-center">
                 <p className="text-gray-500 text-sm">
-                  {selectedYearMonth
-                    ? `${formatYearMonth(selectedYearMonth.year, selectedYearMonth.month)}の会議情報はありません。`
+                  {selectedYear && selectedMonth
+                    ? `${selectedYear}年${selectedMonth}月の会議情報はありません。`
                     : '現在、会議情報はありません。'}
                 </p>
               </div>
@@ -508,7 +524,7 @@ export default function MinutesContent() {
 
                     {/* 資料・議事録・音声ファイル */}
                     <div className="mt-4 pt-4 border-t border-gray-200">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 gap-4">
                         {/* 資料 */}
                         {meeting.materials &&
                           Array.isArray(meeting.materials) &&
@@ -538,36 +554,30 @@ export default function MinutesContent() {
                               <div className="space-y-2">
                                 {meeting.materials.map(
                                   (
-                                    material: { fileKey: string; name: string },
+                                    material: {
+                                      fileKey: string;
+                                      name: string;
+                                      title?: string;
+                                      size?: string;
+                                    },
                                     index: number
                                   ) => (
-                                    <button
+                                    <div
                                       key={index}
-                                      onClick={() => {
-                                        downloadFile(
-                                          material.fileKey,
-                                          material.name
-                                        );
-                                      }}
-                                      className="w-full text-left px-3 py-2 bg-white rounded-md border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors flex items-center justify-between group"
+                                      className="flex items-center justify-between"
                                     >
-                                      <span className="text-sm text-gray-700 group-hover:text-indigo-700 truncate">
-                                        {material.name}
-                                      </span>
-                                      <svg
-                                        className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 flex-shrink-0 ml-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                      >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          strokeWidth={2}
-                                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                      <h3 className="font-semibold text-gray-900 flex-1">
+                                        {material.title || material.name}
+                                      </h3>
+                                      <div className="w-64 ml-4">
+                                        <FileDownloadButton
+                                          fileKey={material.fileKey}
+                                          fileName={material.name}
+                                          endpoint="minutes"
+                                          fileSize={material.size}
                                         />
-                                      </svg>
-                                    </button>
+                                      </div>
+                                    </div>
                                   )
                                 )}
                               </div>
@@ -577,79 +587,72 @@ export default function MinutesContent() {
                         {/* 議事録 */}
                         {meeting.minutes && (
                           <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-3">
-                              <svg
-                                className="w-5 h-5 text-gray-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <svg
+                                  className="w-5 h-5 text-gray-600"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                  />
+                                </svg>
+                                <h4 className="text-sm font-semibold text-gray-700">
+                                  議事録
+                                </h4>
+                              </div>
+                              <div className="w-64 ml-4">
+                                <FileDownloadButton
+                                  fileKey={meeting.minutes.fileKey}
+                                  fileName={meeting.minutes.name}
+                                  endpoint="minutes"
+                                  fileSize={meeting.minutes.size}
                                 />
-                              </svg>
-                              <h4 className="text-sm font-semibold text-gray-700">
-                                議事録
-                              </h4>
+                              </div>
                             </div>
-                            <button
-                              onClick={() => {
-                                if (meeting.minutes) {
-                                  downloadFile(
-                                    meeting.minutes.fileKey,
-                                    meeting.minutes.name
-                                  );
-                                }
-                              }}
-                              className="w-full px-3 py-2 bg-white rounded-md border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors flex items-center justify-between group"
-                            >
-                              <span className="text-sm text-gray-700 group-hover:text-indigo-700 truncate">
-                                {meeting.minutes.name}
-                              </span>
-                              <svg
-                                className="w-4 h-4 text-gray-400 group-hover:text-indigo-600 flex-shrink-0 ml-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                                />
-                              </svg>
-                            </button>
                           </div>
                         )}
 
                         {/* 音声ファイル */}
                         {meeting.audio && (
                           <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex items-center gap-2 mb-3">
-                              <svg
-                                className="w-5 h-5 text-gray-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <svg
+                                  className="w-5 h-5 text-gray-600"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                                  />
+                                </svg>
+                                <h4 className="text-sm font-semibold text-gray-700">
+                                  音声ファイル
+                                </h4>
+                              </div>
+                              <div className="w-64 ml-4">
+                                <FileDownloadButton
+                                  fileKey={meeting.audio.fileKey}
+                                  fileName={meeting.audio.name}
+                                  endpoint="minutes"
+                                  fileSize={meeting.audio.size}
                                 />
-                              </svg>
-                              <h4 className="text-sm font-semibold text-gray-700">
-                                音声ファイル
-                              </h4>
+                              </div>
                             </div>
                             <AudioPlayer
                               fileKey={meeting.audio.fileKey}
                               fileName={meeting.audio.name}
+                              hideDownloadButton={true}
                             />
                           </div>
                         )}

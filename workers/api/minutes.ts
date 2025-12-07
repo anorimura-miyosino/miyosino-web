@@ -36,6 +36,9 @@ interface KintoneRecord {
   materials?: {
     value: Array<{
       value: {
+        relatedMaterialTitle?: {
+          value: string;
+        };
         file?: {
           value: Array<{
             fileKey: string;
@@ -223,6 +226,8 @@ async function fetchKintoneRecords(
           firstRowValueKeys: materialsField?.value?.[0]?.value
             ? Object.keys(materialsField.value[0].value)
             : [],
+          firstRowTitle: materialsField?.value?.[0]?.value?.relatedMaterialTitle,
+          firstRowTitleValue: materialsField?.value?.[0]?.value?.relatedMaterialTitle?.value,
           firstRowFile: materialsField?.value?.[0]?.value?.file,
           firstRowFileValue: materialsField?.value?.[0]?.value?.file?.value,
           firstRowFileValueLength:
@@ -252,6 +257,7 @@ function convertKintoneRecordToMeeting(record: KintoneRecord): {
     name: string;
     contentType?: string;
     size?: string;
+    title?: string;
   }>;
   minutes?: {
     fileKey: string;
@@ -333,6 +339,9 @@ function convertKintoneRecordToMeeting(record: KintoneRecord): {
           hasValue: !!row?.value,
           valueType: typeof row?.value,
           valueKeys: row?.value ? Object.keys(row.value) : [],
+          hasTitle: !!row?.value?.relatedMaterialTitle,
+          titleValue: row?.value?.relatedMaterialTitle?.value,
+          titleType: typeof row?.value?.relatedMaterialTitle,
           hasFile: !!row?.value?.file,
           fileType: typeof row?.value?.file,
           fileKeys: row?.value?.file ? Object.keys(row.value.file) : [],
@@ -363,6 +372,17 @@ function convertKintoneRecordToMeeting(record: KintoneRecord): {
           return [];
         }
 
+        // 各行のtitleを取得
+        const rowTitle = row.value.relatedMaterialTitle?.value;
+        console.log(
+          `[Minutes] Row ${rowIndex} title:`,
+          rowTitle,
+          'type:',
+          typeof rowTitle,
+          'hasTitle:',
+          !!row.value.relatedMaterialTitle
+        );
+
         // 各ファイルを変換
         return fileField.value
           .map((file: any, fileIndex: number) => {
@@ -377,12 +397,17 @@ function convertKintoneRecordToMeeting(record: KintoneRecord): {
               );
               return null;
             }
-            return {
+            const material = {
               fileKey: file.fileKey || '',
               name: file.name || '',
               contentType: file.contentType || '',
               size: file.size || '',
             };
+            // titleが存在し、空文字列でない場合のみ追加
+            if (rowTitle && rowTitle.trim() !== '') {
+              (material as any).title = rowTitle;
+            }
+            return material;
           })
           .filter((f: any) => f !== null);
       })

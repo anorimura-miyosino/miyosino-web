@@ -170,6 +170,11 @@ async function fetchKintoneRecords(
   console.log('[GreenWellness] Kintone API success:', {
     recordCount: data.records.length,
     sampleRecordKeys: data.records[0] ? Object.keys(data.records[0]) : [],
+    firstRecordFile: data.records[0]?.file?.value?.[0],
+    firstRecordFileKeys: data.records[0]?.file?.value?.[0]
+      ? Object.keys(data.records[0].file.value[0])
+      : [],
+    firstRecordFileSize: data.records[0]?.file?.value?.[0]?.size,
   });
 
   return data;
@@ -186,10 +191,22 @@ function convertKintoneRecordToGreenWellnessFile(
   file?: {
     name: string;
     fileKey: string;
+    size?: string;
   };
 } {
   // ファイル情報を取得（最初のファイルのみ使用）
   const fileInfo = record.file?.value?.[0];
+
+  // デバッグ: ファイル情報の構造を確認
+  if (fileInfo) {
+    console.log('[GreenWellness] File info:', {
+      hasFileInfo: !!fileInfo,
+      fileInfoKeys: Object.keys(fileInfo),
+      hasSize: 'size' in fileInfo,
+      size: fileInfo.size,
+      sizeType: typeof fileInfo.size,
+    });
+  }
 
   // orderNumberフィールドの値を取得（デバッグ用）
   const orderNumberValue = record.orderNumber?.value;
@@ -211,6 +228,9 @@ function convertKintoneRecordToGreenWellnessFile(
       ? {
           name: fileInfo.name,
           fileKey: fileInfo.fileKey,
+          size: fileInfo.size
+            ? String(fileInfo.size)
+            : undefined,
         }
       : undefined,
   };

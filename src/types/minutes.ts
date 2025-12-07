@@ -6,6 +6,7 @@ export interface FileInfo {
   name: string;
   contentType?: string;
   size?: string;
+  title?: string; // 関連資料のタイトル（materials専用）
 }
 
 // 会議データ

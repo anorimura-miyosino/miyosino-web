@@ -218,6 +218,42 @@ export async function fetchCirculars(): Promise<Circular[]> {
     });
 
     if (!response.ok) {
+      // レスポンスの詳細を取得
+      let errorMessage = `配布資料の取得に失敗しました: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        // サーバーからの詳細なエラーメッセージを優先的に使用
+        if (errorData.message) {
+          errorMessage = errorData.message;
+          // Kintone APIエラーの場合は日本語メッセージを追加
+          if (errorMessage.includes('Kintone API error')) {
+            const kintoneErrorMatch = errorMessage.match(
+              /Kintone API error: (\d+) (.+?) - (.+)/
+            );
+            if (kintoneErrorMatch) {
+              const [, status, statusText, errorJson] = kintoneErrorMatch;
+              try {
+                const kintoneError = JSON.parse(errorJson);
+                if (kintoneError.message) {
+                  errorMessage = `Kintone APIエラー: ${kintoneError.message}`;
+                } else {
+                  errorMessage = `Kintone APIエラー (${status}): ${statusText}`;
+                }
+              } catch {
+                errorMessage = `Kintone APIエラー (${status}): ${statusText}`;
+              }
+            }
+          }
+        } else if (errorData.error) {
+          errorMessage += ` - ${errorData.error}`;
+        }
+      } catch {
+        // JSON解析に失敗した場合はstatusTextを使用
+        if (response.statusText) {
+          errorMessage += ` ${response.statusText}`;
+        }
+      }
+
       if (response.status === 401) {
         // 401エラーの場合、トークンを削除して認証エラーを投げる
         if (typeof window !== 'undefined') {
@@ -225,9 +261,7 @@ export async function fetchCirculars(): Promise<Circular[]> {
         }
         throw new Error('認証に失敗しました');
       }
-      throw new Error(
-        `配布資料の取得に失敗しました: ${response.status} ${response.statusText}`
-      );
+      throw new Error(errorMessage);
     }
 
     const data = (await response.json()) as CircularsResponse;
@@ -261,6 +295,42 @@ export async function fetchCircularYearMonths(): Promise<YearMonth[]> {
     });
 
     if (!response.ok) {
+      // レスポンスの詳細を取得
+      let errorMessage = `年月一覧の取得に失敗しました: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        // サーバーからの詳細なエラーメッセージを優先的に使用
+        if (errorData.message) {
+          errorMessage = errorData.message;
+          // Kintone APIエラーの場合は日本語メッセージを追加
+          if (errorMessage.includes('Kintone API error')) {
+            const kintoneErrorMatch = errorMessage.match(
+              /Kintone API error: (\d+) (.+?) - (.+)/
+            );
+            if (kintoneErrorMatch) {
+              const [, status, statusText, errorJson] = kintoneErrorMatch;
+              try {
+                const kintoneError = JSON.parse(errorJson);
+                if (kintoneError.message) {
+                  errorMessage = `Kintone APIエラー: ${kintoneError.message}`;
+                } else {
+                  errorMessage = `Kintone APIエラー (${status}): ${statusText}`;
+                }
+              } catch {
+                errorMessage = `Kintone APIエラー (${status}): ${statusText}`;
+              }
+            }
+          }
+        } else if (errorData.error) {
+          errorMessage += ` - ${errorData.error}`;
+        }
+      } catch {
+        // JSON解析に失敗した場合はstatusTextを使用
+        if (response.statusText) {
+          errorMessage += ` ${response.statusText}`;
+        }
+      }
+
       if (response.status === 401) {
         // 401エラーの場合、トークンを削除して認証エラーを投げる
         if (typeof window !== 'undefined') {
@@ -268,9 +338,7 @@ export async function fetchCircularYearMonths(): Promise<YearMonth[]> {
         }
         throw new Error('認証に失敗しました');
       }
-      throw new Error(
-        `年月一覧の取得に失敗しました: ${response.status} ${response.statusText}`
-      );
+      throw new Error(errorMessage);
     }
 
     const data = (await response.json()) as YearMonthsResponse;

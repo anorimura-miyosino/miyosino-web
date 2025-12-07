@@ -35,5 +35,6 @@ export interface GreenWellnessFile {
   file?: {
     name: string;
     fileKey: string;
+    size?: string;
   };
 }

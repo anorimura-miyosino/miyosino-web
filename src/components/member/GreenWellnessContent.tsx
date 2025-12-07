@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { GreenWellnessFile } from './data';
 import { fetchGreenWellnessFiles } from '@/shared/utils/kintone';
 import { redirectToLogin } from '@/shared/utils/auth';
+import FileDownloadButton from '@/components/shared/FileDownloadButton';
 
 export default function GreenWellnessContent() {
   const [files, setFiles] = useState<GreenWellnessFile[]>([]);
@@ -40,51 +41,6 @@ export default function GreenWellnessContent() {
 
     loadFiles();
   }, []);
-
-  const handleDownload = async (file: GreenWellnessFile) => {
-    if (!file.file?.fileKey) {
-      alert('ファイルが設定されていません');
-      return;
-    }
-
-    const greenwellnessApiUrl =
-      process.env.NEXT_PUBLIC_GREENWELLNESS_API_URL ||
-      'https://miyosino-greenwellness.anorimura-miyosino.workers.dev';
-    const fileUrl = `${greenwellnessApiUrl}/greenwellness/file?fileKey=${encodeURIComponent(file.file.fileKey)}`;
-
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      alert('認証が必要です');
-      redirectToLogin();
-      return;
-    }
-
-    try {
-      const response = await fetch(fileUrl, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('ファイルのダウンロードに失敗しました');
-      }
-
-      // ファイルをダウンロード
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = file.file.name;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('File download error:', error);
-      alert('ファイルのダウンロードに失敗しました');
-    }
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -125,13 +81,15 @@ export default function GreenWellnessContent() {
                       </p>
                     )}
                   </div>
-                  {file.file ? (
-                    <button
-                      onClick={() => handleDownload(file)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      ダウンロード
-                    </button>
+                  {file.file?.fileKey ? (
+                    <div className="w-64">
+                      <FileDownloadButton
+                        fileKey={file.file.fileKey}
+                        fileName={file.file.name || 'download'}
+                        endpoint="greenwellness"
+                        fileSize={file.file.size}
+                      />
+                    </div>
                   ) : (
                     <span className="text-gray-400 text-sm">ファイルなし</span>
                   )}

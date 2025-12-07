@@ -398,10 +398,29 @@ export default {
       }
     } catch (error) {
       console.error('[Circulars] Error:', error);
+      
+      // エラーの詳細を取得
+      let errorMessage = 'Internal server error';
+      let errorDetails: any = {};
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        errorDetails = {
+          name: error.name,
+          stack: error.stack,
+        };
+      }
+      
+      // Kintone APIエラーの場合は詳細を追加
+      if (errorMessage.includes('Kintone API error')) {
+        errorDetails.kintoneError = true;
+      }
+      
       return new Response(
         JSON.stringify({
           error: 'Internal server error',
-          message: error instanceof Error ? error.message : 'Unknown error',
+          message: errorMessage,
+          details: errorDetails,
         }),
         {
           status: 500,
