@@ -324,6 +324,9 @@ export default function EventsContent({
   // 選択されたカテゴリ（全カテゴリは空文字列）
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 
+  // 選択された主催者（全主催者は空文字列）
+  const [selectedOwner, setSelectedOwner] = useState<string>('');
+
   // 年と月の一覧を取得
   const years = useMemo(() => {
     const yearSet = new Set<number>();
@@ -360,6 +363,17 @@ export default function EventsContent({
     return Array.from(categorySet).sort();
   }, [allEvents]);
 
+  // 主催者の一覧を取得
+  const owners = useMemo(() => {
+    const ownerSet = new Set<string>();
+    allEvents.forEach((event) => {
+      if (event.owner) {
+        ownerSet.add(event.owner);
+      }
+    });
+    return Array.from(ownerSet).sort();
+  }, [allEvents]);
+
   // フィルタリングされたイベント
   const filteredEvents = useMemo(() => {
     return allEvents.filter((event) => {
@@ -386,9 +400,14 @@ export default function EventsContent({
         return false;
       }
 
+      // 主催者でフィルタリング
+      if (selectedOwner && event.owner !== selectedOwner) {
+        return false;
+      }
+
       return true;
     });
-  }, [allEvents, selectedYear, selectedMonth, selectedCategory]);
+  }, [allEvents, selectedYear, selectedMonth, selectedCategory, selectedOwner]);
 
   // フィルタリングされたイベントを今後のイベントと過去のイベントに分離
   const filteredUpcomingEvents = useMemo(() => {
@@ -423,7 +442,8 @@ export default function EventsContent({
   useEffect(() => {
     if (selectedYear && months.length > 0) {
       // 選択された年に対応する月が存在する場合、最初の月を選択
-      if (!months.includes(parseInt(selectedMonth))) {
+      // selectedMonthが空文字列（「すべて」）の場合はリセットしない
+      if (selectedMonth && !months.includes(parseInt(selectedMonth))) {
         setSelectedMonth(months[0].toString());
       }
     } else {
@@ -522,6 +542,15 @@ export default function EventsContent({
     }
   };
 
+  // カレンダーの前年・次年に移動
+  const goToPreviousYear = () => {
+    setCalendarYear(calendarYear - 1);
+  };
+
+  const goToNextYear = () => {
+    setCalendarYear(calendarYear + 1);
+  };
+
   // カレンダー用の年と月の一覧を取得（イベントが存在する年月の範囲）
   const calendarYears = useMemo(() => {
     if (allEvents.length === 0) {
@@ -587,7 +616,9 @@ export default function EventsContent({
         <div className="flex flex-col lg:flex-row gap-6">
           {/* フィルタ（左側） - 一覧表示時のみ表示 */}
           {activeTab === 'list' &&
-            (categories.length > 0 || years.length > 0) && (
+            (categories.length > 0 ||
+              years.length > 0 ||
+              owners.length > 0) && (
               <div className="lg:w-64 flex-shrink-0">
                 <div className="bg-gray-50 rounded-lg p-4 sticky top-4 space-y-6">
                   {/* カテゴリフィルタ */}
@@ -609,6 +640,31 @@ export default function EventsContent({
                         {categories.map((category) => (
                           <option key={category} value={category}>
                             {category}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {/* 主催者フィルタ */}
+                  {owners.length > 0 && (
+                    <div>
+                      <label
+                        htmlFor="owner-filter"
+                        className="text-sm font-semibold text-gray-700 mb-2 block"
+                      >
+                        主催者で絞り込み
+                      </label>
+                      <select
+                        id="owner-filter"
+                        value={selectedOwner}
+                        onChange={(e) => setSelectedOwner(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      >
+                        <option value="">すべて</option>
+                        {owners.map((owner) => (
+                          <option key={owner} value={owner}>
+                            {owner}
                           </option>
                         ))}
                       </select>
@@ -767,27 +823,56 @@ export default function EventsContent({
               /* カレンダー表示 */
               <div>
                 {/* カテゴリフィルタ（カレンダー上部） */}
-                {categories.length > 0 && (
-                  <div className="mb-4">
-                    <label
-                      htmlFor="category-filter-calendar"
-                      className="text-sm font-semibold text-gray-700 mb-2 block"
-                    >
-                      カテゴリで絞り込み
-                    </label>
-                    <select
-                      id="category-filter-calendar"
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full max-w-xs border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    >
-                      <option value="">すべて</option>
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
+                {(categories.length > 0 || owners.length > 0) && (
+                  <div className="mb-4 flex gap-4">
+                    {categories.length > 0 && (
+                      <div>
+                        <label
+                          htmlFor="category-filter-calendar"
+                          className="text-sm font-semibold text-gray-700 mb-2 block"
+                        >
+                          カテゴリで絞り込み
+                        </label>
+                        <select
+                          id="category-filter-calendar"
+                          value={selectedCategory}
+                          onChange={(e) => setSelectedCategory(e.target.value)}
+                          className="w-full max-w-xs border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        >
+                          <option value="">すべて</option>
+                          {categories.map((category) => (
+                            <option key={category} value={category}>
+                              {category}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    {/* 主催者フィルタ（カレンダー上部） */}
+                    {owners.length > 0 && (
+                      <div>
+                        <label
+                          htmlFor="owner-filter-calendar"
+                          className="text-sm font-semibold text-gray-700 mb-2 block"
+                        >
+                          主催者で絞り込み
+                        </label>
+                        <select
+                          id="owner-filter-calendar"
+                          value={selectedOwner}
+                          onChange={(e) => setSelectedOwner(e.target.value)}
+                          className="w-full max-w-xs border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        >
+                          <option value="">すべて</option>
+                          {owners.map((owner) => (
+                            <option key={owner} value={owner}>
+                              {owner}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -860,19 +945,35 @@ export default function EventsContent({
                           <label className="text-sm font-semibold text-gray-700 mb-2 block">
                             年
                           </label>
-                          <select
-                            value={calendarYear}
-                            onChange={(e) =>
-                              setCalendarYear(parseInt(e.target.value))
-                            }
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                          >
-                            {calendarYears.map((year) => (
-                              <option key={year} value={year}>
-                                {year}年
-                              </option>
-                            ))}
-                          </select>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={goToPreviousYear}
+                              className="px-3 py-2 text-sm rounded-lg transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
+                              aria-label="前の年"
+                            >
+                              ←
+                            </button>
+                            <select
+                              value={calendarYear}
+                              onChange={(e) =>
+                                setCalendarYear(parseInt(e.target.value))
+                              }
+                              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            >
+                              {calendarYears.map((year) => (
+                                <option key={year} value={year}>
+                                  {year}年
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              onClick={goToNextYear}
+                              className="px-3 py-2 text-sm rounded-lg transition-colors bg-gray-100 text-gray-700 hover:bg-gray-200"
+                              aria-label="次の年"
+                            >
+                              →
+                            </button>
+                          </div>
                         </div>
 
                         {/* 月の選択（12か月すべて表示） */}
