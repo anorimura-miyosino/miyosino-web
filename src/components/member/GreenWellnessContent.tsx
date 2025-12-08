@@ -91,7 +91,9 @@ export default function GreenWellnessContent() {
                       />
                     </div>
                   ) : (
-                    <span className="text-gray-400 text-sm mt-4 md:mt-0">ファイルなし</span>
+                    <span className="text-gray-400 text-sm mt-4 md:mt-0">
+                      ファイルなし
+                    </span>
                   )}
                 </div>
               </div>
