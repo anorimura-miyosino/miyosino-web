@@ -55,11 +55,19 @@ export default function EventModal({
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      if (!isOpen) {
-        document.body.style.overflow = 'unset';
-      }
     };
   }, [isOpen, onClose]);
+
+  // モーダルが閉じられた時にスクロールを復元
+  useEffect(() => {
+    if (!isOpen) {
+      // アニメーション完了後にスクロールを復元
+      const timer = setTimeout(() => {
+        document.body.style.overflow = 'unset';
+      }, 300); // duration-300に合わせる
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   // 日時から時間のみを取得する関数（00:00の場合は空文字列を返す）
   const formatTime = (dateTimeString: string): string => {
