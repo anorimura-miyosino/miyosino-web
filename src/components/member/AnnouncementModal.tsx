@@ -1,7 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Announcement, getPriorityBorderColor } from './data';
+import {
+  Announcement,
+  getPriorityBorderColor,
+  getPriorityBadgeStyle,
+  getPriorityText,
+} from './data';
 
 interface AnnouncementModalProps {
   announcement: Announcement | null;
@@ -107,6 +112,13 @@ export default function AnnouncementModal({
         {/* ヘッダー */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex-1">
+            <div className="mb-2">
+              <span
+                className={`px-2 py-1 ${getPriorityBadgeStyle(announcement.importance)} text-xs rounded whitespace-nowrap`}
+              >
+                {getPriorityText(announcement.importance)}
+              </span>
+            </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               {announcement.title}
             </h2>

@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Announcement, getPriorityBorderColor } from './data';
+import {
+  Announcement,
+  getPriorityBorderColor,
+  getPriorityBadgeStyle,
+  getPriorityText,
+} from './data';
 import AnnouncementModal from './AnnouncementModal';
 import { fetchAnnouncements } from '@/shared/utils/kintone';
 import { redirectToLogin } from '@/shared/utils/auth';
@@ -209,6 +214,13 @@ export default function AnnouncementsSection({
               }}
               className={`w-full text-left border-l-4 ${getPriorityBorderColor(announcement.importance)} pl-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer rounded-r-lg`}
             >
+              <div className="mb-2">
+                <span
+                  className={`px-2 py-1 ${getPriorityBadgeStyle(announcement.importance)} text-xs rounded whitespace-nowrap`}
+                >
+                  {getPriorityText(announcement.importance)}
+                </span>
+              </div>
               <div className="flex items-center justify-between mb-1">
                 <h3 className="font-semibold text-gray-900">
                   {announcement.title}

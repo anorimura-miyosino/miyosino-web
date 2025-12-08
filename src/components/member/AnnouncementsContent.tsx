@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Announcement, getPriorityBorderColor } from './data';
+import {
+  Announcement,
+  getPriorityBorderColor,
+  getPriorityBadgeStyle,
+  getPriorityText,
+} from './data';
 import { fetchAnnouncements, fetchYearMonths } from '@/shared/utils/kintone';
 import { redirectToLogin } from '@/shared/utils/auth';
 import AnnouncementModal from './AnnouncementModal';
@@ -262,6 +267,13 @@ export default function AnnouncementsContent({
                     }}
                     className={`w-full text-left border-l-4 ${getPriorityBorderColor(announcement.importance)} pl-4 py-3 bg-gray-50 rounded-r-lg hover:bg-gray-100 transition-colors cursor-pointer`}
                   >
+                    <div className="mb-2">
+                      <span
+                        className={`px-2 py-1 ${getPriorityBadgeStyle(announcement.importance)} text-xs rounded whitespace-nowrap`}
+                      >
+                        {getPriorityText(announcement.importance)}
+                      </span>
+                    </div>
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-semibold text-gray-900">
                         {announcement.title}
