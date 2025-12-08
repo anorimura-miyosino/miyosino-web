@@ -101,43 +101,58 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
    # プロンプトが表示されたら、Turnstileのシークレットキーを入力
    ```
 
-   **Kintone OAuth 2.0認証用Worker（miyosino-auth）:**
+# Kintone（お問い合わせ保存先）の設定
 
-   ```bash
-   cd workers
-   # Kintone OAuth 2.0設定
-   npx wrangler secret put KINTONE_DOMAIN --config wrangler.auth.toml
-   # プロンプトが表示されたら、Kintoneのドメインを入力（例: your-subdomain.cybozu.com）
+npx wrangler secret put KINTONE_CONTACT_DOMAIN --config wrangler.contact.toml
 
-   npx wrangler secret put KINTONE_CLIENT_ID --config wrangler.auth.toml
-   # プロンプトが表示されたら、Kintone OAuth 2.0のClient IDを入力
+# 例: your-subdomain.cybozu.com
 
-   npx wrangler secret put KINTONE_CLIENT_SECRET --config wrangler.auth.toml
-   # プロンプトが表示されたら、Kintone OAuth 2.0のClient Secretを入力
+npx wrangler secret put KINTONE_CONTACT_APP_ID --config wrangler.contact.toml
 
-   npx wrangler secret put JWT_SECRET --config wrangler.auth.toml
-   # プロンプトが表示されたら、ランダムな文字列を入力（例: openssl rand -base64 32 で生成）
-   ```
+# 例: 999 (お問い合わせ用アプリID)
 
-   ⚠️ **注意**: Kintone OAuth 2.0認証を使用するには、事前にKintone管理画面でOAuth 2.0クライアントの登録が必要です。詳細は後述の「Kintone OAuth 2.0設定」を参照してください。
+npx wrangler secret put KINTONE_CONTACT_API_TOKEN --config wrangler.contact.toml
 
-   **Kintoneお知らせAPI用Worker（miyosino-announcements）:**
+# 例: お問い合わせ用アプリに「レコード追加」権限を付けたAPIトークン
 
-   ```bash
-   cd workers
-   # Kintone API設定
-   npx wrangler secret put KINTONE_DOMAIN --config wrangler.announcements.toml
-   # プロンプトが表示されたら、Kintoneのドメインを入力（例: k-miyosino.cybozu.com）
+````
 
-   npx wrangler secret put KINTONE_API_TOKEN --config wrangler.announcements.toml
-   # プロンプトが表示されたら、kintoneアプリ（アプリID: 53）のAPIトークンを入力
+**Kintone OAuth 2.0認証用Worker（miyosino-auth）:**
 
-   npx wrangler secret put JWT_SECRET --config wrangler.announcements.toml
-   # プロンプトが表示されたら、認証用Workerと同じJWT_SECRETを入力
-   ```
+```bash
+cd workers
+# Kintone OAuth 2.0設定
+npx wrangler secret put KINTONE_DOMAIN --config wrangler.auth.toml
+# プロンプトが表示されたら、Kintoneのドメインを入力（例: your-subdomain.cybozu.com）
 
-   ⚠️ **注意**: kintone APIトークンは、kintone管理画面の「アプリ設定」→「API」から発行できます。アプリID: 53のお知らせアプリに対して「レコードの閲覧」権限を付与してください。
+npx wrangler secret put KINTONE_CLIENT_ID --config wrangler.auth.toml
+# プロンプトが表示されたら、Kintone OAuth 2.0のClient IDを入力
 
+npx wrangler secret put KINTONE_CLIENT_SECRET --config wrangler.auth.toml
+# プロンプトが表示されたら、Kintone OAuth 2.0のClient Secretを入力
+
+npx wrangler secret put JWT_SECRET --config wrangler.auth.toml
+# プロンプトが表示されたら、ランダムな文字列を入力（例: openssl rand -base64 32 で生成）
+````
+
+⚠️ **注意**: Kintone OAuth 2.0認証を使用するには、事前にKintone管理画面でOAuth 2.0クライアントの登録が必要です。詳細は後述の「Kintone OAuth 2.0設定」を参照してください。
+
+**Kintoneお知らせAPI用Worker（miyosino-announcements）:**
+
+```bash
+cd workers
+# Kintone API設定
+npx wrangler secret put KINTONE_DOMAIN --config wrangler.announcements.toml
+# プロンプトが表示されたら、Kintoneのドメインを入力（例: k-miyosino.cybozu.com）
+
+npx wrangler secret put KINTONE_API_TOKEN --config wrangler.announcements.toml
+# プロンプトが表示されたら、kintoneアプリ（アプリID: 53）のAPIトークンを入力
+
+npx wrangler secret put JWT_SECRET --config wrangler.announcements.toml
+# プロンプトが表示されたら、認証用Workerと同じJWT_SECRETを入力
+```
+
+⚠️ **注意**: kintone APIトークンは、kintone管理画面の「アプリ設定」→「API」から発行できます。アプリID: 53のお知らせアプリに対して「レコードの閲覧」権限を付与してください。
 
 4. Workerをデプロイ:
 
@@ -183,6 +198,10 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
   - ⚠️ **重要**: 静的エクスポート（`output: 'export'`）を使用している場合、この環境変数は必須です
   - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
 
+- **`KINTONE_CONTACT_DOMAIN`** / **`KINTONE_CONTACT_APP_ID`** / **`KINTONE_CONTACT_API_TOKEN`**
+  - 値：kintoneのドメイン、アプリID、APIトークン（お問い合わせ用アプリに「レコード追加」権限を付与）
+  - 用途：お問い合わせ送信をkintoneに保存（Next.js API経由、またはCloudflare Worker経由）
+
 - **`NEXT_PUBLIC_AUTH_API_URL`** (組合員専用ページを使用する場合に必須)
   - 値：Kintone OAuth 2.0認証用WorkerのURL（例: `https://miyosino-auth.your-subdomain.workers.dev`）
   - ⚠️ **重要**: 組合員専用ページ（`/member/`）にアクセス制限を設定する場合、この環境変数は必須です
@@ -199,6 +218,12 @@ MicroCMS APIキーをサーバーサイドで管理するため、Cloudflare Wor
 NEXT_PUBLIC_API_ENDPOINT=https://miyosino-api.your-subdomain.workers.dev
 NEXT_PUBLIC_AUTH_API_URL=https://miyosino-auth.your-subdomain.workers.dev
 NEXT_PUBLIC_ANNOUNCEMENTS_API_URL=https://miyosino-announcements.your-subdomain.workers.dev
+NEXT_PUBLIC_CONTACT_API_URL=https://miyosino-contact-api.your-subdomain.workers.dev
+
+# サーバーサイド専用（公開されない）
+KINTONE_CONTACT_DOMAIN=your-subdomain.cybozu.com
+KINTONE_CONTACT_APP_ID=999
+KINTONE_CONTACT_API_TOKEN=your-kintone-api-token
 ```
 
 #### 1-5. ローカル開発でのWorkerテスト
@@ -296,6 +321,21 @@ NEXT_PUBLIC_CONTACT_API_URL=https://miyosino-contact-api.your-subdomain.workers.
 ```
 
 ⚠️ **注意**: `.env.local`はGitにコミットしないでください（`.gitignore`に含まれています）
+
+#### お問い合わせ/Kintone連携の動作確認
+
+1. 環境変数
+   - Next.jsローカル/APIルート経由で送る場合: `.env.local`に `KINTONE_CONTACT_DOMAIN`, `KINTONE_CONTACT_APP_ID`, `KINTONE_CONTACT_API_TOKEN` を設定
+   - 静的エクスポートや本番: `NEXT_PUBLIC_CONTACT_API_URL` をお問い合わせ用WorkerのURLに設定し、Worker側にも同じKintone環境変数を`wrangler secret put`で登録
+2. ローカルテスト（Next.js API）
+   - `npm run dev` を起動
+   - `/contact` からフォーム送信し、ステータス200が返り、kintoneアプリにレコードが追加されることを確認
+3. ローカルテスト（Worker単体）
+   - `cd workers && npm run dev:contact`
+   - 別ターミナルで `curl -X POST http://localhost:8787/api/contact -H "Content-Type: application/json" -d '{\"subject\":\"test\",\"message\":\"hello\",\"name\":\"tester\",\"email\":\"test@example.com\",\"phone\":\"\",\"type\":\"general\",\"privacyConsent\":true,\"turnstileToken\":\"dummy\"}'` を実行（Turnstile検証を避けるなら一時的に検証部分を無効化またはテスト用トークンを使用）
+   - 正常時は200が返り、kintoneにレコードが追加される
+4. 本番確認
+   - 本番サイトの `/contact` から送信し、kintoneにレコードができることを確認
 
 ### 4. Dockerを使用した開発環境
 

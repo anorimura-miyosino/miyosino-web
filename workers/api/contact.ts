@@ -8,6 +8,135 @@
 interface Env {
   TURNSTILE_SITE_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
+  KINTONE_CONTACT_DOMAIN?: string;
+  KINTONE_CONTACT_APP_ID?: string;
+  KINTONE_CONTACT_API_TOKEN?: string;
+}
+
+type ContactFormData = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  subject?: string;
+  message?: string;
+  type?: string;
+  privacyConsent?: boolean;
+};
+
+async function saveToKintone(formData: ContactFormData, env: Env) {
+  const {
+    KINTONE_CONTACT_DOMAIN,
+    KINTONE_CONTACT_APP_ID,
+    KINTONE_CONTACT_API_TOKEN,
+  } = env;
+
+  if (
+    !KINTONE_CONTACT_DOMAIN ||
+    !KINTONE_CONTACT_APP_ID ||
+    !KINTONE_CONTACT_API_TOKEN
+  ) {
+    console.error('[Workers] Kintone環境変数が不足しています');
+    return {
+      success: false,
+      status: 500,
+      message: 'サーバー設定エラー（Kintone）',
+    };
+  }
+
+  const endpoint = `https://${KINTONE_CONTACT_DOMAIN}/k/v1/record.json`;
+
+  // typeフィールドの値を表示テキストに変換
+  // ContactType enum値（例：moving_in）を表示テキスト（例：「入居について」）に変換
+  const typeLabels: Record<string, string> = {
+    living_environment: '住環境について',
+    moving_in: '入居について',
+    facilities: '共用施設について',
+    community: 'コミュニティについて',
+    general: 'その他',
+  };
+  const typeValue = typeLabels[formData.type || 'general'] || formData.type || 'その他';
+
+  // agreeフィールドはチェックボックスなので配列形式で送信
+  // 選択されている場合は ["はい"]、選択されていない場合は []
+  const agreeValue = formData.privacyConsent ? ['はい'] : [];
+
+  const record = {
+    subject: { value: formData.subject || '' },
+    message: { value: formData.message || '' },
+    name: { value: formData.name || '' },
+    email: { value: formData.email || '' },
+    phone: { value: formData.phone || '' },
+    type: { value: typeValue },
+    agree: { value: agreeValue },
+  };
+
+  console.log('[Workers] レコードデータ:', JSON.stringify(record, null, 2));
+
+  // アプリIDを数値に変換（Kintone APIの要件）
+  const appId = Number(KINTONE_CONTACT_APP_ID);
+  if (isNaN(appId)) {
+    console.error('[Workers] アプリIDが数値ではありません:', KINTONE_CONTACT_APP_ID);
+    return {
+      success: false,
+      status: 500,
+      message: 'サーバー設定エラー（アプリIDが無効です）',
+    };
+  }
+
+  const requestBody = {
+    app: appId,
+    record,
+  };
+
+  const requestBodyString = JSON.stringify(requestBody);
+  console.log('[Workers] Kintone保存リクエスト:', requestBodyString);
+  console.log('[Workers] Kintone保存エンドポイント:', endpoint);
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Cybozu-API-Token': KINTONE_CONTACT_API_TOKEN,
+    },
+    body: requestBodyString,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    let errorMessage = 'お問い合わせの保存に失敗しました';
+    let errorDetails = '';
+    
+    try {
+      const errorData = JSON.parse(errorText);
+      if (errorData.message) {
+        errorMessage = `Kintone保存エラー: ${errorData.message}`;
+      }
+      if (errorData.errors) {
+        errorDetails = JSON.stringify(errorData.errors, null, 2);
+      }
+    } catch {
+      // JSON解析失敗時はそのまま使用
+      if (errorText) {
+        errorMessage = `Kintone保存エラー: ${errorText}`;
+      }
+    }
+    
+    console.error('[Workers] Kintone保存失敗:', {
+      status: response.status,
+      statusText: response.statusText,
+      errorText,
+      requestBody: requestBodyString,
+      errorDetails,
+    });
+    
+    return {
+      success: false,
+      status: response.status,
+      message: errorMessage,
+    };
+  }
+
+  return { success: true };
 }
 
 export default {
@@ -60,7 +189,9 @@ export default {
     if (pathname === '/api/contact' && request.method === 'POST') {
       try {
         const body = await request.json();
-        const { turnstileToken, ...formData } = body;
+        const { turnstileToken, ...formData } = body as ContactFormData & {
+          turnstileToken?: string;
+        };
 
         // Turnstileトークンの検証
         if (!turnstileToken) {
@@ -126,8 +257,21 @@ export default {
           );
         }
 
-        // ここで実際のフォーム送信処理を行う
-        // 例: メール送信、データベース保存、外部APIへの送信など
+        // Kintoneへ保存
+        const saveResult = await saveToKintone(formData, env);
+        if (!saveResult.success) {
+          return new Response(
+            JSON.stringify({ error: saveResult.message }),
+            {
+              status: saveResult.status ?? 500,
+              headers: {
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+        }
+
         console.log('[Workers] お問い合わせフォーム送信:', formData);
 
         // 例: SendGridやメール送信サービスを使う場合

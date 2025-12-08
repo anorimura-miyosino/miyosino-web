@@ -39,38 +39,33 @@ export default function ContactFormSection() {
   useEffect(() => {
     const fetchSiteKey = async () => {
       try {
-        // 開発環境（localhost）では常にローカルのAPIルートを使用
-        // 本番環境（静的エクスポート）では外部APIエンドポイントを使用
-        const isDevelopment =
-          typeof window !== 'undefined' &&
-          (window.location.hostname === 'localhost' ||
-            window.location.hostname === '127.0.0.1');
+        // NEXT_PUBLIC_CONTACT_API_URL が設定されていれば Cloudflare Worker を使用
+        // 未設定の場合はローカルの API ルートを使用（フォールバック）
+        const contactApiUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL;
 
         let apiUrl: string;
-        if (isDevelopment) {
-          // 開発環境: ローカルのAPIルートを使用
-          apiUrl = '/api/turnstile-site-key';
+        if (contactApiUrl) {
+          // Cloudflare Worker を使用（開発環境・本番環境共通）
+          const baseUrl = contactApiUrl.replace(/\/$/, '');
+          // /api/contactが含まれている場合は置き換え、含まれていない場合は末尾に追加
+          if (baseUrl.includes('/api/contact')) {
+            apiUrl = baseUrl.replace(
+              '/api/contact',
+              '/api/turnstile-site-key'
+            );
+          } else {
+            // /api/contactが含まれていない場合は、末尾に/api/turnstile-site-keyを追加
+            apiUrl = `${baseUrl}/api/turnstile-site-key`;
+          }
         } else {
-          // 本番環境: Cloudflare Workerを使用
-          const contactApiUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL;
-          console.log(
-            '[ContactForm] NEXT_PUBLIC_CONTACT_API_URL:',
-            contactApiUrl
-          );
+          // フォールバック: ローカルの API ルートを使用（開発環境のみ）
+          const isDevelopment =
+            typeof window !== 'undefined' &&
+            (window.location.hostname === 'localhost' ||
+              window.location.hostname === '127.0.0.1');
 
-          if (contactApiUrl) {
-            // URLの末尾のスラッシュを削除
-            const baseUrl = contactApiUrl.replace(/\/$/, '');
-            // /api/contactが含まれている場合は置き換え、含まれていない場合は末尾に追加
-            if (baseUrl.includes('/api/contact')) {
-              apiUrl = baseUrl.replace(
-                '/api/contact',
-                '/api/turnstile-site-key'
-              );
-            } else {
-              // /api/contactが含まれていない場合は、末尾に/api/turnstile-site-keyを追加
-              apiUrl = `${baseUrl}/api/turnstile-site-key`;
-            }
+          if (isDevelopment) {
+            apiUrl = '/api/turnstile-site-key';
           } else {
             console.error(
               '[ContactForm] NEXT_PUBLIC_CONTACT_API_URLが設定されていません'
@@ -79,27 +74,10 @@ export default function ContactFormSection() {
           }
         }
 
-        console.log(
-          '[ContactForm] サイトキー取得URL:',
-          apiUrl,
-          'isDevelopment:',
-          isDevelopment
-        );
         const response = await fetch(apiUrl);
-        console.log(
-          '[ContactForm] サイトキー取得レスポンス:',
-          response.status,
-          response.statusText,
-          'Content-Type:',
-          response.headers.get('content-type')
-        );
 
         if (response.ok) {
           const data = await response.json();
-          console.log('[ContactForm] サイトキー取得データ:', data);
-          console.log('[ContactForm] データの型:', typeof data);
-          console.log('[ContactForm] siteKeyプロパティ:', data.siteKey);
-
           const siteKey = data.siteKey || '';
           if (!siteKey) {
             console.error(
@@ -107,10 +85,6 @@ export default function ContactFormSection() {
               JSON.stringify(data)
             );
           } else {
-            console.log(
-              '[ContactForm] サイトキー設定完了:',
-              siteKey.substring(0, 10) + '...'
-            );
             setTurnstileSiteKey(siteKey);
           }
         } else {
@@ -127,12 +101,6 @@ export default function ContactFormSection() {
         console.error('[ContactForm] サイトキー取得エラー:', error);
       } finally {
         setIsLoadingSiteKey(false);
-        console.log(
-          '[ContactForm] サイトキー読み込み完了, isLoadingSiteKey:',
-          false,
-          'turnstileSiteKey:',
-          turnstileSiteKey ? '設定済み' : '未設定'
-        );
       }
     };
 
@@ -167,20 +135,38 @@ export default function ContactFormSection() {
 
     try {
       // フォーム送信のロジック（APIエンドポイントに送信）
-      // 静的エクスポートの場合は外部APIを指定する必要がある
-      const apiUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL || '/api/contact';
+      // NEXT_PUBLIC_CONTACT_API_URL が設定されていれば Cloudflare Worker を使用
+      // 未設定の場合はローカルの API ルートを使用（フォールバック）
+      const contactApiUrl = process.env.NEXT_PUBLIC_CONTACT_API_URL;
 
-      // 静的エクスポートの場合、APIルートは動作しない
-      if (
-        !process.env.NEXT_PUBLIC_CONTACT_API_URL &&
-        apiUrl === '/api/contact'
-      ) {
-        console.error(
-          'APIエンドポイントが設定されていません。静的エクスポートの場合は、NEXT_PUBLIC_CONTACT_API_URLを設定してください。'
-        );
-        setSubmitStatus('error');
-        setIsSubmitting(false);
-        return;
+      let apiUrl: string;
+      if (contactApiUrl) {
+        // Cloudflare Worker を使用（開発環境・本番環境共通）
+        const baseUrl = contactApiUrl.replace(/\/$/, '');
+        // /api/contactが含まれている場合はそのまま、含まれていない場合は末尾に追加
+        if (baseUrl.includes('/api/contact')) {
+          apiUrl = baseUrl;
+        } else {
+          // /api/contactが含まれていない場合は、末尾に/api/contactを追加
+          apiUrl = `${baseUrl}/api/contact`;
+        }
+      } else {
+        // フォールバック: ローカルの API ルートを使用（開発環境のみ）
+        const isDevelopment =
+          typeof window !== 'undefined' &&
+          (window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1');
+
+        if (isDevelopment) {
+          apiUrl = '/api/contact';
+        } else {
+          console.error(
+            'APIエンドポイントが設定されていません。静的エクスポートの場合は、NEXT_PUBLIC_CONTACT_API_URLを設定してください。'
+          );
+          setSubmitStatus('error');
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       const response = await fetch(apiUrl, {
@@ -205,8 +191,7 @@ export default function ContactFormSection() {
         return;
       }
 
-      const data = await response.json();
-      console.log('フォーム送信成功:', data);
+      await response.json();
       setSubmitStatus('success');
       setFormData(initialFormData);
       setTurnstileToken(null);
@@ -476,8 +461,17 @@ export default function ContactFormSection() {
           </div>
         )}
         {!isLoadingSiteKey && !turnstileSiteKey && (
-          <div className="flex justify-center text-red-500 text-sm">
-            警告: Turnstileサイトキーが取得できませんでした
+          <div className="flex justify-center text-red-500 text-sm mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div>
+              <p className="font-semibold mb-1">
+                警告: Turnstileサイトキーが取得できませんでした
+              </p>
+              <p className="text-xs text-red-600">
+                ブラウザのコンソール（F12）でエラーログを確認してください。
+                <br />
+                Cloudflare Worker 側で TURNSTILE_SITE_KEY が設定されているか確認してください。
+              </p>
+            </div>
           </div>
         )}
         {!isLoadingSiteKey && turnstileSiteKey && (
@@ -486,10 +480,6 @@ export default function ContactFormSection() {
               ref={turnstileRef}
               siteKey={turnstileSiteKey}
               onSuccess={(token) => {
-                console.log(
-                  '[ContactForm] Turnstile成功:',
-                  token.substring(0, 20) + '...'
-                );
                 setTurnstileToken(token);
               }}
               onError={(error) => {
@@ -497,7 +487,6 @@ export default function ContactFormSection() {
                 setTurnstileToken(null);
               }}
               onExpire={() => {
-                console.log('[ContactForm] Turnstile期限切れ');
                 setTurnstileToken(null);
               }}
             />

@@ -11,3 +11,9 @@ KINTONE_DOMAIN=your-subdomain.cybozu.com
 KINTONE_CLIENT_ID=your-client-id
 KINTONE_CLIENT_SECRET=your-client-secret
 JWT_SECRET=your-random-secret-key-here
+
+# お問い合わせ保存用 kintone（contact Worker/Next.js 共通）
+# アプリIDとAPIトークンは「レコード追加」権限を持つものを設定
+KINTONE_CONTACT_DOMAIN=your-subdomain.cybozu.com
+KINTONE_CONTACT_APP_ID=999
+KINTONE_CONTACT_API_TOKEN=your-kintone-api-token
