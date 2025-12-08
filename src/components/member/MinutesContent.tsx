@@ -564,12 +564,12 @@ export default function MinutesContent() {
                                   ) => (
                                     <div
                                       key={index}
-                                      className="flex items-center justify-between"
+                                      className="flex flex-col md:flex-row md:items-center md:justify-between"
                                     >
                                       <h3 className="font-semibold text-gray-900 flex-1">
                                         {material.title || material.name}
                                       </h3>
-                                      <div className="w-64 ml-4">
+                                      <div className="w-full md:w-64 mt-4 md:mt-0">
                                         <FileDownloadButton
                                           fileKey={material.fileKey}
                                           fileName={material.name}
@@ -587,7 +587,7 @@ export default function MinutesContent() {
                         {/* 議事録 */}
                         {meeting.minutes && (
                           <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                               <div className="flex items-center gap-2">
                                 <svg
                                   className="w-5 h-5 text-gray-600"
@@ -606,7 +606,7 @@ export default function MinutesContent() {
                                   議事録
                                 </h4>
                               </div>
-                              <div className="w-64 ml-4">
+                              <div className="w-full md:w-64 mt-4 md:mt-0">
                                 <FileDownloadButton
                                   fileKey={meeting.minutes.fileKey}
                                   fileName={meeting.minutes.name}
@@ -621,7 +621,7 @@ export default function MinutesContent() {
                         {/* 音声ファイル */}
                         {meeting.audio && (
                           <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-3">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
                               <div className="flex items-center gap-2">
                                 <svg
                                   className="w-5 h-5 text-gray-600"
@@ -640,7 +640,7 @@ export default function MinutesContent() {
                                   音声ファイル
                                 </h4>
                               </div>
-                              <div className="w-64 ml-4">
+                              <div className="w-full md:w-64 mt-4 md:mt-0">
                                 <FileDownloadButton
                                   fileKey={meeting.audio.fileKey}
                                   fileName={meeting.audio.name}
