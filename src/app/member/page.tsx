@@ -299,11 +299,11 @@ export default function MemberPage() {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900">
-                イベントカレンダー
+                イベント予定
               </h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              団地内のイベント日程を確認できます
+              イベント日程を確認できます
             </p>
             <Link
               href="/member/events"
