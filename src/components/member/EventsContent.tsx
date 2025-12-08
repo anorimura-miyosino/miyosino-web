@@ -327,6 +327,10 @@ export default function EventsContent({
   // 選択された主催者（全主催者は空文字列）
   const [selectedOwner, setSelectedOwner] = useState<string>('');
 
+  // 過去のイベントの表示件数制限
+  const [pastEventsDisplayLimit, setPastEventsDisplayLimit] =
+    useState<number>(10);
+
   // 年と月の一覧を取得
   const years = useMemo(() => {
     const yearSet = new Set<number>();
@@ -450,6 +454,11 @@ export default function EventsContent({
       setSelectedMonth('');
     }
   }, [selectedYear, months, selectedMonth]);
+
+  // フィルタが変更されたら過去のイベントの表示件数をリセット
+  useEffect(() => {
+    setPastEventsDisplayLimit(10);
+  }, [selectedYear, selectedMonth, selectedCategory, selectedOwner]);
 
   // カレンダー用: 日付をキーとしてイベントをグループ化
   const eventsByDate = useMemo(() => {
@@ -785,32 +794,50 @@ export default function EventsContent({
                   </h3>
                   <div className="space-y-4">
                     {filteredPastEvents.length > 0 ? (
-                      filteredPastEvents.map((event) => (
-                        <button
-                          key={event.id}
-                          onClick={() => handleEventClick(event)}
-                          className="w-full text-left border-l-4 border-gray-300 pl-4 py-2 hover:bg-gray-100 transition-colors rounded-r-lg cursor-pointer"
-                        >
-                          {event.category && (
-                            <div className="mb-2">
-                              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
-                                {event.category}
-                              </span>
-                            </div>
-                          )}
-                          <div className="text-sm text-gray-500 mb-1">
-                            {formatEventDateTime(event)}
+                      <>
+                        {filteredPastEvents
+                          .slice(0, pastEventsDisplayLimit)
+                          .map((event) => (
+                            <button
+                              key={event.id}
+                              onClick={() => handleEventClick(event)}
+                              className="w-full text-left border-l-4 border-gray-300 pl-4 py-2 hover:bg-gray-100 transition-colors rounded-r-lg cursor-pointer"
+                            >
+                              {event.category && (
+                                <div className="mb-2">
+                                  <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
+                                    {event.category}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="text-sm text-gray-500 mb-1">
+                                {formatEventDateTime(event)}
+                              </div>
+                              <h3 className="font-semibold text-gray-900 text-lg">
+                                {event.title}
+                              </h3>
+                              <p className="text-gray-600 text-sm mt-1">
+                                {event.venue && `場所: ${event.venue}`}
+                                {event.venue && event.owner && ' / '}
+                                {event.owner && `主催: ${event.owner}`}
+                              </p>
+                            </button>
+                          ))}
+                        {filteredPastEvents.length > pastEventsDisplayLimit && (
+                          <div className="flex justify-center mt-6">
+                            <button
+                              onClick={() =>
+                                setPastEventsDisplayLimit(
+                                  pastEventsDisplayLimit + 10
+                                )
+                              }
+                              className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                            >
+                              もっと見る
+                            </button>
                           </div>
-                          <h3 className="font-semibold text-gray-900 text-lg">
-                            {event.title}
-                          </h3>
-                          <p className="text-gray-600 text-sm mt-1">
-                            {event.venue && `場所: ${event.venue}`}
-                            {event.venue && event.owner && ' / '}
-                            {event.owner && `主催: ${event.owner}`}
-                          </p>
-                        </button>
-                      ))
+                        )}
+                      </>
                     ) : (
                       <p className="text-gray-500 text-sm">
                         過去のイベントはありません
