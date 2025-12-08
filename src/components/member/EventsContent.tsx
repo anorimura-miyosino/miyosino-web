@@ -3,6 +3,12 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Event } from '@/types/events';
 import EventModal from './EventModal';
+import {
+  ColorScheme,
+  COLOR_SCHEMES,
+  DEFAULT_COLOR,
+  getCategoryColor,
+} from './colorSchemes';
 
 interface EventsContentProps {
   upcomingEvents?: Event[];
@@ -377,6 +383,15 @@ export default function EventsContent({
     });
     return Array.from(ownerSet).sort();
   }, [allEvents]);
+
+  // カテゴリごとの色を決定（カテゴリ数が配色数を超えたら循環）
+  const categoryColorMap = useMemo(() => {
+    const map: Record<string, ColorScheme> = {};
+    categories.forEach((category, index) => {
+      map[category] = COLOR_SCHEMES[index % COLOR_SCHEMES.length];
+    });
+    return map;
+  }, [categories]);
 
   // フィルタリングされたイベント
   const filteredEvents = useMemo(() => {
@@ -761,9 +776,17 @@ export default function EventsContent({
                         >
                           {event.category && (
                             <div className="mb-2">
-                              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
-                                {event.category}
-                              </span>
+                              {(() => {
+                                const color =
+                                  categoryColorMap[event.category] || DEFAULT_COLOR;
+                                return (
+                                  <span
+                                    className={`px-2 py-1 text-xs rounded whitespace-nowrap ${color.bg} ${color.text}`}
+                                  >
+                                    {event.category}
+                                  </span>
+                                );
+                              })()}
                             </div>
                           )}
                           <div className="text-sm text-gray-500 mb-1">
@@ -805,9 +828,17 @@ export default function EventsContent({
                             >
                               {event.category && (
                                 <div className="mb-2">
-                                  <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
-                                    {event.category}
-                                  </span>
+                                  {(() => {
+                                    const color =
+                                      categoryColorMap[event.category] || DEFAULT_COLOR;
+                                    return (
+                                      <span
+                                        className={`px-2 py-1 text-xs rounded whitespace-nowrap ${color.bg} ${color.text}`}
+                                      >
+                                        {event.category}
+                                      </span>
+                                    );
+                                  })()}
                                 </div>
                               )}
                               <div className="text-sm text-gray-500 mb-1">
@@ -1082,13 +1113,17 @@ export default function EventsContent({
                                 event,
                                 day.date
                               );
+                              const color = getCategoryColor(
+                                event.category,
+                                categoryColorMap
+                              );
                               let className =
-                                'w-full text-left text-xs bg-purple-100 text-purple-800 px-1 py-0.5 rounded truncate hover:bg-purple-200 transition-colors cursor-pointer';
+                                `w-full text-left text-xs px-1 py-0.5 rounded truncate transition-colors cursor-pointer ${color.bg} ${color.text} ${color.hover}`;
                               let displayText = '';
 
                               // 位置に応じてスタイルとテキストを変更
                               if (position === 'start') {
-                                className += ' border-l-4 border-purple-600';
+                                className += ` border-l-4 ${color.borderStrong}`;
                                 const startTime = formatTime(
                                   event.startDateTime
                                 );
@@ -1096,7 +1131,7 @@ export default function EventsContent({
                                   ? `${startTime} ${event.title}`
                                   : event.title;
                               } else if (position === 'end') {
-                                className += ' border-r-4 border-purple-600';
+                                className += ` border-r-4 ${color.borderStrong}`;
                                 const endTime = event.endDateTime
                                   ? formatTime(event.endDateTime)
                                   : '';
@@ -1105,7 +1140,7 @@ export default function EventsContent({
                                   : event.title;
                               } else if (position === 'middle') {
                                 className +=
-                                  ' border-l-2 border-purple-400 opacity-90';
+                                  ` border-l-2 ${color.borderSoft} opacity-90`;
                                 displayText = event.title;
                               } else {
                                 // single
@@ -1150,6 +1185,7 @@ export default function EventsContent({
         event={selectedEvent}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        categoryColorMap={categoryColorMap}
       />
     </div>
   );

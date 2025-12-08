@@ -2,17 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { Event } from '@/types/events';
+import { ColorScheme, DEFAULT_COLOR } from './colorSchemes';
 
 interface EventModalProps {
   event: Event | null;
   isOpen: boolean;
   onClose: () => void;
+  categoryColorMap?: Record<string, ColorScheme>;
 }
 
 export default function EventModal({
   event,
   isOpen,
   onClose,
+  categoryColorMap,
 }: EventModalProps) {
   // アニメーション用の状態（閉じる時のアニメーションを完了させるため）
   const [shouldRender, setShouldRender] = useState(false);
@@ -165,6 +168,9 @@ export default function EventModal({
 
   // 今後のイベントかどうかを判定
   const isUpcoming = new Date(event.startDateTime) >= new Date();
+  const categoryColor = event.category
+    ? categoryColorMap?.[event.category] || DEFAULT_COLOR
+    : DEFAULT_COLOR;
 
   return (
     <div
@@ -201,7 +207,9 @@ export default function EventModal({
           </div>
           <div className="flex items-start gap-2 ml-4">
             {event.category && (
-              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
+              <span
+                className={`px-2 py-1 text-xs rounded whitespace-nowrap ${categoryColor.bg} ${categoryColor.text}`}
+              >
                 {event.category}
               </span>
             )}
