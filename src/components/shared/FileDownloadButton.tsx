@@ -13,6 +13,7 @@ interface FileDownloadButtonProps {
   className?: string;
   onError?: (error: Error) => void;
   fileSize?: string; // ファイルサイズ（バイト数の文字列、例: "87270206"）
+  ariaDescribedby?: string; // 紐付けたい説明テキストのID
 }
 
 /**
@@ -44,6 +45,7 @@ export default function FileDownloadButton({
   className = '',
   onError,
   fileSize,
+  ariaDescribedby,
 }: FileDownloadButtonProps) {
   const [downloading, setDownloading] = useState(false);
 
@@ -72,6 +74,7 @@ export default function FileDownloadButton({
     <button
       onClick={handleDownload}
       disabled={downloading}
+      aria-describedby={ariaDescribedby}
       className={`w-full text-left px-3 py-2 bg-indigo-600 text-white rounded-md border border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700 transition-colors flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${className}`}
     >
       <div className="flex flex-col flex-1 min-w-0">

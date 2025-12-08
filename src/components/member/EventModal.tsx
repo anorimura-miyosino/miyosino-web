@@ -199,25 +199,32 @@ export default function EventModal({
             </div>
             <h2 className="text-2xl font-bold text-gray-900">{event.title}</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="ml-4 text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="閉じる"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex items-start gap-2 ml-4">
+            {event.category && (
+              <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
+                {event.category}
+              </span>
+            )}
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="閉じる"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* 本文 */}
@@ -234,14 +241,6 @@ export default function EventModal({
               <div>
                 <p className="text-sm text-gray-600 mb-1">主催</p>
                 <p className="text-gray-900 font-medium">{event.owner}</p>
-              </div>
-            )}
-            {event.category && (
-              <div>
-                <p className="text-sm text-gray-600 mb-1">カテゴリ</p>
-                <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded whitespace-nowrap">
-                  {event.category}
-                </span>
               </div>
             )}
           </div>

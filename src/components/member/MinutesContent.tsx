@@ -487,179 +487,199 @@ export default function MinutesContent() {
               </div>
             ) : (
               <div className="space-y-6">
-                {filteredMeetings.map((meeting) => (
-                  <div
-                    key={meeting.id}
-                    className="border border-gray-200 rounded-lg p-6 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="mb-4">
-                      {meeting.category && (
-                        <div className="mb-2">
-                          <span className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded">
-                            {meeting.category}
-                          </span>
+                {filteredMeetings.map((meeting) => {
+                  const minutesTitleId = `minutes-title-${meeting.id}`;
+                  const audioTitleId = `audio-title-${meeting.id}`;
+
+                  return (
+                    <div
+                      key={meeting.id}
+                      className="border border-gray-200 rounded-lg p-6 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="mb-4">
+                        {meeting.category && (
+                          <div className="mb-2">
+                            <span className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded">
+                              {meeting.category}
+                            </span>
+                          </div>
+                        )}
+                        <h3 className="text-xl font-semibold text-gray-900">
+                          {meeting.title}
+                        </h3>
+                      </div>
+
+                      {/* 会議情報 */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">日時</p>
+                          <p className="text-gray-900 font-medium">
+                            {formatDateTime(meeting.StartDateTime).date}{' '}
+                            {formatDateTime(meeting.StartDateTime).time}
+                          </p>
                         </div>
-                      )}
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {meeting.title}
-                      </h3>
-                    </div>
-
-                    {/* 会議情報 */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">日時</p>
-                        <p className="text-gray-900 font-medium">
-                          {formatDateTime(meeting.StartDateTime).date}{' '}
-                          {formatDateTime(meeting.StartDateTime).time}
-                        </p>
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">場所</p>
+                          <p className="text-gray-900 font-medium">
+                            {meeting.venue}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm text-gray-600 mb-1">場所</p>
-                        <p className="text-gray-900 font-medium">
-                          {meeting.venue}
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* 資料・議事録・音声ファイル */}
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <div className="grid grid-cols-1 gap-4">
-                        {/* 資料 */}
-                        {meeting.materials &&
-                          Array.isArray(meeting.materials) &&
-                          meeting.materials.length > 0 && (
-                            <div className="bg-gray-50 rounded-lg p-4">
-                              <div className="flex items-center gap-2 mb-3">
-                                <svg
-                                  className="w-5 h-5 text-gray-600"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                  />
-                                </svg>
-                                <h4 className="text-sm font-semibold text-gray-700">
-                                  資料
-                                </h4>
-                                <span className="text-xs text-gray-500">
-                                  ({meeting.materials.length}件)
-                                </span>
+                      {/* 資料・議事録・音声ファイル */}
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <div className="grid grid-cols-1 gap-4">
+                          {/* 資料 */}
+                          {meeting.materials &&
+                            Array.isArray(meeting.materials) &&
+                            meeting.materials.length > 0 && (
+                              <div className="bg-gray-100 rounded-lg p-4">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <svg
+                                    className="w-5 h-5 text-gray-600"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
+                                  </svg>
+                                  <h4 className="text-sm font-semibold text-gray-700">
+                                    資料
+                                  </h4>
+                                  <span className="text-xs text-gray-500">
+                                    ({meeting.materials.length}件)
+                                  </span>
+                                </div>
+                                <div className="space-y-2">
+                                  {meeting.materials.map(
+                                    (
+                                      material: {
+                                        fileKey: string;
+                                        name: string;
+                                        title?: string;
+                                        size?: string;
+                                      },
+                                      index: number
+                                    ) => {
+                                      const materialTitleId = `material-title-${meeting.id}-${index}`;
+                                      return (
+                                        <div
+                                          key={index}
+                                          className="flex flex-col md:flex-row md:items-center md:justify-between rounded-md px-3 py-2 transition-colors hover:bg-gray-200 focus-within:bg-gray-200"
+                                        >
+                                          <h3
+                                            id={materialTitleId}
+                                            className="font-semibold text-gray-900 flex-1"
+                                          >
+                                            {material.title || material.name}
+                                          </h3>
+                                          <div className="w-full md:w-64 mt-4 md:mt-0">
+                                            <FileDownloadButton
+                                              fileKey={material.fileKey}
+                                              fileName={material.name}
+                                              endpoint="minutes"
+                                              fileSize={material.size}
+                                              ariaDescribedby={materialTitleId}
+                                            />
+                                          </div>
+                                        </div>
+                                      );
+                                    }
+                                  )}
+                                </div>
                               </div>
-                              <div className="space-y-2">
-                                {meeting.materials.map(
-                                  (
-                                    material: {
-                                      fileKey: string;
-                                      name: string;
-                                      title?: string;
-                                      size?: string;
-                                    },
-                                    index: number
-                                  ) => (
-                                    <div
-                                      key={index}
-                                      className="flex flex-col md:flex-row md:items-center md:justify-between"
-                                    >
-                                      <h3 className="font-semibold text-gray-900 flex-1">
-                                        {material.title || material.name}
-                                      </h3>
-                                      <div className="w-full md:w-64 mt-4 md:mt-0">
-                                        <FileDownloadButton
-                                          fileKey={material.fileKey}
-                                          fileName={material.name}
-                                          endpoint="minutes"
-                                          fileSize={material.size}
-                                        />
-                                      </div>
-                                    </div>
-                                  )
-                                )}
+                            )}
+
+                          {/* 議事録 */}
+                          {meeting.minutes && (
+                            <div className="bg-gray-100 rounded-lg p-4 transition-colors hover:bg-gray-200 focus-within:bg-gray-200">
+                              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div className="flex items-center gap-2">
+                                  <svg
+                                    className="w-5 h-5 text-gray-600"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
+                                  </svg>
+                                  <h4
+                                    id={minutesTitleId}
+                                    className="text-sm font-semibold text-gray-700"
+                                  >
+                                    議事録
+                                  </h4>
+                                </div>
+                                <div className="w-full md:w-64 mt-4 md:mt-0">
+                                  <FileDownloadButton
+                                    fileKey={meeting.minutes.fileKey}
+                                    fileName={meeting.minutes.name}
+                                    endpoint="minutes"
+                                    fileSize={meeting.minutes.size}
+                                    ariaDescribedby={minutesTitleId}
+                                  />
+                                </div>
                               </div>
                             </div>
                           )}
 
-                        {/* 議事録 */}
-                        {meeting.minutes && (
-                          <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                              <div className="flex items-center gap-2">
-                                <svg
-                                  className="w-5 h-5 text-gray-600"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          {/* 音声ファイル */}
+                          {meeting.audio && (
+                            <div className="bg-gray-100 rounded-lg p-4 transition-colors hover:bg-gray-200 focus-within:bg-gray-200">
+                              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                  <svg
+                                    className="w-5 h-5 text-gray-600"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                                    />
+                                  </svg>
+                                  <h4
+                                    id={audioTitleId}
+                                    className="text-sm font-semibold text-gray-700"
+                                  >
+                                    音声ファイル
+                                  </h4>
+                                </div>
+                                <div className="w-full md:w-64 mt-4 md:mt-0">
+                                  <FileDownloadButton
+                                    fileKey={meeting.audio.fileKey}
+                                    fileName={meeting.audio.name}
+                                    endpoint="minutes"
+                                    fileSize={meeting.audio.size}
+                                    ariaDescribedby={audioTitleId}
                                   />
-                                </svg>
-                                <h4 className="text-sm font-semibold text-gray-700">
-                                  議事録
-                                </h4>
+                                </div>
                               </div>
-                              <div className="w-full md:w-64 mt-4 md:mt-0">
-                                <FileDownloadButton
-                                  fileKey={meeting.minutes.fileKey}
-                                  fileName={meeting.minutes.name}
-                                  endpoint="minutes"
-                                  fileSize={meeting.minutes.size}
-                                />
-                              </div>
+                              <AudioPlayer
+                                fileKey={meeting.audio.fileKey}
+                                fileName={meeting.audio.name}
+                                hideDownloadButton={true}
+                              />
                             </div>
-                          </div>
-                        )}
-
-                        {/* 音声ファイル */}
-                        {meeting.audio && (
-                          <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <svg
-                                  className="w-5 h-5 text-gray-600"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
-                                  />
-                                </svg>
-                                <h4 className="text-sm font-semibold text-gray-700">
-                                  音声ファイル
-                                </h4>
-                              </div>
-                              <div className="w-full md:w-64 mt-4 md:mt-0">
-                                <FileDownloadButton
-                                  fileKey={meeting.audio.fileKey}
-                                  fileName={meeting.audio.name}
-                                  endpoint="minutes"
-                                  fileSize={meeting.audio.size}
-                                />
-                              </div>
-                            </div>
-                            <AudioPlayer
-                              fileKey={meeting.audio.fileKey}
-                              fileName={meeting.audio.name}
-                              hideDownloadButton={true}
-                            />
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
