@@ -70,7 +70,7 @@ export default function GreenWellnessContent() {
                 key={file.id}
                 className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                   <div>
                     <h3 className="font-semibold text-gray-900">
                       {file.title}
@@ -82,7 +82,7 @@ export default function GreenWellnessContent() {
                     )}
                   </div>
                   {file.file?.fileKey ? (
-                    <div className="w-64">
+                    <div className="w-full md:w-64 mt-4 md:mt-0">
                       <FileDownloadButton
                         fileKey={file.file.fileKey}
                         fileName={file.file.name || 'download'}
@@ -91,7 +91,7 @@ export default function GreenWellnessContent() {
                       />
                     </div>
                   ) : (
-                    <span className="text-gray-400 text-sm">ファイルなし</span>
+                    <span className="text-gray-400 text-sm mt-4 md:mt-0">ファイルなし</span>
                   )}
                 </div>
               </div>

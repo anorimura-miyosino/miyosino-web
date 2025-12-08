@@ -299,7 +299,7 @@ export default function CircularsContent() {
                     className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
                   >
                     {/* 一列目: カテゴリ、配布日、配布元 */}
-                    <div className="mb-3 flex items-center gap-4 text-sm text-gray-600">
+                    <div className="mb-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-gray-600">
                       {circular.category && (
                         <span className="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded whitespace-nowrap">
                           {circular.category}
@@ -312,12 +312,12 @@ export default function CircularsContent() {
                     </div>
 
                     {/* 二列目: タイトルとダウンロードボタン */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                       <h3 className="font-semibold text-gray-900 flex-1">
                         {circular.title}
                       </h3>
                       {circular.file?.fileKey ? (
-                        <div className="w-64 ml-4">
+                        <div className="w-full md:w-64 mt-4 md:mt-0">
                           <FileDownloadButton
                             fileKey={circular.file.fileKey}
                             fileName={circular.file.name || 'download'}
