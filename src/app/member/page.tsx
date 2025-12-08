@@ -299,17 +299,17 @@ export default function MemberPage() {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900">
-                イベント予定
+                イベント情報
               </h3>
             </div>
             <p className="text-gray-600 text-sm mb-4">
-              イベント日程を確認できます
+              イベントの日程などを確認できます
             </p>
             <Link
               href="/member/events"
               className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors block text-center"
             >
-              カレンダーを見る
+              イベント情報を見る
             </Link>
           </div>
         </div>
