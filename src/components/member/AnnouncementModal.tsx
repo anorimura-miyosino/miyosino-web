@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Announcement, getPriorityBorderColor } from './data';
 
 interface AnnouncementModalProps {
@@ -14,27 +14,62 @@ export default function AnnouncementModal({
   isOpen,
   onClose,
 }: AnnouncementModalProps) {
+  // アニメーション用の状態（閉じる時のアニメーションを完了させるため）
+  const [shouldRender, setShouldRender] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // モーダルの開閉アニメーション制御
+  useEffect(() => {
+    if (isOpen && announcement) {
+      // モーダルを表示
+      setShouldRender(true);
+      // DOMの更新を待ってからアニメーションを開始
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 10);
+      return () => clearTimeout(timer);
+    } else if (!isOpen) {
+      // 閉じる時はアニメーションを開始
+      setIsVisible(false);
+      // アニメーション完了後にDOMから削除
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 300); // duration-300に合わせる
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, announcement]);
+
   // ESCキーでモーダルを閉じる
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      // モーダルが開いている時は背景のスクロールを無効化
-      document.body.style.overflow = 'hidden';
-    }
+    document.addEventListener('keydown', handleEscape);
+    // モーダルが開いている時は背景のスクロールを無効化
+    document.body.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || !announcement) {
+  // モーダルが閉じられた時にスクロールを復元
+  useEffect(() => {
+    if (!isOpen) {
+      // アニメーション完了後にスクロールを復元
+      const timer = setTimeout(() => {
+        document.body.style.overflow = 'unset';
+      }, 300); // duration-300に合わせる
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  if (!announcement || !shouldRender) {
     return null;
   }
 
@@ -48,15 +83,25 @@ export default function AnnouncementModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 ease-in-out ${
+        isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
       onClick={onClose}
     >
       {/* 背景オーバーレイ */}
-      <div className="absolute inset-0 bg-black bg-opacity-50" />
+      <div
+        className={`absolute inset-0 bg-black transition-opacity duration-300 ease-in-out ${
+          isVisible ? 'opacity-50' : 'opacity-0'
+        }`}
+      />
 
       {/* モーダルコンテンツ */}
       <div
-        className={`relative bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col border-l-4 ${getPriorityBorderColor(announcement.importance)}`}
+        className={`relative bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col border-l-4 ${getPriorityBorderColor(announcement.importance)} transition-all duration-300 ease-in-out ${
+          isVisible
+            ? 'opacity-100 scale-100 translate-y-0'
+            : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* ヘッダー */}
