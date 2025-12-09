@@ -185,7 +185,7 @@ export default function MemberPage() {
               href="/member/green-wellness"
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors block text-center"
             >
-              ダウンロードページを開く
+              グリーンウェルネスを開く
             </Link>
           </div>
 
@@ -217,7 +217,7 @@ export default function MemberPage() {
               href="/member/circulars"
               className="w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors block text-center"
             >
-              ダウンロードページを開く
+              回覧板・配布資料を開く
             </Link>
           </div>
 
@@ -247,7 +247,7 @@ export default function MemberPage() {
               href="/member/minutes"
               className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors block text-center"
             >
-              会議情報を見る
+              会議情報を開く
             </Link>
           </div>
 
@@ -277,7 +277,7 @@ export default function MemberPage() {
               href="/member/applications"
               className="w-full bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors block text-center"
             >
-              申請ページを開く
+              各種申請を開く
             </Link>
           </div>
 
@@ -309,7 +309,7 @@ export default function MemberPage() {
               href="/member/events"
               className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors block text-center"
             >
-              イベント情報を見る
+              イベント情報を開く
             </Link>
           </div>
         </div>
