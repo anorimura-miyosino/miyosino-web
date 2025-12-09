@@ -6,7 +6,11 @@
 
 import { getToken, redirectToLogin } from './auth';
 
-export type FileDownloadEndpoint = 'greenwellness' | 'circulars' | 'minutes';
+export type FileDownloadEndpoint =
+  | 'greenwellness'
+  | 'circulars'
+  | 'minutes'
+  | 'applications';
 
 /**
  * エンドポイントタイプからAPI URLを取得
@@ -28,6 +32,11 @@ function getApiEndpoint(endpoint: FileDownloadEndpoint): string {
         process.env.NEXT_PUBLIC_MINUTES_API_URL ||
         'https://miyosino-minutes.anorimura-miyosino.workers.dev'
       );
+    case 'applications':
+      return (
+        process.env.NEXT_PUBLIC_APPLICATIONS_API_URL ||
+        'https://miyosino-applications.anorimura-miyosino.workers.dev'
+      );
     default:
       throw new Error(`Unknown endpoint type: ${endpoint}`);
   }
@@ -38,7 +47,7 @@ function getApiEndpoint(endpoint: FileDownloadEndpoint): string {
  *
  * @param fileKey - Kintoneのファイルキー
  * @param fileName - ダウンロードするファイル名
- * @param endpoint - エンドポイントタイプ（greenwellness/circulars/minutes）
+ * @param endpoint - エンドポイントタイプ（greenwellness/circulars/minutes/applications）
  * @throws エラーが発生した場合
  */
 export async function downloadFile(

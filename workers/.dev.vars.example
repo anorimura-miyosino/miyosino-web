@@ -1,19 +1,135 @@
 # Cloudflare API Token
 # このファイルをコピーして .dev.vars を作成し、実際のトークンを設定してください
 # cp .dev.vars.example .dev.vars
-# その後、.dev.vars を編集して CLOUDFLARE_API_TOKEN に実際のトークンを設定
+# その後、.dev.vars を編集して各環境変数に実際の値を設定
 
 CLOUDFLARE_API_TOKEN=your-api-token-here
+
+# Turnstile Keys (Cloudflare Workers用)
+# ローカル開発時にCloudflare Workersで使用する環境変数
+TURNSTILE_SITE_KEY=your-site-key-here
+TURNSTILE_SECRET_KEY=your-secret-key-here
 
 # Kintone OAuth 2.0 認証設定（認証Worker用）
 # Kintone管理画面で OAuth 2.0 クライアントを登録後、以下を設定
 KINTONE_DOMAIN=your-subdomain.cybozu.com
 KINTONE_CLIENT_ID=your-client-id
 KINTONE_CLIENT_SECRET=your-client-secret
+
+# JWT認証用シークレット
+# すべてのWorkerで同じ値を使用します
+# 生成方法: openssl rand -base64 32
 JWT_SECRET=your-random-secret-key-here
+
+# Kintone API トークン（アプリごとに異なるトークンが必要）
+# 注意: .dev.varsはローカル開発環境（wrangler dev）でのみ使用されます
+# 本番環境では、Cloudflare Dashboardまたは wrangler secret put コマンドで設定してください
+# 各アプリのAPIトークンは、kintone管理画面の「アプリ設定」→「API」から発行できます
+# 「レコードの閲覧」権限を付与してください
+#
+# 重要: 各Workerで個別に環境変数を設定する必要があります（wrangler.*.tomlごと）
+# 各Workerは独立した設定ファイル（wrangler.announcements.toml、wrangler.circulars.toml など）を持ち、
+# それぞれのWorkerで個別に環境変数を設定してください
+
+# グリーンウェルネスアプリ（アプリID: 51）用の設定
+# ローカル開発でテストする場合のみ設定してください
+# ドメイン: KINTONE_DOMAIN
+# アプリID: 51（コード内でハードコード、環境変数なし）
+# KINTONE_DOMAIN=your-subdomain.cybozu.com
+# KINTONE_API_TOKEN=your-api-token-for-app-51-here
+#
+# 【メモ】グリーンウェルネスアプリ設定
+# ドメイン: 
+# アプリID: 51
+# APIトークン: 
+# 権限: レコードの閲覧
+# 備考: 
+
+# お知らせアプリ（アプリID: 53）用の設定
+# ローカル開発でテストする場合のみ設定してください
+# ドメイン: KINTONE_DOMAIN
+# アプリID: 53（コード内でハードコード、環境変数なし）
+# 注意: greenwellness.tsでもKINTONE_API_TOKENを使用しているため、
+# グリーンウェルネスとお知らせで異なるトークンが必要な場合は、
+# それぞれのWorker設定ファイルで個別に環境変数を設定してください
+# KINTONE_DOMAIN=your-subdomain.cybozu.com
+# KINTONE_API_TOKEN=your-api-token-for-app-53-here
+#
+# 【メモ】お知らせアプリ設定
+# ドメイン: 
+# アプリID: 53
+# APIトークン: 
+# 権限: レコードの閲覧
+# 備考: 
+
+# 配布資料アプリ（アプリID: 54）用の設定
+# ローカル開発でテストする場合のみ設定してください
+# ドメイン: KINTONE_DOMAIN
+# アプリID: 54（コード内でハードコード、環境変数なし）
+# KINTONE_DOMAIN=your-subdomain.cybozu.com
+# KINTONE_API_TOKEN_CIRCULARS=your-api-token-for-app-54-here
+#
+# 【メモ】配布資料アプリ設定
+# ドメイン: 
+# アプリID: 54
+# APIトークン: 
+# 権限: レコードの閲覧
+# 備考: 
+
+# 会議情報アプリ（アプリID: 48）用の設定
+# ローカル開発でテストする場合のみ設定してください
+# ドメイン: KINTONE_DOMAIN
+# アプリID: 48（コード内でハードコード、環境変数なし）
+# KINTONE_DOMAIN=your-subdomain.cybozu.com
+# KINTONE_API_TOKEN_MINUTES=your-api-token-for-app-48-here
+#
+# 【メモ】会議情報アプリ設定
+# ドメイン: 
+# アプリID: 48
+# APIトークン: 
+# 権限: レコードの閲覧
+# 備考: 
+
+# イベントアプリ（アプリID: 49）用の設定
+# ローカル開発でテストする場合のみ設定してください
+# ドメイン: KINTONE_DOMAIN
+# アプリID: 49（コード内でハードコード、環境変数なし）
+# KINTONE_DOMAIN=your-subdomain.cybozu.com
+# KINTONE_API_TOKEN_EVENTS=your-api-token-for-app-49-here
+#
+# 【メモ】イベントアプリ設定
+# ドメイン: 
+# アプリID: 49
+# APIトークン: 
+# 権限: レコードの閲覧
+# 備考: 
+
+# 申請書アプリ（アプリID: 56）用の設定
+# ローカル開発でテストする場合のみ設定してください
+# ドメイン: KINTONE_DOMAIN
+# アプリID: 56（コード内でハードコード、環境変数なし）
+# KINTONE_DOMAIN=your-subdomain.cybozu.com
+# KINTONE_API_TOKEN_APPLICATIONS=your-api-token-for-app-56-here
+#
+# 【メモ】申請書アプリ設定
+# ドメイン: 
+# アプリID: 56
+# APIトークン: 
+# 権限: レコードの閲覧
+# 備考: 
 
 # お問い合わせ保存用 kintone（contact Worker/Next.js 共通）
 # アプリIDとAPIトークンは「レコード追加」権限を持つものを設定
-KINTONE_CONTACT_DOMAIN=your-subdomain.cybozu.com
-KINTONE_CONTACT_APP_ID=999
-KINTONE_CONTACT_API_TOKEN=your-kintone-api-token
+# ローカル開発でテストする場合のみ設定してください
+# ドメイン: KINTONE_CONTACT_DOMAIN（環境変数として設定）
+# アプリID: KINTONE_CONTACT_APP_ID（環境変数として設定）
+# KINTONE_CONTACT_DOMAIN=your-subdomain.cybozu.com
+# KINTONE_CONTACT_APP_ID=999
+# KINTONE_API_CONTACT_TOKEN=your-kintone-api-token
+#
+# 【メモ】お問い合わせ保存用Kintone設定
+# ドメイン: 
+# アプリID: 
+# APIトークン: 
+# 権限: レコード追加
+# 備考:

@@ -30,6 +30,10 @@ const EVENTS_API_ENDPOINT =
   process.env.NEXT_PUBLIC_EVENTS_API_URL ||
   'https://miyosino-events.anorimura-miyosino.workers.dev';
 
+const APPLICATIONS_API_ENDPOINT =
+  process.env.NEXT_PUBLIC_APPLICATIONS_API_URL ||
+  'https://miyosino-applications.anorimura-miyosino.workers.dev';
+
 export interface YearMonth {
   year: number;
   month: number;
@@ -58,6 +62,20 @@ interface MeetingsResponse {
 interface EventsResponse {
   upcomingEvents: Event[];
   pastEvents: Event[];
+}
+
+export interface Application {
+  id: string;
+  title: string;
+  file?: {
+    name: string;
+    fileKey: string;
+    size: string;
+  };
+}
+
+interface ApplicationsResponse {
+  applications: Application[];
 }
 
 /**
@@ -525,6 +543,83 @@ export async function fetchEvents(): Promise<{
     };
   } catch (error) {
     console.error('[Kintone] fetchEvents error:', error);
+    throw error;
+  }
+}
+
+/**
+ * kintoneから申請書一覧を取得
+ * @returns 申請書データの配列
+ */
+export async function fetchApplications(): Promise<Application[]> {
+  try {
+    const token = getToken();
+    if (!token) {
+      throw new Error('認証トークンがありません');
+    }
+
+    const url = new URL(`${APPLICATIONS_API_ENDPOINT}/applications`);
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      // レスポンスの詳細を取得
+      let errorMessage = `申請書の取得に失敗しました: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        // サーバーからの詳細なエラーメッセージを優先的に使用
+        if (errorData.message) {
+          errorMessage = errorData.message;
+          // Kintone APIエラーの場合は日本語メッセージを追加
+          if (errorMessage.includes('Kintone API error')) {
+            const kintoneErrorMatch = errorMessage.match(
+              /Kintone API error: (\d+) (.+?) - (.+)/
+            );
+            if (kintoneErrorMatch) {
+              const [, status, statusText, errorJson] = kintoneErrorMatch;
+              try {
+                const kintoneError = JSON.parse(errorJson);
+                if (kintoneError.message) {
+                  errorMessage = `Kintone APIエラー: ${kintoneError.message}`;
+                } else {
+                  errorMessage = `Kintone APIエラー (${status}): ${statusText}`;
+                }
+              } catch {
+                errorMessage = `Kintone APIエラー (${status}): ${statusText}`;
+              }
+            }
+          }
+        } else if (errorData.error) {
+          errorMessage += ` - ${errorData.error}`;
+        }
+      } catch {
+        // JSON解析に失敗した場合はstatusTextを使用
+        if (response.statusText) {
+          errorMessage += ` ${response.statusText}`;
+        }
+      }
+
+      if (response.status === 401) {
+        // 401エラーの場合、トークンを削除して認証エラーを投げる
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth_token');
+        }
+        throw new Error('認証に失敗しました');
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = (await response.json()) as ApplicationsResponse;
+    return data.applications;
+  } catch (error) {
+    console.error('[Kintone] fetchApplications error:', error);
     throw error;
   }
 }

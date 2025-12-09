@@ -49,10 +49,7 @@ export default function ContactFormSection() {
           const baseUrl = contactApiUrl.replace(/\/$/, '');
           // /api/contactが含まれている場合は置き換え、含まれていない場合は末尾に追加
           if (baseUrl.includes('/api/contact')) {
-            apiUrl = baseUrl.replace(
-              '/api/contact',
-              '/api/turnstile-site-key'
-            );
+            apiUrl = baseUrl.replace('/api/contact', '/api/turnstile-site-key');
           } else {
             // /api/contactが含まれていない場合は、末尾に/api/turnstile-site-keyを追加
             apiUrl = `${baseUrl}/api/turnstile-site-key`;
@@ -469,7 +466,8 @@ export default function ContactFormSection() {
               <p className="text-xs text-red-600">
                 ブラウザのコンソール（F12）でエラーログを確認してください。
                 <br />
-                Cloudflare Worker 側で TURNSTILE_SITE_KEY が設定されているか確認してください。
+                Cloudflare Worker 側で TURNSTILE_SITE_KEY
+                が設定されているか確認してください。
               </p>
             </div>
           </div>

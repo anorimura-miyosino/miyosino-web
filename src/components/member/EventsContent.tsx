@@ -778,7 +778,8 @@ export default function EventsContent({
                             <div className="mb-2">
                               {(() => {
                                 const color =
-                                  categoryColorMap[event.category] || DEFAULT_COLOR;
+                                  categoryColorMap[event.category] ||
+                                  DEFAULT_COLOR;
                                 return (
                                   <span
                                     className={`px-2 py-1 text-xs rounded whitespace-nowrap ${color.bg} ${color.text}`}
@@ -830,7 +831,8 @@ export default function EventsContent({
                                 <div className="mb-2">
                                   {(() => {
                                     const color =
-                                      categoryColorMap[event.category] || DEFAULT_COLOR;
+                                      categoryColorMap[event.category] ||
+                                      DEFAULT_COLOR;
                                     return (
                                       <span
                                         className={`px-2 py-1 text-xs rounded whitespace-nowrap ${color.bg} ${color.text}`}
@@ -1117,8 +1119,7 @@ export default function EventsContent({
                                 event.category,
                                 categoryColorMap
                               );
-                              let className =
-                                `w-full text-left text-xs px-1 py-0.5 rounded truncate transition-colors cursor-pointer ${color.bg} ${color.text} ${color.hover}`;
+                              let className = `w-full text-left text-xs px-1 py-0.5 rounded truncate transition-colors cursor-pointer ${color.bg} ${color.text} ${color.hover}`;
                               let displayText = '';
 
                               // 位置に応じてスタイルとテキストを変更
@@ -1139,8 +1140,7 @@ export default function EventsContent({
                                   ? `${event.title} ${endTime}`
                                   : event.title;
                               } else if (position === 'middle') {
-                                className +=
-                                  ` border-l-2 ${color.borderSoft} opacity-90`;
+                                className += ` border-l-2 ${color.borderSoft} opacity-90`;
                                 displayText = event.title;
                               } else {
                                 // single

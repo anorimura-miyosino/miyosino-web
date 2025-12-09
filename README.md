@@ -154,6 +154,23 @@ npx wrangler secret put JWT_SECRET --config wrangler.announcements.toml
 
 ⚠️ **注意**: kintone APIトークンは、kintone管理画面の「アプリ設定」→「API」から発行できます。アプリID: 53のお知らせアプリに対して「レコードの閲覧」権限を付与してください。
 
+**Kintone申請書API用Worker（miyosino-applications）:**
+
+```bash
+cd workers
+# Kintone API設定
+npx wrangler secret put KINTONE_DOMAIN --config wrangler.applications.toml
+# プロンプトが表示されたら、Kintoneのドメインを入力（例: k-miyosino.cybozu.com）
+
+npx wrangler secret put KINTONE_API_TOKEN_APPLICATIONS --config wrangler.applications.toml
+# プロンプトが表示されたら、kintoneアプリ（アプリID: 56）のAPIトークンを入力
+
+npx wrangler secret put JWT_SECRET --config wrangler.applications.toml
+# プロンプトが表示されたら、認証用Workerと同じJWT_SECRETを入力
+```
+
+⚠️ **注意**: kintone APIトークンは、kintone管理画面の「アプリ設定」→「API」から発行できます。アプリID: 56の申請書アプリに対して「レコードの閲覧」権限を付与してください。
+
 4. Workerをデプロイ:
 
    ```bash
@@ -175,6 +192,9 @@ npx wrangler secret put JWT_SECRET --config wrangler.announcements.toml
 
    # Kintoneお知らせAPI用Workerをデプロイ
    npx wrangler deploy --config wrangler.announcements.toml
+
+   # Kintone申請書API用Workerをデプロイ
+   npx wrangler deploy --config wrangler.applications.toml
    ```
 
 5. デプロイ後、各WorkerのURLをコピー:
@@ -182,6 +202,7 @@ npx wrangler secret put JWT_SECRET --config wrangler.announcements.toml
    - お問い合わせフォーム用: `https://miyosino-contact-api.your-subdomain.workers.dev`
    - Kintone OAuth 2.0認証用: `https://miyosino-auth.your-subdomain.workers.dev`
    - Kintoneお知らせAPI用: `https://miyosino-announcements.your-subdomain.workers.dev`
+   - Kintone申請書API用: `https://miyosino-applications.your-subdomain.workers.dev`
 
 #### 1-4. 環境変数の設定
 
@@ -212,12 +233,18 @@ npx wrangler secret put JWT_SECRET --config wrangler.announcements.toml
   - ⚠️ **重要**: 組合員専用ページのお知らせ機能を使用する場合、この環境変数は必須です
   - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
 
+- **`NEXT_PUBLIC_APPLICATIONS_API_URL`** (組合員専用ページの申請書ダウンロード機能を使用する場合に必須)
+  - 値：Kintone申請書API用WorkerのURL（例: `https://miyosino-applications.your-subdomain.workers.dev`）
+  - ⚠️ **重要**: 組合員専用ページの申請書ダウンロード機能を使用する場合、この環境変数は必須です
+  - ⚠️ **注意**: `NEXT_PUBLIC_`プレフィックスが付いているため、ビルド時にクライアントコードに埋め込まれますが、これは公開エンドポイントなので問題ありません
+
 **ローカル開発用（`.env.local`）:**
 
 ```bash
 NEXT_PUBLIC_API_ENDPOINT=https://miyosino-api.your-subdomain.workers.dev
 NEXT_PUBLIC_AUTH_API_URL=https://miyosino-auth.your-subdomain.workers.dev
 NEXT_PUBLIC_ANNOUNCEMENTS_API_URL=https://miyosino-announcements.your-subdomain.workers.dev
+NEXT_PUBLIC_APPLICATIONS_API_URL=https://miyosino-applications.your-subdomain.workers.dev
 NEXT_PUBLIC_CONTACT_API_URL=https://miyosino-contact-api.your-subdomain.workers.dev
 
 # サーバーサイド専用（公開されない）
