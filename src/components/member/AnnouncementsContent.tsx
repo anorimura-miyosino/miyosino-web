@@ -151,7 +151,7 @@ export default function AnnouncementsContent({
       try {
         setLoading(true);
         setError(null);
-        
+
         // 年と月の両方が選択されている場合は年月で絞り込み、それ以外は全データを取得
         let data: Announcement[];
         if (selectedYear && selectedMonth) {
@@ -163,7 +163,7 @@ export default function AnnouncementsContent({
           // 「すべて」が選択されている場合は全データを取得
           data = await fetchAnnouncements();
         }
-        
+
         setAnnouncements(data);
       } catch (err) {
         console.error(
@@ -252,66 +252,64 @@ export default function AnnouncementsContent({
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* フィルタ（左側） */}
-          {!loading &&
-            !error &&
-            years.length > 0 && (
-              <div className="lg:w-64 flex-shrink-0">
-                <div className="bg-gray-50 rounded-lg p-4 sticky top-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                    年月で絞り込み
-                  </h3>
-                  <div className="space-y-3">
-                    {/* 年フィルター */}
+          {!loading && !error && years.length > 0 && (
+            <div className="lg:w-64 flex-shrink-0">
+              <div className="bg-gray-50 rounded-lg p-4 sticky top-4">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                  年月で絞り込み
+                </h3>
+                <div className="space-y-3">
+                  {/* 年フィルター */}
+                  <div>
+                    <label
+                      htmlFor="year-filter"
+                      className="text-sm text-gray-700 mb-1 block"
+                    >
+                      年
+                    </label>
+                    <select
+                      id="year-filter"
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">すべて</option>
+                      {years.map((year) => (
+                        <option key={year} value={year.toString()}>
+                          {year}年
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* 月フィルター（年が選択されている場合のみ表示） */}
+                  {selectedYear && (
                     <div>
                       <label
-                        htmlFor="year-filter"
+                        htmlFor="month-filter"
                         className="text-sm text-gray-700 mb-1 block"
                       >
-                        年
+                        月
                       </label>
                       <select
-                        id="year-filter"
-                        value={selectedYear}
-                        onChange={(e) => setSelectedYear(e.target.value)}
+                        id="month-filter"
+                        value={selectedMonth}
+                        onChange={(e) => setSelectedMonth(e.target.value)}
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="">すべて</option>
-                        {years.map((year) => (
-                          <option key={year} value={year.toString()}>
-                            {year}年
+                        {months.map((month) => (
+                          <option key={month} value={month.toString()}>
+                            {month}月
                           </option>
                         ))}
                       </select>
                     </div>
-
-                    {/* 月フィルター（年が選択されている場合のみ表示） */}
-                    {selectedYear && (
-                      <div>
-                        <label
-                          htmlFor="month-filter"
-                          className="text-sm text-gray-700 mb-1 block"
-                        >
-                          月
-                        </label>
-                        <select
-                          id="month-filter"
-                          value={selectedMonth}
-                          onChange={(e) => setSelectedMonth(e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                          <option value="">すべて</option>
-                          {months.map((month) => (
-                            <option key={month} value={month.toString()}>
-                              {month}月
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
           {/* お知らせ一覧（右側） */}
           <div className="flex-1 min-w-0">
