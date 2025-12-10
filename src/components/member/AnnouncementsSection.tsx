@@ -151,25 +151,46 @@ export default function AnnouncementsSection({
       ? filterFutureAnnouncements(announcements).slice(0, limit)
       : filterFutureAnnouncements(announcements);
 
+  // 表示内容の説明テキストを生成
+  const getDisplayDescription = () => {
+    if (showMoreLink && limit) {
+      return `直近1か月分から最新${limit}件を表示しています`;
+    } else if (showMoreLink) {
+      return '直近1か月分のお知らせを表示しています';
+    } else if (limit) {
+      return `最新${limit}件のお知らせを表示しています`;
+    }
+    return null; // 全件表示の場合は説明を表示しない
+  };
+
+  const displayDescription = getDisplayDescription();
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-          <svg
-            className="w-6 h-6 text-blue-600 mr-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
-            />
-          </svg>
-          お知らせ
-        </h2>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+            <svg
+              className="w-6 h-6 text-blue-600 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
+              />
+            </svg>
+            お知らせ
+          </h2>
+          {displayDescription && (
+            <p className="text-gray-500 text-sm mt-1 ml-8">
+              {displayDescription}
+            </p>
+          )}
+        </div>
         {showMoreLink && (
           <Link
             href="/member/announcements"
