@@ -3,10 +3,9 @@ import {
   HeroSection,
   IntroductionSection,
   FeaturesHighlightSection,
-  NewsSection,
   InstagramSection,
+  OverviewSection,
 } from '@/components/home';
-import { OverviewSection } from '@/components/features';
 
 export default function Home() {
   return (

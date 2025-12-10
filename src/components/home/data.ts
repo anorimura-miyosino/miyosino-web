@@ -22,3 +22,4 @@ export const featuresSections = [
     title: '団地のあゆみ',
   },
 ];
+

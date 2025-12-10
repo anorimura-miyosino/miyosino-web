@@ -1,4 +1,4 @@
-import { featuresSections } from '../features/data';
+import { featuresSections } from './data';
 
 const overviewData = {
   location: {

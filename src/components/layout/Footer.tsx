@@ -16,9 +16,7 @@ export default function Footer() {
             <p className="text-gray-300 text-sm leading-relaxed">
               かわつる三芳野団地へようこそ。
               <br />
-              埼玉県川越市、武蔵野台地の北端で、豊かな緑に包まれた団地空間。
-              <br />
-              ここには、安心感のある暮らしとコミュニティが息づいています。
+              埼玉県川越市、武蔵野台地の北端で、豊かな緑に包まれた団地空間です。
             </p>
           </div>
 

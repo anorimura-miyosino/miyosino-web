@@ -1,5 +1,5 @@
 // アイコンを削除してエラー回避
-import { featuresSections } from './data';
+import { featuresSections } from '../home/data';
 
 const historyData = [
   {

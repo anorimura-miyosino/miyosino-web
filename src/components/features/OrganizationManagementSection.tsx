@@ -1,6 +1,6 @@
 // アイコンを削除してエラー回避
 import Link from 'next/link';
-import { featuresSections } from './data';
+import { featuresSections } from '../home/data';
 
 const organizationData = {
   mainOrganizations: {
