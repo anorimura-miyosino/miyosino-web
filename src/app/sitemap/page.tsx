@@ -44,7 +44,7 @@ const sitemapData: SitemapSection[] = [
       },
       {
         title: '共有施設・サービス',
-        href: '/shared-facilities',
+        href: '/facilities',
         description: '集会所や公園などの施設案内',
       },
       {

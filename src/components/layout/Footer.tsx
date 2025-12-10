@@ -60,7 +60,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/shared-facilities"
+                  href="/facilities"
                   className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >
                   共有施設・サービス

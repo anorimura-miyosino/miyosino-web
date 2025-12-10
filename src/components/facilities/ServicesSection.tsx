@@ -6,7 +6,7 @@ import type {
   Service,
   MicroCMSService,
   MicroCMSServiceListResponse,
-} from '@/types/shared-facilities';
+} from '@/types/facilities';
 import { CONTENT_CATEGORIES } from '@/types/categories';
 
 export default function ServicesSection() {

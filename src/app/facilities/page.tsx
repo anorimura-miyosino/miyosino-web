@@ -1,6 +1,6 @@
-import { SharedFacilitiesSection } from '@/components/shared-facilities';
+import { FacilitiesSection } from '@/components/facilities';
 
-export default function SharedFacilitiesPage() {
+export default function FacilitiesPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* ヒーローセクション */}
@@ -16,7 +16,7 @@ export default function SharedFacilitiesPage() {
       </section>
 
       {/* 共有施設・サービスセクション */}
-      <SharedFacilitiesSection />
+      <FacilitiesSection />
     </div>
   );
 }

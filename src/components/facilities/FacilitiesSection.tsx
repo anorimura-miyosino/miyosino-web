@@ -4,7 +4,7 @@ import { useState } from 'react';
 import CommonFacilitiesSection from './CommonFacilitiesSection';
 import ServicesSection from './ServicesSection';
 
-export default function SharedFacilitiesSection() {
+export default function FacilitiesSection() {
   const [activeTab, setActiveTab] = useState<'common' | 'services'>('common');
 
   return (

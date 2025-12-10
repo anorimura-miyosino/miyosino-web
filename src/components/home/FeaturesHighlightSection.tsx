@@ -21,7 +21,7 @@ const highlights = [
       '団地内および周辺に公園が複数あり、子供たちがのびのびと遊べます。近隣には保育園や小学校もあり、子育て世代に安心の環境です。',
     icon: UsersIcon,
     color: 'blue',
-    link: '/shared-facilities',
+    link: '/facilities',
   },
   {
     name: '快適な住空間',

@@ -1,5 +1,5 @@
 // 共有施設・サービスデータ
-export const sharedFacilities = {
+export const facilities = {
   commonAreas: [
     {
       id: 1,
