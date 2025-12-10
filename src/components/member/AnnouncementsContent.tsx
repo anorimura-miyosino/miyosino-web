@@ -50,10 +50,11 @@ export default function AnnouncementsContent({
     };
   };
 
-  // 選択された年月（デフォルトは現在月）
-  const [selectedYearMonth, setSelectedYearMonth] = useState<YearMonth>(
-    getCurrentYearMonth()
-  );
+  // 選択された年（全期間は空文字列）
+  const [selectedYear, setSelectedYear] = useState<string>('');
+
+  // 選択された月（全月は空文字列）
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
 
   // モーダル用の状態
   const [selectedAnnouncement, setSelectedAnnouncement] =
@@ -85,7 +86,7 @@ export default function AnnouncementsContent({
 
         setYearMonths(filteredYearMonths);
 
-        // 現在月が存在する場合は選択、存在しない場合は最新の年月を選択
+        // デフォルトで現在月を選択（存在しない場合は最新の年月を選択）
         const currentYearMonth = getCurrentYearMonth();
         const hasCurrentMonth = filteredYearMonths.some(
           (ym) =>
@@ -94,9 +95,11 @@ export default function AnnouncementsContent({
         );
 
         if (hasCurrentMonth) {
-          setSelectedYearMonth(currentYearMonth);
+          setSelectedYear(currentYearMonth.year.toString());
+          setSelectedMonth(currentYearMonth.month.toString());
         } else if (filteredYearMonths.length > 0) {
-          setSelectedYearMonth(filteredYearMonths[0]);
+          setSelectedYear(filteredYearMonths[0].year.toString());
+          setSelectedMonth(filteredYearMonths[0].month.toString());
         }
       } catch (err) {
         console.error(
@@ -122,16 +125,45 @@ export default function AnnouncementsContent({
     loadYearMonths();
   }, []);
 
+  // 年と月の一覧を取得
+  const years = useMemo(() => {
+    const yearSet = new Set<number>();
+    yearMonths.forEach((ym) => {
+      yearSet.add(ym.year);
+    });
+    return Array.from(yearSet).sort((a, b) => b - a); // 新しい順
+  }, [yearMonths]);
+
+  const months = useMemo(() => {
+    if (!selectedYear) return [];
+    const monthSet = new Set<number>();
+    yearMonths
+      .filter((ym) => ym.year.toString() === selectedYear)
+      .forEach((ym) => {
+        monthSet.add(ym.month);
+      });
+    return Array.from(monthSet).sort((a, b) => b - a); // 新しい順
+  }, [yearMonths, selectedYear]);
+
   // 選択された年月が変更されたらデータを取得
   useEffect(() => {
     const loadAnnouncements = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchAnnouncements(
-          selectedYearMonth.year,
-          selectedYearMonth.month
-        );
+        
+        // 年と月の両方が選択されている場合は年月で絞り込み、それ以外は全データを取得
+        let data: Announcement[];
+        if (selectedYear && selectedMonth) {
+          data = await fetchAnnouncements(
+            parseInt(selectedYear),
+            parseInt(selectedMonth)
+          );
+        } else {
+          // 「すべて」が選択されている場合は全データを取得
+          data = await fetchAnnouncements();
+        }
+        
         setAnnouncements(data);
       } catch (err) {
         console.error(
@@ -158,7 +190,20 @@ export default function AnnouncementsContent({
     };
 
     loadAnnouncements();
-  }, [selectedYearMonth]);
+  }, [selectedYear, selectedMonth]);
+
+  // 年が変更されたら月をリセット
+  useEffect(() => {
+    if (selectedYear && months.length > 0) {
+      // 選択された年に対応する月が存在する場合、最初の月を選択
+      // ただし、selectedMonthが空文字列（「すべて」）の場合はリセットしない
+      if (selectedMonth && !months.includes(parseInt(selectedMonth))) {
+        setSelectedMonth(months[0].toString());
+      }
+    } else {
+      setSelectedMonth('');
+    }
+  }, [selectedYear, months]);
 
   // 選択された年月のお知らせをフィルタリング（未来の日付と「準備中」を除外）してソート
   const filteredAnnouncements = useMemo(() => {
@@ -206,36 +251,67 @@ export default function AnnouncementsContent({
         </h2>
 
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* 年月インデックス（左側） */}
-          {yearMonths.length > 0 && (
-            <div className="lg:w-64 flex-shrink-0">
-              <div className="bg-gray-50 rounded-lg p-4 sticky top-4">
-                <h3 className="text-sm font-semibold text-gray-700 mb-3">
-                  年月で絞り込み
-                </h3>
-                <div className="space-y-1 max-h-[600px] overflow-y-auto">
-                  {yearMonths.map((ym) => {
-                    const isSelected =
-                      selectedYearMonth?.year === ym.year &&
-                      selectedYearMonth?.month === ym.month;
-                    return (
-                      <button
-                        key={`${ym.year}-${ym.month}`}
-                        onClick={() => setSelectedYearMonth(ym)}
-                        className={`w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                          isSelected
-                            ? 'bg-blue-600 text-white'
-                            : 'text-gray-700 hover:bg-gray-200'
-                        }`}
+          {/* フィルタ（左側） */}
+          {!loading &&
+            !error &&
+            years.length > 0 && (
+              <div className="lg:w-64 flex-shrink-0">
+                <div className="bg-gray-50 rounded-lg p-4 sticky top-4">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                    年月で絞り込み
+                  </h3>
+                  <div className="space-y-3">
+                    {/* 年フィルター */}
+                    <div>
+                      <label
+                        htmlFor="year-filter"
+                        className="text-sm text-gray-700 mb-1 block"
                       >
-                        {formatYearMonth(ym.year, ym.month)}
-                      </button>
-                    );
-                  })}
+                        年
+                      </label>
+                      <select
+                        id="year-filter"
+                        value={selectedYear}
+                        onChange={(e) => setSelectedYear(e.target.value)}
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="">すべて</option>
+                        {years.map((year) => (
+                          <option key={year} value={year.toString()}>
+                            {year}年
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* 月フィルター（年が選択されている場合のみ表示） */}
+                    {selectedYear && (
+                      <div>
+                        <label
+                          htmlFor="month-filter"
+                          className="text-sm text-gray-700 mb-1 block"
+                        >
+                          月
+                        </label>
+                        <select
+                          id="month-filter"
+                          value={selectedMonth}
+                          onChange={(e) => setSelectedMonth(e.target.value)}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="">すべて</option>
+                          {months.map((month) => (
+                            <option key={month} value={month.toString()}>
+                              {month}月
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* お知らせ一覧（右側） */}
           <div className="flex-1 min-w-0">
@@ -251,8 +327,8 @@ export default function AnnouncementsContent({
             ) : filteredAnnouncements.length === 0 ? (
               <div className="bg-gray-50 rounded-lg p-8 text-center">
                 <p className="text-gray-500 text-sm">
-                  {selectedYearMonth
-                    ? `${formatYearMonth(selectedYearMonth.year, selectedYearMonth.month)}のお知らせはありません。`
+                  {selectedYear && selectedMonth
+                    ? `${formatYearMonth(parseInt(selectedYear), parseInt(selectedMonth))}のお知らせはありません。`
                     : '現在、お知らせはありません。'}
                 </p>
               </div>
