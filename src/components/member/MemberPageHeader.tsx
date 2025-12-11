@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import MemberNavigation from './MemberNavigation';
 
 interface MemberPageHeaderProps {
   title: string;
@@ -43,6 +44,7 @@ export default function MemberPageHeader({
         </Link>
         <h1 className="text-3xl lg:text-4xl font-bold">{title}</h1>
         <p className={`${textColor} text-lg mt-4`}>{description}</p>
+        <MemberNavigation />
       </div>
     </div>
   );

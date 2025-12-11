@@ -1,5 +1,6 @@
 export { default as MemberAuthWrapper } from './MemberAuthWrapper';
 export { default as MemberPageHeader } from './MemberPageHeader';
+export { default as MemberNavigation } from './MemberNavigation';
 export { default as CircularsContent } from './CircularsContent';
 export { default as EventsContent } from './EventsContent';
 export { default as GreenWellnessContent } from './GreenWellnessContent';
