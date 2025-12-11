@@ -58,3 +58,22 @@ h6 {
     transform: translateY(0);
   }
 }
+
+/* メンバーメニューのスクロールバースタイル */
+.member-nav-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.member-nav-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.member-nav-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.member-nav-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}

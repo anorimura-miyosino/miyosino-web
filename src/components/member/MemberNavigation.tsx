@@ -112,7 +112,7 @@ export default function MemberNavigation() {
 
   return (
     <div className="mt-6 pt-4 border-t border-white border-opacity-20">
-      <nav className="flex overflow-x-auto -mx-2 px-2">
+      <nav className="flex flex-col md:flex-row md:overflow-x-auto md:snap-x md:snap-mandatory md:-mx-4 md:px-4 md:member-nav-scroll gap-2 md:gap-0">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -120,8 +120,8 @@ export default function MemberNavigation() {
               key={item.href}
               href={item.href}
               className={`
-                flex items-center px-6 py-4 mx-1 text-lg font-medium whitespace-nowrap
-                rounded-lg transition-all duration-200
+                flex items-center px-4 py-3 md:px-6 md:py-4 md:mx-1 text-base md:text-lg font-medium whitespace-nowrap
+                rounded-lg transition-all duration-200 md:snap-start md:flex-shrink-0 w-full md:w-auto
                 ${
                   isActive
                     ? 'bg-white bg-opacity-60 text-blue-900 shadow-md hover:bg-opacity-70'
@@ -129,7 +129,7 @@ export default function MemberNavigation() {
                 }
               `}
             >
-              <span className="mr-3 flex-shrink-0">{item.icon}</span>
+              <span className="mr-2 md:mr-3 flex-shrink-0">{item.icon}</span>
               <span>{item.label}</span>
             </Link>
           );

@@ -124,7 +124,7 @@ export default function MemberPage() {
 
       {/* メインコンテンツ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* 重要なお知らせ */}
+        {/* ご利用上の注意 */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
           <div className="flex items-start">
             <div className="flex-shrink-0">
@@ -144,7 +144,7 @@ export default function MemberPage() {
             </div>
             <div className="ml-3">
               <h3 className="text-lg font-semibold text-yellow-800">
-                重要なお知らせ
+                ご利用上の注意
               </h3>
               <p className="text-yellow-700 mt-2">
                 このページは組合員専用のページです。個人情報の取り扱いには十分ご注意ください。
