@@ -132,7 +132,8 @@ export default function PhoneContactSection() {
 
         {/* その他の連絡先 */}
         <div className="space-y-4">
-          <div className="flex items-center space-x-3">
+          {/* メール（一時的に非表示） */}
+          {/* <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
               <svg
                 className="w-5 h-5 text-blue-600"
@@ -157,7 +158,7 @@ export default function PhoneContactSection() {
                 {contactInfo.email}
               </a>
             </div>
-          </div>
+          </div> */}
 
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">

@@ -1,7 +1,7 @@
 import {
-  ContactFormSection,
+  // ContactFormSection, // 一時的に非表示
   PhoneContactSection,
-  TableOfContents,
+  // TableOfContents, // 一時的に非表示
 } from '@/components/contact';
 
 export const metadata = {
@@ -25,7 +25,8 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <TableOfContents />
+      {/* サブヘッダー（一時的に非表示） */}
+      {/* <TableOfContents /> */}
 
       {/* 電話でのお問い合わせ */}
       <section className="py-12 lg:py-16 bg-gray-50">
@@ -34,12 +35,12 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* お問い合わせフォーム */}
-      <section className="py-12 lg:py-16 bg-white">
+      {/* お問い合わせフォーム（一時的に非表示） */}
+      {/* <section className="py-12 lg:py-16 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <ContactFormSection />
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
