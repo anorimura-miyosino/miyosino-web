@@ -27,7 +27,7 @@ export default function Header() {
             <Link href="/" className="flex items-center space-x-2">
               <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg flex items-center justify-center overflow-hidden">
                 <Image
-                  src="/icon-miyosino4.png"
+                  src="/icon-miyosino.png"
                   alt="かわつる三芳野団地"
                   width={32}
                   height={32}
