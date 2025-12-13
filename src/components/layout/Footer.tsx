@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -8,8 +9,15 @@ export default function Footer() {
           {/* ロゴと説明 */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">M</span>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/icon-miyosino4.png"
+                  alt="かわつる三芳野団地"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-contain"
+                  unoptimized
+                />
               </div>
               <span className="text-xl font-bold">かわつる三芳野団地</span>
             </div>

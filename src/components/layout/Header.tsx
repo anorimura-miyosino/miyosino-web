@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 
 const navigationItems = [
@@ -24,10 +25,15 @@ export default function Header() {
           {/* ロゴ */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-7 h-7 lg:w-8 lg:h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs lg:text-sm">
-                  M
-                </span>
+              <div className="w-7 h-7 lg:w-8 lg:h-8 rounded-lg flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/icon-miyosino4.png"
+                  alt="かわつる三芳野団地"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-contain"
+                  unoptimized
+                />
               </div>
               <span className="text-lg lg:text-xl font-bold text-gray-900 tracking-wide">
                 かわつる三芳野団地
