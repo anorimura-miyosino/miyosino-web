@@ -1,6 +1,6 @@
 import {
   NearbyFacilitiesSection,
-  SurroundingFacilitiesMapSection,
+  TableOfContents,
 } from '@/components/surrounding';
 
 export default function SurroundingPage() {
@@ -9,22 +9,17 @@ export default function SurroundingPage() {
       {/* ヒーローセクション */}
       <section className="bg-gradient-to-r from-blue-600 to-green-700 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            周辺施設・お店
-          </h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">周辺施設</h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed">
-            かわつる三芳野団地周辺の便利な施設とお店をご紹介
-            <br />
-            子育てに必要な施設やお店が徒歩圏内に充実しています
+            団地周辺にある公共施設や病院、主要な生活関連施設をご紹介します。
           </p>
         </div>
       </section>
 
+      <TableOfContents />
+
       {/* 周辺の施設・お店セクション */}
       <NearbyFacilitiesSection />
-
-      {/* 周辺施設マップセクション */}
-      <SurroundingFacilitiesMapSection />
     </div>
   );
 }

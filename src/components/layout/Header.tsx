@@ -10,9 +10,8 @@ const navigationItems = [
   { href: '/management', label: '団地運営' },
   { href: '/community', label: 'コミュニティ' },
   { href: '/facilities', label: '共有施設・サービス' },
+  { href: '/surrounding', label: '周辺施設' },
   { href: '/access', label: 'アクセス' },
-  // TODO: コンテンツの準備ができたら追加
-  // { href: '/surrounding', label: '周辺環境' },
 ];
 
 export default function Header() {

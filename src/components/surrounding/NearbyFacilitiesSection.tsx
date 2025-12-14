@@ -1,551 +1,416 @@
 'use client';
 
-import { useState } from 'react';
-import { nearbyFacilities } from './data';
+import { useState, useEffect } from 'react';
+import type {
+  NearbyFacility,
+  MicroCMSNearbyFacility,
+  MicroCMSNearbyFacilityListResponse,
+} from '@/types/surrounding';
+import { CONTENT_CATEGORIES } from '@/types/categories';
 
-type Facility = {
-  id: number;
-  name: string;
-  description: string;
-  distance: string;
-  category: string;
-  icon: string;
-  features?: string[];
-  hours?: string;
-  phone?: string;
-  website?: string;
+type GroupedFacilities = {
+  publicFacilities: NearbyFacility[];
+  educationFacilities: NearbyFacility[];
+  financialInstitutions: NearbyFacility[];
+  commercialFacilities: NearbyFacility[];
+  medicalFacilities: NearbyFacility[];
+  utilities: NearbyFacility[];
 };
 
-// Facility型を他の変数にも適用
-type Service = Facility;
-type School = Facility;
-
 export default function NearbyFacilitiesSection() {
-  const [activeTab, setActiveTab] = useState<
-    | 'shoppingStreet'
-    | 'shopping'
-    | 'lifeServices'
-    | 'medical'
-    | 'education'
-    | 'publicTransport'
-    | 'leisure'
-  >('shoppingStreet');
+  const [groupedFacilities, setGroupedFacilities] = useState<GroupedFacilities>(
+    {
+      publicFacilities: [],
+      educationFacilities: [],
+      financialInstitutions: [],
+      commercialFacilities: [],
+      medicalFacilities: [],
+      utilities: [],
+    }
+  );
+  const [loading, setLoading] = useState(true);
+
+  // Cloudflare Workers経由でMicroCMSから周辺施設データを取得
+  // APIキーはサーバーサイド（Cloudflare Workers）で管理され、クライアントに露出しません
+  useEffect(() => {
+    const fetchNearbyFacilities = async () => {
+      try {
+        setLoading(true);
+
+        // Cloudflare Workersのエンドポイントを取得
+        const contentsApiEndpoint =
+          process.env.NEXT_PUBLIC_CONTENTS_API_ENDPOINT ||
+          process.env.NEXT_PUBLIC_PHOTOS_API_ENDPOINT?.replace(
+            'miyosino-photos-api',
+            'miyosino-contents-api'
+          );
+
+        if (!contentsApiEndpoint) {
+          console.error(
+            '[NearbyFacilitiesSection] API endpoint is not set. Please configure NEXT_PUBLIC_CONTENTS_API_ENDPOINT or NEXT_PUBLIC_PHOTOS_API_ENDPOINT environment variable.'
+          );
+          setLoading(false);
+          return;
+        }
+
+        // Cloudflare Workers経由で取得
+        const url = new URL(contentsApiEndpoint);
+        url.searchParams.append('category', CONTENT_CATEGORIES.NEARBY); // カテゴリIDでフィルタ
+        url.searchParams.append('getAll', 'true'); // 全件取得
+
+        const response = await fetch(url.toString(), {
+          cache: 'no-store',
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch nearby facilities: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const data: MicroCMSNearbyFacilityListResponse = await response.json();
+
+        console.log(
+          `[NearbyFacilitiesSection] 取得した全データ数: ${data.contents.length}`
+        );
+
+        // クライアント側でカテゴリフィルタリング（category.idがCONTENT_CATEGORIES.NEARBYのもののみ）
+        const filteredContents = data.contents.filter(
+          (facility: MicroCMSNearbyFacility) => {
+            if (!Array.isArray(facility.category)) {
+              return false;
+            }
+            return facility.category.some(
+              (cat) => cat && cat.id === CONTENT_CATEGORIES.NEARBY
+            );
+          }
+        );
+
+        console.log(
+          `[NearbyFacilitiesSection] フィルタリング後のデータ数: ${filteredContents.length}`
+        );
+
+        // デバッグ: 最初の数件のデータ構造を確認
+        console.log(
+          '[NearbyFacilitiesSection] サンプルデータ（最初の1件の全フィールド）:',
+          filteredContents[0]
+        );
+
+        // subCategoryの値をマッピング（nearby_xxx形式からxxxFacilities形式へ）
+        const subCategoryMap: Record<string, string> = {
+          nearby_public: 'publicFacilities',
+          nearby_education: 'educationFacilities',
+          nearby_finance: 'financialInstitutions',
+          nearby_commerce: 'commercialFacilities',
+          nearby_medical: 'medicalFacilities',
+          nearby_other: 'utilities',
+        };
+
+        // MicroCMSのレスポンスをNearbyFacility型に変換
+        // subCategoryがオブジェクトの場合はidを取得、文字列の場合はそのまま使用
+        const fetchedFacilities: NearbyFacility[] = filteredContents.map(
+          (facility: MicroCMSNearbyFacility) => {
+            let subCategoryValue = '';
+            if (facility.subCategory) {
+              if (typeof facility.subCategory === 'string') {
+                // nearby_xxx形式をxxxFacilities形式に変換
+                subCategoryValue =
+                  subCategoryMap[facility.subCategory] || facility.subCategory;
+              } else if (
+                typeof facility.subCategory === 'object' &&
+                facility.subCategory.id
+              ) {
+                // オブジェクトの場合も同様にマッピング
+                subCategoryValue =
+                  subCategoryMap[facility.subCategory.id] ||
+                  facility.subCategory.id;
+              }
+            }
+
+            return {
+              id: facility.id,
+              createdAt: new Date(facility.createdAt),
+              updatedAt: new Date(facility.updatedAt),
+              name:
+                facility.name ||
+                (facility as MicroCMSNearbyFacility & { title?: string })
+                  .title ||
+                '',
+              description: facility.description || '',
+              subCategory: subCategoryValue,
+              icon: facility.icon || '',
+              order: facility.order || 0,
+            };
+          }
+        );
+
+        // デバッグ: 変換後のsubCategoryの値を確認
+        console.log(
+          '[NearbyFacilitiesSection] 変換後のsubCategory一覧:',
+          fetchedFacilities.map((f) => ({
+            name: f.name,
+            subCategory: f.subCategory,
+            subCategoryLength: f.subCategory?.length,
+            subCategoryType: typeof f.subCategory,
+          }))
+        );
+
+        // デバッグ: ユニークなsubCategoryの値を確認
+        const uniqueSubCategories = [
+          ...new Set(fetchedFacilities.map((f) => f.subCategory)),
+        ];
+        console.log(
+          '[NearbyFacilitiesSection] ユニークなsubCategoryの値:',
+          uniqueSubCategories
+        );
+
+        // subCategory.idに基づいて分類
+        const grouped: GroupedFacilities = {
+          publicFacilities: fetchedFacilities
+            .filter((f) => f.subCategory === 'publicFacilities')
+            .sort((a, b) => a.order - b.order),
+          educationFacilities: fetchedFacilities
+            .filter((f) => f.subCategory === 'educationFacilities')
+            .sort((a, b) => a.order - b.order),
+          financialInstitutions: fetchedFacilities
+            .filter((f) => f.subCategory === 'financialInstitutions')
+            .sort((a, b) => a.order - b.order),
+          commercialFacilities: fetchedFacilities
+            .filter((f) => f.subCategory === 'commercialFacilities')
+            .sort((a, b) => a.order - b.order),
+          medicalFacilities: fetchedFacilities
+            .filter((f) => f.subCategory === 'medicalFacilities')
+            .sort((a, b) => a.order - b.order),
+          utilities: fetchedFacilities
+            .filter((f) => f.subCategory === 'utilities')
+            .sort((a, b) => a.order - b.order),
+        };
+
+        // デバッグ: 分類後の各カテゴリのデータ数を確認
+        console.log('[NearbyFacilitiesSection] 分類後のデータ数:', {
+          publicFacilities: grouped.publicFacilities.length,
+          educationFacilities: grouped.educationFacilities.length,
+          financialInstitutions: grouped.financialInstitutions.length,
+          commercialFacilities: grouped.commercialFacilities.length,
+          medicalFacilities: grouped.medicalFacilities.length,
+          utilities: grouped.utilities.length,
+        });
+
+        setGroupedFacilities(grouped);
+      } catch (error) {
+        console.error(
+          '[NearbyFacilitiesSection] 周辺施設データ取得エラー:',
+          error
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNearbyFacilities();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500">読み込み中...</p>
+      </div>
+    );
+  }
 
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            周辺の施設・お店
-          </h2>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            子育てに必要な施設やお店が徒歩圏内に充実
-            <br />
-            日々の生活に便利で安心な環境を提供します
-          </p>
-        </div>
-
-        {/* タブナビゲーション */}
-        <div className="flex justify-center mb-12">
-          <div className="bg-gray-100 rounded-lg p-1 flex flex-wrap gap-1">
-            <button
-              onClick={() => setActiveTab('shoppingStreet')}
-              className={`px-4 py-2 rounded-md text-xs font-medium transition-all duration-200 ${
-                activeTab === 'shoppingStreet'
-                  ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-pink-500'
-              }`}
-            >
-              かわつる商店街
-            </button>
-            <button
-              onClick={() => setActiveTab('shopping')}
-              className={`px-4 py-2 rounded-md text-xs font-medium transition-all duration-200 ${
-                activeTab === 'shopping'
-                  ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-pink-500'
-              }`}
-            >
-              ショッピング
-            </button>
-            <button
-              onClick={() => setActiveTab('lifeServices')}
-              className={`px-4 py-2 rounded-md text-xs font-medium transition-all duration-200 ${
-                activeTab === 'lifeServices'
-                  ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-pink-500'
-              }`}
-            >
-              生活サービス
-            </button>
-            <button
-              onClick={() => setActiveTab('medical')}
-              className={`px-4 py-2 rounded-md text-xs font-medium transition-all duration-200 ${
-                activeTab === 'medical'
-                  ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-pink-500'
-              }`}
-            >
-              医療・健康
-            </button>
-            <button
-              onClick={() => setActiveTab('education')}
-              className={`px-4 py-2 rounded-md text-xs font-medium transition-all duration-200 ${
-                activeTab === 'education'
-                  ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-pink-500'
-              }`}
-            >
-              教育施設
-            </button>
-            <button
-              onClick={() => setActiveTab('publicTransport')}
-              className={`px-4 py-2 rounded-md text-xs font-medium transition-all duration-200 ${
-                activeTab === 'publicTransport'
-                  ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-pink-500'
-              }`}
-            >
-              交通
-            </button>
-            <button
-              onClick={() => setActiveTab('leisure')}
-              className={`px-4 py-2 rounded-md text-xs font-medium transition-all duration-200 ${
-                activeTab === 'leisure'
-                  ? 'bg-pink-500 text-white shadow-md'
-                  : 'text-gray-700 hover:text-pink-500'
-              }`}
-            >
-              レジャー・公園・観光
-            </button>
+    <>
+      {/* 公共施設セクション */}
+      {groupedFacilities.publicFacilities.length > 0 && (
+        <section
+          id="publicFacilities"
+          className="bg-gray-50 py-12 sm:py-16 scroll-mt-20"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 px-4 py-2 bg-blue-50 border-l-4 border-blue-500 rounded">
+              公共施設
+            </h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-200">
+              {groupedFacilities.publicFacilities.map((facility) => (
+                <div
+                  key={facility.id}
+                  className="flex items-center px-6 py-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="text-2xl mr-4">{facility.icon}</div>
+                  <div className="flex-1 flex items-center justify-between">
+                    <span className="text-lg font-medium text-gray-900">
+                      {facility.name}
+                    </span>
+                    <span className="text-gray-600 ml-4">
+                      {facility.description}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
+      )}
 
-        {/* タブコンテンツ */}
-        <div className="min-h-[600px]">
-          {activeTab === 'shoppingStreet' && (
-            <div className="space-y-8">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  {nearbyFacilities.shoppingStreet.name}
-                </h3>
-                <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed">
-                  {nearbyFacilities.shoppingStreet.description}
-                </p>
-                {nearbyFacilities.shoppingStreet.website && (
-                  <div className="mt-4">
-                    <a
-                      href={nearbyFacilities.shoppingStreet.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors duration-200 text-sm font-medium"
-                    >
-                      公式サイトを見る
-                    </a>
+      {/* 教育施設セクション */}
+      {groupedFacilities.educationFacilities.length > 0 && (
+        <section
+          id="educationFacilities"
+          className="bg-white py-12 sm:py-16 scroll-mt-20"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 px-4 py-2 bg-green-50 border-l-4 border-green-500 rounded">
+              教育施設
+            </h2>
+            <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-200">
+              {groupedFacilities.educationFacilities.map((facility) => (
+                <div
+                  key={facility.id}
+                  className="flex items-center px-6 py-4 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="text-2xl mr-4">{facility.icon}</div>
+                  <div className="flex-1 flex items-center justify-between">
+                    <span className="text-lg font-medium text-gray-900">
+                      {facility.name}
+                    </span>
+                    <span className="text-gray-600 ml-4">
+                      {facility.description}
+                    </span>
                   </div>
-                )}
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {[
-                  ...nearbyFacilities.shopping.filter(
-                    (shop) =>
-                      shop.features && shop.features.includes('かわつる商店街')
-                  ),
-                  ...nearbyFacilities.medical.filter(
-                    (facility) =>
-                      facility.features &&
-                      facility.features.includes('かわつる商店街')
-                  ),
-                ].map((facility) => (
-                  <div
-                    key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="text-4xl">{facility.icon}</div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold text-gray-900 mb-3">
-                          {facility.name}
-                        </h4>
-                        <p className="text-gray-600 mb-4 leading-relaxed">
-                          {facility.description}
-                        </p>
-                        <div className="mb-4">
-                          <div className="flex flex-wrap gap-2">
-                            {facility.features
-                              .filter((f) => f !== 'かわつる商店街')
-                              .map((feature, index) => (
-                                <span
-                                  key={index}
-                                  className="bg-pink-100 text-pink-800 text-xs px-2 py-1 rounded-full"
-                                >
-                                  {feature}
-                                </span>
-                              ))}
-                          </div>
-                        </div>
-                        {facility.website && (
-                          <a
-                            href={facility.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors duration-200 text-sm font-medium text-center"
-                          >
-                            公式サイトを見る
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
-          {activeTab === 'shopping' && (
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-                ショッピング
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {[
-                  ...nearbyFacilities.shopping.filter(
-                    (shop) =>
-                      shop.features && shop.features.includes('かわつる商店街')
-                  ),
-                  ...nearbyFacilities.shopping.filter(
-                    (shop) =>
-                      !shop.features ||
-                      !shop.features.includes('かわつる商店街')
-                  ),
-                ].map((facility) => (
-                  <div
-                    key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="text-4xl">{facility.icon}</div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold text-gray-900 mb-3">
-                          {facility.name}
-                        </h4>
-                        <p className="text-gray-600 mb-4 leading-relaxed">
-                          {facility.description}
-                        </p>
-                        <div className="space-y-2 mb-4">
-                          {facility.distance && (
-                            <div className="flex items-center text-sm text-gray-500">
-                              <span className="font-medium">アクセス：</span>
-                              <span className="ml-2 font-semibold text-pink-600">
-                                {facility.distance}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="mb-4">
-                          <div className="flex flex-wrap gap-2">
-                            {facility.features?.map((feature, index) => (
-                              <span
-                                key={index}
-                                className="bg-pink-100 text-pink-800 text-xs px-2 py-1 rounded-full"
-                              >
-                                {feature}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        {facility.website && (
-                          <a
-                            href={facility.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 transition-colors duration-200 text-sm font-medium text-center"
-                          >
-                            公式サイトを見る
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          </div>
+        </section>
+      )}
 
-          {activeTab === 'lifeServices' && (
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-                生活サービス
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {nearbyFacilities.lifeServices.map((service: Service) => (
-                  <div
-                    key={service.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="text-4xl">{service.icon}</div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold text-gray-900 mb-3">
-                          {service.name}
-                        </h4>
-                        <p className="text-gray-600 mb-4 leading-relaxed">
-                          {service.description}
-                        </p>
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <span className="font-medium">アクセス：</span>
-                            <span className="ml-2 font-semibold text-pink-600">
-                              {service.distance}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="mb-4">
-                          <div className="flex flex-wrap gap-2">
-                            {service.features?.map((feature, index) => (
-                              <span
-                                key={index}
-                                className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full"
-                              >
-                                {feature}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        {service.website && (
-                          <a
-                            href={service.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm font-medium text-center"
-                          >
-                            公式サイトを見る
-                          </a>
-                        )}
-                      </div>
-                    </div>
+      {/* 金融機関セクション */}
+      {groupedFacilities.financialInstitutions.length > 0 && (
+        <section
+          id="financialInstitutions"
+          className="bg-gray-50 py-12 sm:py-16 scroll-mt-20"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 px-4 py-2 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+              金融機関
+            </h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-200">
+              {groupedFacilities.financialInstitutions.map((facility) => (
+                <div
+                  key={facility.id}
+                  className="flex items-center px-6 py-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="text-2xl mr-4">{facility.icon}</div>
+                  <div className="flex-1 flex items-center justify-between">
+                    <span className="text-lg font-medium text-gray-900">
+                      {facility.name}
+                    </span>
+                    <span className="text-gray-600 ml-4">
+                      {facility.description}
+                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+        </section>
+      )}
 
-          {activeTab === 'medical' && (
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-                医療・健康施設
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {nearbyFacilities.medical.map((facility) => (
-                  <div
-                    key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="text-4xl">{facility.icon}</div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold text-gray-900 mb-3">
-                          {facility.name}
-                        </h4>
-                        <p className="text-gray-600 mb-4 leading-relaxed">
-                          {facility.description}
-                        </p>
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <span className="font-medium">アクセス：</span>
-                            <span className="ml-2 font-semibold text-red-600">
-                              {facility.distance}
-                            </span>
-                          </div>
-                        </div>
-                        {facility.website && (
-                          <a
-                            href={facility.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors duration-200 text-sm font-medium text-center"
-                          >
-                            公式サイトを見る
-                          </a>
-                        )}
-                      </div>
-                    </div>
+      {/* 商業施設セクション */}
+      {groupedFacilities.commercialFacilities.length > 0 && (
+        <section
+          id="commercialFacilities"
+          className="bg-white py-12 sm:py-16 scroll-mt-20"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 px-4 py-2 bg-pink-50 border-l-4 border-pink-500 rounded">
+              商業施設
+            </h2>
+            <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-200">
+              {groupedFacilities.commercialFacilities.map((facility) => (
+                <div
+                  key={facility.id}
+                  className="flex items-center px-6 py-4 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="text-2xl mr-4">{facility.icon}</div>
+                  <div className="flex-1 flex items-center justify-between">
+                    <span className="text-lg font-medium text-gray-900">
+                      {facility.name}
+                    </span>
+                    <span className="text-gray-600 ml-4">
+                      {facility.description}
+                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+        </section>
+      )}
 
-          {activeTab === 'education' && (
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-                教育施設
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {nearbyFacilities.education.map((school: School) => (
-                  <div
-                    key={school.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="text-4xl">{school.icon}</div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold text-gray-900 mb-3">
-                          {school.name}
-                        </h4>
-                        <p className="text-gray-600 mb-4 leading-relaxed">
-                          {school.description}
-                        </p>
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <span className="font-medium">アクセス：</span>
-                            <span className="ml-2 font-semibold text-blue-600">
-                              {school.distance}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="mb-4">
-                          <div className="flex flex-wrap gap-2">
-                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                              {school.category}
-                            </span>
-                          </div>
-                        </div>
-                        {school.website && (
-                          <a
-                            href={school.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-200 text-sm font-medium text-center"
-                          >
-                            公式サイトを見る
-                          </a>
-                        )}
-                      </div>
-                    </div>
+      {/* 医療施設セクション */}
+      {groupedFacilities.medicalFacilities.length > 0 && (
+        <section
+          id="medicalFacilities"
+          className="bg-gray-50 py-12 sm:py-16 scroll-mt-20"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 px-4 py-2 bg-red-50 border-l-4 border-red-500 rounded">
+              医療施設
+            </h2>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-200">
+              {groupedFacilities.medicalFacilities.map((facility) => (
+                <div
+                  key={facility.id}
+                  className="flex items-center px-6 py-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="text-2xl mr-4">{facility.icon}</div>
+                  <div className="flex-1 flex items-center justify-between">
+                    <span className="text-lg font-medium text-gray-900">
+                      {facility.name}
+                    </span>
+                    <span className="text-gray-600 ml-4">
+                      {facility.description}
+                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
+        </section>
+      )}
 
-          {activeTab === 'publicTransport' && (
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-                交通
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {nearbyFacilities.publicTransport.map((facility) => (
-                  <div
-                    key={facility.id}
-                    className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="text-4xl">{facility.icon}</div>
-                      <div className="flex-1">
-                        <h4 className="text-xl font-bold text-gray-900 mb-4">
-                          {facility.name}
-                        </h4>
-                        <div className="space-y-4 mb-4">
-                          <div className="flex items-center text-sm">
-                            <span className="font-medium text-gray-700">
-                              アクセス：
-                            </span>
-                            <span className="ml-2 font-semibold text-green-600">
-                              {facility.distance}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="flex flex-wrap gap-2">
-                              {facility.features?.map((feature, index) => (
-                                <span
-                                  key={index}
-                                  className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full"
-                                >
-                                  {feature}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        {facility.website && (
-                          <a
-                            href={facility.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors duration-200 text-sm font-medium text-center"
-                          >
-                            公式サイトを見る
-                          </a>
-                        )}
-                      </div>
-                    </div>
+      {/* その他セクション */}
+      {groupedFacilities.utilities.length > 0 && (
+        <section
+          id="utilities"
+          className="bg-white py-12 sm:py-16 scroll-mt-20"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-4 px-4 py-2 bg-gray-100 border-l-4 border-gray-400 rounded">
+              その他（電気、ガス、水道、ごみ処理）
+            </h2>
+            <div className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-200">
+              {groupedFacilities.utilities.map((facility) => (
+                <div
+                  key={facility.id}
+                  className="flex items-center px-6 py-4 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="text-2xl mr-4">{facility.icon}</div>
+                  <div className="flex-1 flex items-center justify-between">
+                    <span className="text-lg font-medium text-gray-900">
+                      {facility.name}
+                    </span>
+                    <span className="text-gray-600 ml-4">
+                      {facility.description}
+                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
-
-          {activeTab === 'leisure' && (
-            <div className="space-y-8">
-              <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-                レジャー・公園・観光
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {[...nearbyFacilities.leisure, ...nearbyFacilities.tourism].map(
-                  (facility) => (
-                    <div
-                      key={facility.id}
-                      className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
-                    >
-                      <div className="flex items-start space-x-4">
-                        <div className="text-4xl">{facility.icon}</div>
-                        <div className="flex-1">
-                          <h4 className="text-xl font-bold text-gray-900 mb-3">
-                            {facility.name}
-                          </h4>
-                          <p className="text-gray-600 mb-4 leading-relaxed">
-                            {facility.description}
-                          </p>
-                          <div className="space-y-2 mb-4">
-                            <div className="flex items-center text-sm text-gray-500">
-                              <span className="font-medium">アクセス：</span>
-                              <span className="ml-2 font-semibold text-orange-600">
-                                {facility.distance}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="mb-4">
-                            <div className="flex flex-wrap gap-2">
-                              {facility.features?.map((feature, index) => (
-                                <span
-                                  key={index}
-                                  className="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full"
-                                >
-                                  {feature}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          {facility.website && (
-                            <a
-                              href={facility.website}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-200 text-sm font-medium text-center"
-                            >
-                              公式サイトを見る
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </section>
+          </div>
+        </section>
+      )}
+    </>
   );
 }
