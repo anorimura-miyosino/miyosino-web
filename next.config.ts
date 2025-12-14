@@ -36,13 +36,20 @@ const nextConfig: NextConfig = {
     },
   },
   // Docker環境でのホットリロード対応（開発時のみ）
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     // ファイル監視設定を強化（Windows Docker対応）
     config.watchOptions = {
       poll: 1000, // 1秒ごとにファイル変更をチェック
       aggregateTimeout: 300, // 変更検知後300ms待ってからリロード
       ignored: /node_modules/, // node_modulesは監視対象外
     };
+    
+    // WSL2環境でのwebpackキャッシュエラー対策
+    if (dev && !isServer) {
+      // 開発環境のクライアント側でキャッシュを無効化（WSL2のファイルシステム問題を回避）
+      config.cache = false;
+    }
+    
     return config;
   },
 };
