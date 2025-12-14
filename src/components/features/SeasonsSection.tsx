@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { featuresSections } from '../home/data';
+import { featuresSections } from './data';
 import type {
   Season,
   MicroCMSSeason,

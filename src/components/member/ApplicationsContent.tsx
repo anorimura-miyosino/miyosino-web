@@ -33,7 +33,9 @@ export default function ApplicationsContent() {
           return;
         }
         setError(
-          err instanceof Error ? err.message : '申請書の取得に失敗しました'
+          err instanceof Error
+            ? err.message
+            : '届出・申請書の取得に失敗しました'
         );
         setApplications([]);
       } finally {
@@ -49,7 +51,7 @@ export default function ApplicationsContent() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">
-            申請書ダウンロード
+            届出・申請書ダウンロード
           </h2>
           {loading ? (
             <div className="bg-gray-50 rounded-lg p-8 text-center">
@@ -63,7 +65,7 @@ export default function ApplicationsContent() {
           ) : applications.length === 0 ? (
             <div className="bg-gray-50 rounded-lg p-8 text-center">
               <p className="text-gray-500 text-sm">
-                現在、ダウンロード可能な申請書はありません。
+                現在、ダウンロード可能な届出・申請書はありません。
               </p>
             </div>
           ) : (
@@ -97,7 +99,9 @@ export default function ApplicationsContent() {
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 opacity-60">
-          <h2 className="text-xl font-bold text-gray-500 mb-4">申請書提出</h2>
+          <h2 className="text-xl font-bold text-gray-500 mb-4">
+            届出・申請書提出
+          </h2>
           <div className="space-y-4">
             {/* 準備中メッセージ */}
             <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4 mb-4">
@@ -105,7 +109,7 @@ export default function ApplicationsContent() {
                 ⚠️ 準備中
               </p>
               <p className="text-yellow-700 text-sm">
-                申請書提出機能は現在準備中です。
+                届出・申請書提出機能は現在準備中です。
                 <br />
                 管理組合事務所にてご提出ください。
               </p>
@@ -126,6 +130,17 @@ export default function ApplicationsContent() {
                     </button>
                   </div>
                 </div>
+                <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400">不具合箇所届出</span>
+                    <button
+                      disabled
+                      className="bg-gray-400 text-white px-3 py-1 rounded-lg cursor-not-allowed text-sm"
+                    >
+                      届出する
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -142,7 +157,7 @@ export default function ApplicationsContent() {
                       disabled
                       className="bg-gray-400 text-white px-3 py-1 rounded-lg cursor-not-allowed text-sm"
                     >
-                      申請する
+                      届出する
                     </button>
                   </div>
                 </div>

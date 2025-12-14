@@ -1,6 +1,6 @@
 'use client';
 
-import { featuresSections } from '../home/data';
+import { featuresSections } from './data';
 
 export function TableOfContents() {
   const sections = featuresSections.map(({ id, label, icon }) => ({

@@ -1,4 +1,4 @@
-import { featuresSections } from './data';
+import { overviewSections } from './data';
 
 const overviewData = {
   location: {
@@ -48,7 +48,7 @@ const overviewData = {
 };
 
 export function OverviewSection() {
-  const sectionMeta = featuresSections[0];
+  const sectionMeta = overviewSections[0];
 
   return (
     <section

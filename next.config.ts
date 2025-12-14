@@ -43,13 +43,13 @@ const nextConfig: NextConfig = {
       aggregateTimeout: 300, // 変更検知後300ms待ってからリロード
       ignored: /node_modules/, // node_modulesは監視対象外
     };
-    
+
     // WSL2環境でのwebpackキャッシュエラー対策
     if (dev && !isServer) {
       // 開発環境のクライアント側でキャッシュを無効化（WSL2のファイルシステム問題を回避）
       config.cache = false;
     }
-    
+
     return config;
   },
 };
