@@ -1,5 +1,10 @@
 import type { NextConfig } from 'next';
 
+const basePath = process.env.NODE_ENV === 'production' ? '/miyosino-web' : '';
+
+// 環境変数として公開（クライアント側で使用可能）
+process.env.NEXT_PUBLIC_BASE_PATH = basePath;
+
 const nextConfig: NextConfig = {
   // 開発時は静的エクスポートを無効化（HMRとAPIルートを有効にするため）
   ...(process.env.NODE_ENV === 'production' && { output: 'export' }),
@@ -21,8 +26,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/miyosino-web' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/miyosino-web' : '',
+  basePath,
+  assetPrefix: basePath,
   // 静的エクスポート時のRSCプリフェッチエラーを防ぐ
   experimental: {
     // RSCプリフェッチを無効化（静的エクスポートでは不要）

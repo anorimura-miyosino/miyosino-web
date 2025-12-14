@@ -11,7 +11,7 @@ export default function Footer() {
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
                 <Image
-                  src="/icon-miyosino.png"
+                  src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/icon-miyosino.png`}
                   alt="かわつる三芳野団地"
                   width={32}
                   height={32}
