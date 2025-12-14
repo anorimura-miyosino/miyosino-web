@@ -45,11 +45,21 @@ export default function Home() {
             >
               アクセスを見る
             </Link>
+            <Link
+              href="/facilities"
+              className="bg-teal-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+              共有施設・サービスを見る
+            </Link>
+            <Link
+              href="/surrounding"
+              className="bg-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+              周辺施設を見る
+            </Link>
           </div>
         </div>
       </section>
-
-      {/* <NewsSection /> */}
     </>
   );
 }
