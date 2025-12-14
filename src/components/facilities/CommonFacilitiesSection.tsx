@@ -8,6 +8,7 @@ import type {
   MicroCMSCommonFacilityListResponse,
 } from '@/types/facilities';
 import { CONTENT_CATEGORIES } from '@/types/categories';
+import { facilitiesSections } from './data';
 
 export default function CommonFacilitiesSection() {
   const [facilities, setFacilities] = useState<CommonFacility[]>([]);
@@ -114,14 +115,19 @@ export default function CommonFacilitiesSection() {
     );
   }
 
+  const sectionData = facilitiesSections.find((s) => s.id === 'common');
+
   return (
     <div className="space-y-8">
-      <h3
+      <div
         id="common"
-        className="text-2xl font-bold text-gray-900 text-center mb-8"
+        className="bg-gradient-to-r from-blue-50 to-green-50 border-l-4 border-blue-600 rounded-lg p-6 mb-8 shadow-sm"
       >
-        共有施設
-      </h3>
+        <h3 className="text-3xl font-bold text-gray-900 flex items-center justify-start gap-3">
+          <span className="text-4xl">{sectionData?.icon}</span>
+          <span>{sectionData?.label}</span>
+        </h3>
+      </div>
       {facilities.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500">共用施設データがありません。</p>

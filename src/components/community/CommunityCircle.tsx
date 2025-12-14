@@ -7,6 +7,7 @@ import type {
   MicroCMSResidentCircleListResponse,
 } from '@/types/community';
 import { CONTENT_CATEGORIES } from '@/types/categories';
+import { communitySections } from './data';
 
 export default function CommunityCircle() {
   const [sportsCircles, setSportsCircles] = useState<ResidentCircle[]>([]);
@@ -164,14 +165,19 @@ export default function CommunityCircle() {
     { name: '文化活動', circles: cultureCircles },
   ];
 
+  const sectionData = communitySections.find((s) => s.id === 'circles');
+
   return (
     <div className="space-y-8">
-      <h3
+      <div
         id="circles"
-        className="text-2xl font-bold text-gray-900 text-center mb-8"
+        className="bg-gradient-to-r from-blue-50 to-green-50 border-l-4 border-blue-600 rounded-lg p-6 mb-8 shadow-sm"
       >
-        住人サークル
-      </h3>
+        <h3 className="text-3xl font-bold text-gray-900 flex items-center justify-start gap-3">
+          <span className="text-4xl">{sectionData?.icon}</span>
+          <span>{sectionData?.label}</span>
+        </h3>
+      </div>
 
       {/* サークル活動の説明 */}
       <div className="bg-blue-50 rounded-lg p-6 mb-8 border border-blue-200">

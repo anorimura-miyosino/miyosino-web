@@ -8,6 +8,7 @@ import type {
   MicroCMSCommunityActivityListResponse,
 } from '@/types/community';
 import { CONTENT_CATEGORIES } from '@/types/categories';
+import { communitySections } from './data';
 
 export default function CommunityActivities() {
   const [activities, setActivities] = useState<CommunityActivity[]>([]);
@@ -117,14 +118,19 @@ export default function CommunityActivities() {
     );
   }
 
+  const sectionData = communitySections.find((s) => s.id === 'activities');
+
   return (
     <div className="space-y-8">
-      <h3
+      <div
         id="activities"
-        className="text-2xl font-bold text-gray-900 text-center mb-8"
+        className="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-600 rounded-lg p-6 mb-8 shadow-sm"
       >
-        自治会活動
-      </h3>
+        <h3 className="text-3xl font-bold text-gray-900 flex items-center justify-start gap-3">
+          <span className="text-4xl">{sectionData?.icon}</span>
+          <span>{sectionData?.label}</span>
+        </h3>
+      </div>
 
       {/* 自治会活動の説明 */}
       <div className="bg-green-50 rounded-lg p-6 mb-8 border border-green-200">

@@ -8,6 +8,7 @@ import type {
   MicroCMSServiceListResponse,
 } from '@/types/facilities';
 import { CONTENT_CATEGORIES } from '@/types/categories';
+import { facilitiesSections } from './data';
 
 export default function ServicesSection() {
   const [services, setServices] = useState<Service[]>([]);
@@ -111,14 +112,21 @@ export default function ServicesSection() {
     );
   }
 
+  const sectionData = facilitiesSections.find(
+    (s: { id: string; label: string; icon: string }) => s.id === 'services'
+  );
+
   return (
     <div className="space-y-8">
-      <h3
+      <div
         id="services"
-        className="text-2xl font-bold text-gray-900 text-center mb-8"
+        className="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-600 rounded-lg p-6 mb-8 shadow-sm"
       >
-        団地内のサービス
-      </h3>
+        <h3 className="text-3xl font-bold text-gray-900 flex items-center justify-start gap-3">
+          <span className="text-4xl">{sectionData?.icon}</span>
+          <span>{sectionData?.label}</span>
+        </h3>
+      </div>
       {services.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500">サービスデータがありません。</p>
@@ -160,9 +168,6 @@ export default function ServicesSection() {
                       />
                     </div>
                   )}
-                  <button className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium mt-4">
-                    予約する
-                  </button>
                 </div>
               </div>
             </div>
