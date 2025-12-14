@@ -113,7 +113,10 @@ export default function ServicesSection() {
 
   return (
     <div className="space-y-8">
-      <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
+      <h3
+        id="services"
+        className="text-2xl font-bold text-gray-900 text-center mb-8"
+      >
         団地内のサービス
       </h3>
       {services.length === 0 ? (

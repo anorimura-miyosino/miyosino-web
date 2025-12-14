@@ -1,4 +1,4 @@
-import { FacilitiesSection } from '@/components/facilities';
+import { FacilitiesSection, TableOfContents } from '@/components/facilities';
 
 export default function FacilitiesPage() {
   return (
@@ -14,6 +14,8 @@ export default function FacilitiesPage() {
           </p>
         </div>
       </section>
+
+      <TableOfContents />
 
       {/* 共有施設・サービスセクション */}
       <FacilitiesSection />

@@ -116,7 +116,10 @@ export default function CommonFacilitiesSection() {
 
   return (
     <div className="space-y-8">
-      <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
+      <h3
+        id="common"
+        className="text-2xl font-bold text-gray-900 text-center mb-8"
+      >
         共有施設
       </h3>
       {facilities.length === 0 ? (
