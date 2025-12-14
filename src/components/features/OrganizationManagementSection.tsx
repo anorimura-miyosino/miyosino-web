@@ -51,37 +51,39 @@ export function OrganizationManagementSection() {
       className="bg-gray-50 py-24 sm:py-32 scroll-mt-20"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-green-600">
-            {sectionMeta.subtitle}
-          </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            {sectionMeta.title}
-          </p>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            団地では、住民自身が代表者（総会の議員）となり、民主的な意思決定を行う体制となっています。団地は、住民みんなで力を合わせて「良い団地」「良いコミュニティ」を作り、そこに住みたい理想のコミュニティを実現していく場所です。
-          </p>
-          <p className="mt-6">
-            <Link
-              href="/management"
-              className="inline-flex items-center text-base font-semibold text-green-600 hover:text-green-700"
-            >
-              団地運営の詳細を見る
-              <svg
-                className="ml-2 h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        <div className="mb-12">
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 border-l-4 border-green-600 rounded-lg p-6 shadow-sm">
+            <h2 className="text-3xl font-bold text-gray-900 flex items-center justify-start gap-3">
+              <span className="text-4xl">{sectionMeta.icon}</span>
+              <span>{sectionMeta.title}</span>
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-gray-600">
+              本団地は、住民による自主運営を基本としています。
+              住民が代表者（総会の議員）となり、すべての意思決定は民主的な手続きを経て行われます。
+              団地とは、住まいであると同時に、住民が力を合わせて「良い団地、良いコミュニティ」を共に創り上げ、理想とする暮らしを実現していくための場所です。
+            </p>
+            <p className="mt-4">
+              <Link
+                href="/management"
+                className="inline-flex items-center text-base font-semibold text-green-600 hover:text-green-700"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </Link>
-          </p>
+                団地運営の詳細を見る
+                <svg
+                  className="ml-2 h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            </p>
+          </div>
         </div>
 
         {/* 4つの主要組織 */}

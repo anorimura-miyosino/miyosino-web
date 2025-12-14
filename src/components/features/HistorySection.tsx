@@ -226,14 +226,13 @@ export function HistorySection() {
       className="bg-white py-24 sm:py-32 scroll-mt-20"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-green-600">
-            {sectionMeta.subtitle}
-          </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            {sectionMeta.title}
-          </p>
-          <p className="mt-6 text-lg leading-8 text-gray-600"></p>
+        <div className="mb-12">
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-600 rounded-lg p-6 shadow-sm">
+            <h2 className="text-3xl font-bold text-gray-900 flex items-center justify-start gap-3">
+              <span className="text-4xl">{sectionMeta.icon}</span>
+              <span>{sectionMeta.title}</span>
+            </h2>
+          </div>
         </div>
 
         {/* 団地のあゆみ */}

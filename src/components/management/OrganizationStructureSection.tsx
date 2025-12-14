@@ -7,16 +7,16 @@ export function OrganizationStructureSection() {
   return (
     <section id={sectionMeta.id} className="bg-gray-50 py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-green-600">
-            {sectionMeta.subtitle}
-          </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            {sectionMeta.title}
-          </p>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            {data.description}
-          </p>
+        <div className="mb-12">
+          <div className="bg-gradient-to-r from-blue-50 to-green-50 border-l-4 border-blue-600 rounded-lg p-6 shadow-sm">
+            <h2 className="text-3xl font-bold text-gray-900 flex items-center justify-start gap-3">
+              <span className="text-4xl">{sectionMeta.icon}</span>
+              <span>{sectionMeta.title}</span>
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-gray-600">
+              {data.description}
+            </p>
+          </div>
         </div>
 
         <div className="mx-auto mt-16 max-w-5xl space-y-12">
