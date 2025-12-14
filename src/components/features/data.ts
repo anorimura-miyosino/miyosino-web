@@ -1,6 +1,13 @@
 // 目次とセクション定義のメタデータ
 export const featuresSections = [
   {
+    id: 'basic',
+    label: '基本情報',
+    icon: '🔰',
+    subtitle: '',
+    title: '基本情報',
+  },
+  {
     id: 'organization',
     label: '運営体制',
     icon: '🏢',

@@ -105,7 +105,7 @@ export function SeasonsSection() {
     fetchSeasons();
   }, []);
 
-  const sectionMeta = featuresSections[1];
+  const sectionMeta = featuresSections[2];
 
   return (
     <section

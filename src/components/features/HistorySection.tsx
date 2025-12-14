@@ -218,7 +218,7 @@ const historyData = [
 ];
 
 export function HistorySection() {
-  const sectionMeta = featuresSections[2];
+  const sectionMeta = featuresSections[3];
 
   return (
     <section

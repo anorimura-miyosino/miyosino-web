@@ -43,7 +43,7 @@ const organizationData = {
 };
 
 export function OrganizationManagementSection() {
-  const sectionMeta = featuresSections[0];
+  const sectionMeta = featuresSections[1];
 
   return (
     <section

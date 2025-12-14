@@ -4,7 +4,6 @@ import {
   IntroductionSection,
   FeaturesHighlightSection,
   InstagramSection,
-  OverviewSection,
 } from '@/components/home';
 
 export default function Home() {
@@ -14,7 +13,6 @@ export default function Home() {
       <InstagramSection />
       <IntroductionSection />
       <FeaturesHighlightSection />
-      <OverviewSection />
 
       {/* さらに詳しく知るためのリンク */}
       <section className="py-16 bg-gradient-to-b from-gray-100 to-white">

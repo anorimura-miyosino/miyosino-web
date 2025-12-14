@@ -1,4 +1,4 @@
-import { overviewSections } from './data';
+import { featuresSections } from './data';
 
 const overviewData = {
   location: {
@@ -48,7 +48,7 @@ const overviewData = {
 };
 
 export function OverviewSection() {
-  const sectionMeta = overviewSections[0];
+  const sectionMeta = featuresSections[0];
 
   return (
     <section
@@ -56,10 +56,13 @@ export function OverviewSection() {
       className="bg-gray-100 py-24 sm:py-32 scroll-mt-20"
     >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-800 sm:text-4xl">
-            {sectionMeta.title}
-          </p>
+        <div className="mb-12">
+          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-600 rounded-lg p-6 shadow-sm">
+            <h2 className="text-3xl font-bold text-gray-900 flex items-center justify-start gap-3">
+              <span className="text-4xl">{sectionMeta.icon}</span>
+              <span>{sectionMeta.title}</span>
+            </h2>
+          </div>
         </div>
 
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
@@ -151,3 +154,4 @@ export function OverviewSection() {
     </section>
   );
 }
+

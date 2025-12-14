@@ -1,4 +1,5 @@
 import {
+  OverviewSection,
   OrganizationManagementSection,
   SeasonsSection,
   HistorySection,
@@ -28,6 +29,7 @@ export default function FeaturesPage() {
 
       <TableOfContents />
 
+      <OverviewSection />
       <OrganizationManagementSection />
       <SeasonsSection />
       <HistorySection />
