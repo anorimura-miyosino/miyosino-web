@@ -2,8 +2,8 @@ import {
   OrganizationManagementSection,
   SeasonsSection,
   HistorySection,
-  TableOfContents,
 } from '@/components/features';
+import { TableOfContents } from '@/components/features/TableOfContents';
 
 export const metadata = {
   title: '団地の特徴 | かわつる三芳野団地',

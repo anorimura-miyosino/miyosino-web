@@ -2,4 +2,4 @@
 export { OrganizationManagementSection } from './OrganizationManagementSection';
 export { SeasonsSection } from './SeasonsSection';
 export { HistorySection } from './HistorySection';
-export { TableOfContents } from './TableOfContents';
+// TableOfContents is exported directly from the file to avoid name conflicts

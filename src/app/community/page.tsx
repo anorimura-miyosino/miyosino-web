@@ -1,4 +1,5 @@
-import { CommunitySection, TableOfContents } from '@/components/community';
+import { CommunitySection } from '@/components/community';
+import { TableOfContents } from '@/components/community/TableOfContents';
 
 export default function CommunityPage() {
   return (

@@ -1,2 +1,2 @@
 export { default as CommunitySection } from './CommunitySection';
-export { TableOfContents } from './TableOfContents';
+// TableOfContents is exported directly from the file to avoid name conflicts

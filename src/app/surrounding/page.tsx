@@ -1,7 +1,5 @@
-import {
-  NearbyFacilitiesSection,
-  TableOfContents,
-} from '@/components/surrounding';
+import { NearbyFacilitiesSection } from '@/components/surrounding';
+import { TableOfContents } from '@/components/surrounding/TableOfContents';
 
 export default function SurroundingPage() {
   return (
