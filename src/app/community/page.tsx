@@ -1,4 +1,4 @@
-import { CommunitySection } from '@/components/community';
+import { CommunitySection, TableOfContents } from '@/components/community';
 
 export default function CommunityPage() {
   return (
@@ -12,10 +12,12 @@ export default function CommunityPage() {
             <br />
             豊かなコミュニティを築いています
             <br />
-            団地の豊かなコミュニティ活動をご紹介します
+            団地のコミュニティ活動をご紹介します
           </p>
         </div>
       </section>
+
+      <TableOfContents />
 
       {/* コミュニティ活動セクション */}
       <CommunitySection />

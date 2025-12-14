@@ -166,8 +166,11 @@ export default function CommunityCircle() {
 
   return (
     <div className="space-y-8">
-      <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
-        住人サークル紹介
+      <h3
+        id="circles"
+        className="text-2xl font-bold text-gray-900 text-center mb-8"
+      >
+        住人サークル
       </h3>
 
       {/* サークル活動の説明 */}
@@ -175,17 +178,6 @@ export default function CommunityCircle() {
         <p className="text-gray-700 leading-relaxed mb-4">
           私たちの団地生活をより楽しく、快適に過ごすために、有志の方々により、いろいろなサークルが結成されています。教養、趣味、体力増強を目的にサークル活動が活発に行われています。
         </p>
-        <div className="space-y-2 text-gray-700 text-sm">
-          <p>
-            団地内サークルは、サークル登録申請願の提出により自治会に登録され、団地公認のサークルとなります。
-          </p>
-          <p>
-            登録されたサークル名は、集会所の窓口でわかりますので、加入希望者は、その責任者まで問い合わせてください。
-          </p>
-          <p className="font-medium text-gray-900 mt-4">
-            現在登録されているサークルは次のとおりです。
-          </p>
-        </div>
       </div>
 
       {/* 分類別に表示 */}
