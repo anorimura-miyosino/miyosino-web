@@ -195,25 +195,19 @@ export default function CommunityCircle() {
             <h4 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-green-600">
               {name}
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 divide-y divide-gray-200">
               {circles.map((circle) => (
                 <div
                   key={circle.id}
-                  className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8 border border-gray-200"
+                  className="flex items-center px-6 py-4 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex items-start space-x-4">
-                    {circle.icon && (
-                      <div className="text-4xl">{circle.icon}</div>
-                    )}
-                    <div className="flex-1">
-                      <h4 className="text-xl font-bold text-gray-900 mb-3">
-                        {circle.name}
-                      </h4>
-                      <div
-                        className="text-gray-600 mb-4 leading-relaxed prose prose-sm max-w-none"
-                        dangerouslySetInnerHTML={{ __html: circle.body }}
-                      />
-                    </div>
+                  {circle.icon && (
+                    <div className="text-2xl mr-4">{circle.icon}</div>
+                  )}
+                  <div className="flex-1">
+                    <span className="text-lg font-medium text-gray-900">
+                      {circle.name}
+                    </span>
                   </div>
                 </div>
               ))}
