@@ -43,7 +43,11 @@ const organizationData = {
 };
 
 export function OrganizationManagementSection() {
-  const sectionMeta = featuresSections[1];
+  const sectionMeta = featuresSections.find((s) => s.id === 'organization');
+
+  if (!sectionMeta) {
+    return null;
+  }
 
   return (
     <section
@@ -61,27 +65,6 @@ export function OrganizationManagementSection() {
               本団地は、住民による自主運営を基本としています。
               住民が代表者（総会の議員）となり、すべての意思決定は民主的な手続きを経て行われます。
               団地とは、住まいであると同時に、住民が力を合わせて「良い団地、良いコミュニティ」を共に創り上げ、理想とする暮らしを実現していくための場所です。
-            </p>
-            <p className="mt-4">
-              <Link
-                href="/management"
-                className="inline-flex items-center text-base font-semibold text-green-600 hover:text-green-700"
-              >
-                団地運営の詳細を見る
-                <svg
-                  className="ml-2 h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </Link>
             </p>
           </div>
         </div>

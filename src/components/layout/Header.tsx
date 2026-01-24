@@ -7,7 +7,6 @@ import { useState } from 'react';
 const navigationItems = [
   { href: '/', label: 'ホーム' },
   { href: '/features', label: '特徴' },
-  { href: '/management', label: '団地運営' },
   { href: '/community', label: 'コミュニティ' },
   { href: '/facilities', label: '共有施設・サービス' },
   { href: '/surrounding', label: '周辺施設' },

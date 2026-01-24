@@ -50,14 +50,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/management"
-                  className="text-gray-300 hover:text-green-600 text-sm transition-colors"
-                >
-                  団地運営
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/community"
                   className="text-gray-300 hover:text-green-600 text-sm transition-colors"
                 >

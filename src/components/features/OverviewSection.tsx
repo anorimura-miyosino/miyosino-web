@@ -48,7 +48,11 @@ const overviewData = {
 };
 
 export function OverviewSection() {
-  const sectionMeta = featuresSections[0];
+  const sectionMeta = featuresSections.find((s) => s.id === 'basic');
+
+  if (!sectionMeta) {
+    return null;
+  }
 
   return (
     <section

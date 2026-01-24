@@ -218,7 +218,11 @@ const historyData = [
 ];
 
 export function HistorySection() {
-  const sectionMeta = featuresSections[3];
+  const sectionMeta = featuresSections.find((s) => s.id === 'history');
+
+  if (!sectionMeta) {
+    return null;
+  }
 
   return (
     <section

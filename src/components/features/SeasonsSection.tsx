@@ -105,7 +105,11 @@ export function SeasonsSection() {
     fetchSeasons();
   }, []);
 
-  const sectionMeta = featuresSections[2];
+  const sectionMeta = featuresSections.find((s) => s.id === 'seasons');
+
+  if (!sectionMeta) {
+    return null;
+  }
 
   return (
     <section

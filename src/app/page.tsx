@@ -28,12 +28,6 @@ export default function Home() {
               特徴を見る
             </Link>
             <Link
-              href="/management"
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
-            >
-              団地運営を見る
-            </Link>
-            <Link
               href="/community"
               className="bg-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors duration-200 shadow-md hover:shadow-lg"
             >

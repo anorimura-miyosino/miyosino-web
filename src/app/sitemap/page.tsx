@@ -33,11 +33,6 @@ const sitemapData: SitemapSection[] = [
         description: 'かわつる三芳野団地の魅力をご紹介します',
       },
       {
-        title: '団地運営',
-        href: '/management',
-        description: '管理組合の活動や組織について',
-      },
-      {
         title: 'コミュニティ',
         href: '/community',
         description: '団地内のコミュニティ活動について',
@@ -86,6 +81,11 @@ const sitemapData: SitemapSection[] = [
         title: 'イベント予定',
         href: '/member/events',
         description: '団地内のイベントスケジュール（要ログイン）',
+      },
+      {
+        title: '団地運営',
+        href: '/member/management',
+        description: '管理組合の活動や組織について（要ログイン）',
       },
     ],
   },
