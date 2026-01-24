@@ -12,7 +12,7 @@ export const featuresSections = [
     label: '運営体制',
     icon: '🏢',
     subtitle: '運営体制',
-    title: '自主運営組織による運営',
+    title: '自主運営組織の体制',
   },
   {
     id: 'maintenance',
