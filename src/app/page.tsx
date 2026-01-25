@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <InstagramSection />
+      {/*<InstagramSection />*/}
       <IntroductionSection />
       <FeaturesHighlightSection />
 
@@ -34,12 +34,6 @@ export default function Home() {
               コミュニティを見る
             </Link>
             <Link
-              href="/access"
-              className="bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200 shadow-md hover:shadow-lg"
-            >
-              アクセスを見る
-            </Link>
-            <Link
               href="/facilities"
               className="bg-teal-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors duration-200 shadow-md hover:shadow-lg"
             >
@@ -50,6 +44,12 @@ export default function Home() {
               className="bg-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-pink-700 transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               周辺施設を見る
+            </Link>
+            <Link
+              href="/access"
+              className="bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+            >
+              アクセスを見る
             </Link>
           </div>
         </div>
