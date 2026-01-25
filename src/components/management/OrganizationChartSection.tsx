@@ -143,6 +143,9 @@ export function OrganizationChartSection() {
                     </li>
                   ))}
                 </ul>
+                <p className="text-xs text-gray-500 mt-3 italic">
+                  ※委員会は年度ごとに変わるため、参考程度としてご覧ください。
+                </p>
               </div>
             </div>
           </div>

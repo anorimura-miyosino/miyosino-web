@@ -98,7 +98,7 @@ export function ManagementOverviewSection() {
             <p className="text-base leading-7 text-gray-600 mb-6">
               {data.organizations.description}
             </p>
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {data.organizations.items.map((org, index) => (
                 <div
                   key={index}

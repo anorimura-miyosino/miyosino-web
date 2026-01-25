@@ -5,7 +5,7 @@ export const managementSections = [
     label: '運営方針',
     icon: '🏢',
     subtitle: '運営方針',
-    title: '団地運営について',
+    title: '団地運営の方針について',
   },
   {
     id: 'organization',
@@ -16,10 +16,10 @@ export const managementSections = [
   },
   {
     id: 'composition',
-    label: '組織構成',
+    label: '管理組合の構成',
     icon: '📊',
-    subtitle: '組織構成',
-    title: '各組織の構成と業務',
+    subtitle: '管理組合の構成',
+    title: '管理組合の構成と業務',
   },
 ];
 
@@ -210,10 +210,10 @@ export const organizationStructureData = {
   },
 };
 
-// 3. 各組織の構成と業務（階層構造）
+// 3. 管理組合の構成と業務（階層構造）
 export const organizationCompositionData = {
   title: managementSections[2].title,
-  description: '各組織の構成と業務について、階層的にご紹介します。',
+  description: '管理組合の構成と業務についてご紹介します。',
   organizations: [
     {
       name: '管理組合',

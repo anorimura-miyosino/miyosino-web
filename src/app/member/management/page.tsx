@@ -14,7 +14,7 @@ export default function ManagementPage() {
       <div className="min-h-screen bg-gray-50">
         <MemberPageHeader
           title="団地運営のご案内"
-          description="かわつる三芳野団地における団地運営の全体像から管理組合のしくみまでご紹介します"
+          description="かわつる三芳野団地における団地運営についてご紹介します"
           gradientFrom="from-green-600"
           gradientTo="to-green-800"
           textColor="text-green-100"
