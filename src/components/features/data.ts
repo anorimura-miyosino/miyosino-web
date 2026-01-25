@@ -29,6 +29,13 @@ export const featuresSections = [
     title: '高い耐震性能と安全性',
   },
   {
+    id: 'hazard-map',
+    label: '災害リスク情報',
+    icon: '🗺️',
+    subtitle: '災害リスク情報',
+    title: '周辺の災害リスク情報',
+  },
+  {
     id: 'seasons',
     label: '団地の四季',
     icon: '🌸',

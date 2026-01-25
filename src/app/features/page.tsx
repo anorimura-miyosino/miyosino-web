@@ -3,6 +3,7 @@ import {
   OrganizationManagementSection,
   MaintenanceSection,
   SeismicSection,
+  HazardMapSection,
   SeasonsSection,
   HistorySection,
 } from '@/components/features';
@@ -35,6 +36,7 @@ export default function FeaturesPage() {
       <OrganizationManagementSection />
       <MaintenanceSection />
       <SeismicSection />
+      <HazardMapSection />
       <SeasonsSection />
       <HistorySection />
     </div>
