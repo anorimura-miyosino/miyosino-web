@@ -14,7 +14,6 @@ const seismicData = {
     organization: '特定非営利活動法人 耐震総合安全機構 JASO',
     number: 'JASO 評定 No.23133',
     date: '2023年7月3日',
-    building: 'かわつる三芳野団地1号棟',
     format: '評定6号様式',
     description:
       '一級建築士事務所 空間設計が実施した耐震診断報告書について、JASOの判定会議において審査が行われ、「建築物の耐震改修の促進に関する法律」及び同法に基づく技術指針に照らし、「妥当なものであると認める」旨の評定を受けています。',
@@ -114,14 +113,6 @@ export function SeismicSection() {
                   </p>
                   <p className="text-sm font-semibold text-gray-900">
                     {seismicData.certification.date}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1">
-                    対象建物
-                  </p>
-                  <p className="text-sm font-semibold text-gray-900">
-                    {seismicData.certification.building}
                   </p>
                 </div>
                 <div>
