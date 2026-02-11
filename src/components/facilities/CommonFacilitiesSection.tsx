@@ -23,15 +23,11 @@ export default function CommonFacilitiesSection() {
 
         // Cloudflare Workersのエンドポイントを取得
         const contentsApiEndpoint =
-          process.env.NEXT_PUBLIC_CONTENTS_API_ENDPOINT ||
-          process.env.NEXT_PUBLIC_PHOTOS_API_ENDPOINT?.replace(
-            'miyosino-photos-api',
-            'miyosino-contents-api'
-          );
+          process.env.NEXT_PUBLIC_CONTENTS_API_ENDPOINT;
 
         if (!contentsApiEndpoint) {
           console.error(
-            '[CommonFacilitiesSection] API endpoint is not set. Please configure NEXT_PUBLIC_CONTENTS_API_ENDPOINT or NEXT_PUBLIC_PHOTOS_API_ENDPOINT environment variable.'
+            '[NearbyFacilitiesSection] API endpoint is not set. Please configure NEXT_PUBLIC_CONTENTS_API_ENDPOINT environment variable.'
           );
           setLoading(false);
           return;

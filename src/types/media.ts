@@ -11,7 +11,7 @@ export enum MediaType {
 export interface Photo extends BaseEntity {
   title: string;
   description?: string;
-  photo: {
+  image: {
     url: string;
     width?: number;
     height?: number;
@@ -19,27 +19,37 @@ export interface Photo extends BaseEntity {
   order: number;
 }
 
-// MicroCMS API用のPhoto型定義
-export interface MicroCMSPhoto {
+// MicroCMS API用のトップイメージ型定義
+export interface MicroCMSCommonTopImage {
   id: string;
   createdAt: string;
   updatedAt: string;
   publishedAt?: string;
   revisedAt?: string;
   title: string;
-  description?: string;
-  photo: {
+  description: string;
+  body: string; // HTML（features、capacity、reservationを含む）
+  icon?: string; // アイコン（1行テキスト）
+  order?: number;
+  image?: {
     url: string;
     width?: number;
     height?: number;
   };
-  order: number;
-  icon?: string; // アイコン（1行テキスト）
+  category?: Array<{
+    id: string;
+    name: string;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
+    revisedAt?: string;
+    order?: number;
+  }>;
 }
 
 // MicroCMSのレスポンス型（contents配列）
-export interface MicroCMSPhotoListResponse {
-  contents: MicroCMSPhoto[];
+export interface MicroCMSTopImageListResponse {
+  contents: MicroCMSCommonTopImage[];
   totalCount: number;
   offset: number;
   limit: number;
