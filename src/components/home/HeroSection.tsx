@@ -67,17 +67,23 @@ export default function HeroSection() {
           `[ServicesSection] フィルタリング後のデータ数: ${filteredContents.length}`
         );
 
-        const fetchedPhotos: Photo[] = data.contents.map(
-          (content: MicroCMSCommonTopImage) => ({
+        const fetchedPhotos: Photo[] = data.contents
+          .filter(
+            (content: MicroCMSCommonTopImage) => content.image !== undefined
+          )
+          .map((content: MicroCMSCommonTopImage) => ({
             id: content.id,
             createdAt: new Date(content.createdAt),
             updatedAt: new Date(content.updatedAt),
             title: content.title,
             description: content.description,
-            image: content.image,
-            order: content.order,
-          })
-        );
+            image: content.image ?? {
+              url: '/fallback.jpg',
+              width: 0,
+              height: 0,
+            },
+            order: content.order ?? 0,
+          }));
 
         // orderが最小の写真のみを設定
         if (fetchedPhotos.length > 0) {
