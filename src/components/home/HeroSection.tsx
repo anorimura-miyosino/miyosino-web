@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import type {
   Photo,
-  MicroCMSPhoto,
-  MicroCMSPhotoListResponse,
+  MicroCMSCommonTopImage,
+  MicroCMSTopImageListResponse,
 } from '@/types/media';
+import { CONTENT_CATEGORIES } from '@/types/categories';
 
 export default function HeroSection() {
   const [heroPhoto, setHeroPhoto] = useState<Photo | null>(null);
@@ -34,7 +35,9 @@ export default function HeroSection() {
 
         // Cloudflare Workers経由で取得
         const url = new URL(apiEndpoint);
-        url.searchParams.append('orders', 'order');
+        url.searchParams.append('category', CONTENT_CATEGORIES.TOP_IMAGE); // カテゴリIDでフィルタ
+        url.searchParams.append('orders', 'order'); // 表示順でソート
+        url.searchParams.append('getAll', 'true'); // 全件取得
 
         const response = await fetch(url.toString(), {
           cache: 'no-store',
@@ -46,16 +49,33 @@ export default function HeroSection() {
           );
         }
 
-        const data: MicroCMSPhotoListResponse = await response.json();
+        const data: MicroCMSTopImageListResponse = await response.json();
+
+        // クライアント側でカテゴリフィルタリング（category.idがCONTENT_CATEGORIES.TOP_IMAGEのもののみ）
+        const filteredContents = data.contents.filter(
+          (topImage: MicroCMSCommonTopImage) => {
+            if (!Array.isArray(topImage.category)) {
+              return false;
+            }
+            return topImage.category.some(
+              (cat) => cat && cat.id === CONTENT_CATEGORIES.TOP_IMAGE
+            );
+          }
+        );
+
+        console.log(
+          `[ServicesSection] フィルタリング後のデータ数: ${filteredContents.length}`
+        );
+
         const fetchedPhotos: Photo[] = data.contents.map(
-          (photo: MicroCMSPhoto) => ({
-            id: photo.id,
-            createdAt: new Date(photo.createdAt),
-            updatedAt: new Date(photo.updatedAt),
-            title: photo.title,
-            description: photo.description,
-            photo: photo.photo,
-            order: photo.order,
+          (content: MicroCMSCommonTopImage) => ({
+            id: content.id,
+            createdAt: new Date(content.createdAt),
+            updatedAt: new Date(content.updatedAt),
+            title: content.title,
+            description: content.description,
+            image: content.image,
+            order: content.order,
           })
         );
 
@@ -97,7 +117,7 @@ export default function HeroSection() {
       <div className="relative h-[70vh] min-h-[500px]">
         <div className="absolute inset-0">
           <Image
-            src={heroPhoto.photo.url}
+            src={heroPhoto.image?.url || '/fallback.jpg'}
             alt={heroPhoto.title || 'ヒーロー画像'}
             fill
             priority
@@ -115,7 +135,7 @@ export default function HeroSection() {
             onError={() => {
               console.error(
                 '[HeroSection] 画像読み込みエラー:',
-                heroPhoto.photo.url
+                heroPhoto.image.url
               );
               setImageError(true);
               setImageLoaded(false);
