@@ -9,6 +9,8 @@
  * コンテンツカテゴリID
  */
 export const CONTENT_CATEGORIES = {
+  /** */
+  TOP_IMAGE: 'top-image',
   /** お知らせ */
   NEWS: 'news',
   /** 団地の四季 */
@@ -31,6 +33,7 @@ export const CONTENT_CATEGORIES = {
  * カテゴリIDの型
  */
 export type ContentCategoryId =
+  | typeof CONTENT_CATEGORIES.TOP_IMAGE
   | typeof CONTENT_CATEGORIES.NEWS
   | typeof CONTENT_CATEGORIES.SEASON
   | typeof CONTENT_CATEGORIES.COMMUNITY_ACTIVITIES
