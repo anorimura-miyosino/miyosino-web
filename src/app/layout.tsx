@@ -3,7 +3,6 @@ import {
   Geist,
   Geist_Mono,
   Noto_Serif_JP,
-  Kosugi_Maru,
 } from 'next/font/google';
 import './globals.css';
 import { Header, Footer } from '@/components';
@@ -25,12 +24,8 @@ const notoSerifJP = Noto_Serif_JP({
   preload: true,
 });
 
-const kosugiMaru = Kosugi_Maru({
-  variable: '--font-kosugi-maru',
-  subsets: ['latin'],
-  weight: ['400'],
-  preload: true,
-});
+// Kosugi Maru は Dev Container 等で Google Fonts がタイムアウトするため削除。
+// 必要なら Noto Serif JP やローカルフォントで代替可能。
 
 export const metadata: Metadata = {
   title: 'かわつる三芳野団地 | Miyoshino Apartments',
@@ -47,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJP.variable} ${kosugiMaru.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJP.variable} antialiased`}
       >
         <Header />
         <main className="min-h-screen">{children}</main>
